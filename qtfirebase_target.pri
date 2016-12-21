@@ -3,6 +3,8 @@ message( "QtFirebase: configuring build for supported Firebase target platform..
 isEmpty(QTFIREBASE_SDK_PATH){
     QTFIREBASE_SDK_PATH = $$PWD/firebase_cpp_sdk
     message("No QTFIREBASE_SDK_PATH path sat. Using default (firebase_cpp_sdk) $$QTFIREBASE_SDK_PATH")
+} else {
+    message("Using QTFIREBASE_SDK_PATH ($$QTFIREBASE_SDK_PATH)")
 }
 
 QML_IMPORT_PATH += $$PWD
