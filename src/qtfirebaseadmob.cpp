@@ -858,7 +858,7 @@ QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent) : QObj
     _initializing = false;
     _nativeUIElement = 0;
     _isFirstInit = true;
-
+    _visible = false;
     _request = 0;
 
     connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobInterstitial::onFutureEvent);
@@ -919,6 +919,31 @@ void QtFirebaseAdMobInterstitial::setAdUnitId(const QString &adUnitId)
         __adUnitIdByteArray = _adUnitId.toLatin1();
 
         emit adUnitIdChanged();
+    }
+}
+
+bool QtFirebaseAdMobInterstitial::visible() const
+{
+    return _visible;
+}
+
+void QtFirebaseAdMobInterstitial::setVisible(bool visible)
+{
+    if(!_ready) {
+        qDebug() << this << "::setVisible native part not ready";
+        return;
+    }
+
+    if(!_loaded) {
+        qDebug() << this << "::setVisible native part not loaded - so not changing visiblity to" << visible;
+        return;
+    }
+
+    if(!_visible && visible) {
+        show(); // NOTE show will change _visible and emit signal
+    } else {
+        // NOTE An interstitial can't be hidden by any other than the user
+        qInfo() << this << "::setVisible" << visible << " - interstitials can't be hidden programmatically. Not hidding";
     }
 }
 
@@ -1028,7 +1053,7 @@ void QtFirebaseAdMobInterstitial::load()
         qDebug() << this << "::load() not ready";
         return;
     }
-
+    
     if(_request == 0) {
         qDebug() << this << "::load() no request data sat. Not loading";
         return;
@@ -1060,14 +1085,21 @@ void QtFirebaseAdMobInterstitial::show()
         return;
     }
 
-    qDebug() << this << "::show() native showed";
-    emit showed();
+    if(!_visible) {
+        _visible = true;
+        emit visibleChanged();
+    }
 
     // TODO dangerous code?!?
     while (_interstitial->GetPresentationState() != admob::InterstitialAd::PresentationState::kPresentationStateHidden) {
         QGuiApplication::processEvents();
     }
     qDebug() << this << "::show() closed";
+
+    if(_visible) {
+        _visible = false;
+        emit visibleChanged();
+    }
 
     setLoaded(false);
     qDebug() << this << "::show() loaded false";
