@@ -198,6 +198,8 @@ signals:
     void heightChanged();
     void requestChanged();
 
+    void loading();
+
     void error(int errorCode);
 
 public slots:
@@ -236,6 +238,9 @@ public:
     QString adUnitId() { return ""; }
     void setAdUnitId(const QString &adUnitId) { Q_UNUSED(adUnitId); }
 
+    bool visible() { return false; }
+    void setVisible(bool visible) { Q_UNUSED(visible); }
+
     QtFirebaseAdMobRequest* request()  { return 0; }
     void setRequest(QtFirebaseAdMobRequest *request) { Q_UNUSED(request); }
 
@@ -243,9 +248,10 @@ signals:
     void readyChanged();
     void loadedChanged();
     void adUnitIdChanged();
+    void visibleChanged();
     void error(int errorCode);
     void closed();
-    void showed();
+    void loading();
     void requestChanged();
 
 public slots:

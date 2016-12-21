@@ -806,6 +806,7 @@ void QtFirebaseAdMobBanner::load()
     }
 
     qDebug() << this << "::load() getting request data";
+    emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = _banner->LoadAd(request);
     qFirebase->addFuture(__QTFIREBASE_ID + ".banner.loaded",future);
@@ -1060,6 +1061,7 @@ void QtFirebaseAdMobInterstitial::load()
     }
 
     qDebug() << this << "::load() getting request data";
+    emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = _interstitial->LoadAd(request);
     qFirebase->addFuture(__QTFIREBASE_ID + ".interstitial.loaded",future);

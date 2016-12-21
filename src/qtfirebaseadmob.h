@@ -250,6 +250,7 @@ signals:
     void widthChanged();
     void heightChanged();
     void requestChanged();
+    void loading();
 
     void error(QtFirebaseAdMob::Error code, QString message);
 
@@ -334,6 +335,7 @@ signals:
     void loadedChanged();
     void adUnitIdChanged();
     void requestChanged();
+    void loading();
     void error(QtFirebaseAdMob::Error code, QString message);
     void closed();
     void visibleChanged();
