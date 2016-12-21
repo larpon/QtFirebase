@@ -17,12 +17,15 @@ INCLUDEPATH += \
 HEADERS += \
     $$PWD/qtfirebase.h \
     $$PWD/src/platformutils.h \
-    $$PWD/src/qtfirebase.h \
-    $$PWD/src/qtfirebase_plugin.h
+    $$PWD/src/qtfirebase.h
 
 SOURCES += \
-    $$PWD/src/qtfirebase.cpp \
-    $$PWD/src/qtfirebase_plugin.cpp
+    $$PWD/src/qtfirebase.cpp
+
+contains(QTPLUGIN,qtfirebase) {
+    HEADERS += $$PWD/src/qtfirebase_plugin.h
+    SOURCES += $$PWD/src/qtfirebase_plugin.cpp
+}
 
 !ios: {
     SOURCES += \

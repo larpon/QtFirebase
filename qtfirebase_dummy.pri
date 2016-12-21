@@ -5,11 +5,12 @@ INCLUDEPATH += $$QTFIREBASE_FAKE_PATH
 
 HEADERS += \
     $$QTFIREBASE_FAKE_PATH/qtfirebase.h \
-    $$QTFIREBASE_FAKE_PATH/src/qtfirebase.h \
-    $$QTFIREBASE_FAKE_PATH/src/qtfirebase_plugin.h
+    $$QTFIREBASE_FAKE_PATH/src/qtfirebase.h
 
-SOURCES += \
-    $$PWD/src/qtfirebase_plugin.cpp
+contains(QTPLUGIN,qtfirebase) {
+    HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebase_plugin.h
+    SOURCES += $$PWD/src/qtfirebase_plugin.cpp
+}
 
 # Analytics
 contains(DEFINES,QTFIREBASE_BUILD_ANALYTICS) {
