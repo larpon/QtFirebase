@@ -1,0 +1,4 @@
+FIREBASE_SDK_IOS_LIBS=firebase_cpp_sdk/libs/ios
+libtool -static -o $FIREBASE_SDK_IOS_LIBS/libapp.a $FIREBASE_SDK_IOS_LIBS/arm64/libapp.a $FIREBASE_SDK_IOS_LIBS/armv7/libapp.a $FIREBASE_SDK_IOS_LIBS/i386/libapp.a $FIREBASE_SDK_IOS_LIBS/universal/libapp.a $FIREBASE_SDK_IOS_LIBS/x86_64/libapp.a
+libtool -static -o $FIREBASE_SDK_IOS_LIBS/libadmob.a $FIREBASE_SDK_IOS_LIBS/arm64/libadmob.a $FIREBASE_SDK_IOS_LIBS/armv7/libadmob.a $FIREBASE_SDK_IOS_LIBS/i386/libadmob.a $FIREBASE_SDK_IOS_LIBS/universal/libadmob.a $FIREBASE_SDK_IOS_LIBS/x86_64/libadmob.a
+libtool -static -o $FIREBASE_SDK_IOS_LIBS/libanalytics.a $FIREBASE_SDK_IOS_LIBS/arm64/libanalytics.a $FIREBASE_SDK_IOS_LIBS/armv7/libanalytics.a $FIREBASE_SDK_IOS_LIBS/i386/libanalytics.a $FIREBASE_SDK_IOS_LIBS/universal/libanalytics.a $FIREBASE_SDK_IOS_LIBS/x86_64/libanalytics.a

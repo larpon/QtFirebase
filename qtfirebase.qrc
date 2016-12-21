@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>QtFirebase/qmldir</file>
+        <file>QtFirebase/Firebase.qml</file>
+    </qresource>
+</RCC>

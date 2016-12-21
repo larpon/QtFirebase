@@ -1,0 +1,16 @@
+project 'Empty/Empty'
+#xcodeproj 'Empty/Empty'
+
+source 'https://github.com/CocoaPods/Specs.git'
+
+#platform :ios, '8.0'
+#use_frameworks!  # needed when using Swift
+
+pod 'Firebase'
+pod 'Firebase/Core'
+pod 'Firebase/Analytics'
+pod 'Firebase/AdMob'
+
+target 'Empty' do
+
+end
