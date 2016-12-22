@@ -9,8 +9,6 @@ contains(QTFIREBASE_CONFIG,"admob") {
 # Currently supported Firebase targets
 android|ios {
     include(qtfirebase_target.pri)
-}
-
-!android:!ios {
+} else {
     include(qtfirebase_dummy.pri)
 }
