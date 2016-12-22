@@ -607,12 +607,15 @@ void QtFirebaseAdMobBanner::setX(const int &x)
 
     if(_x != x) {
         qDebug() << this << "::setX moving to" << x << "," << _y;
+        _banner->MoveTo(x, _y); // NOTE Potential dangerous code? The code below is more safe but will hang until the "I give up limit" is reached on some devices :/
+        // This can mybe be fixed by using the Listeners for the bounding rect??
+        /*
         firebase::FutureBase future = _banner->MoveTo(x, _y);
         qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
         if(future.Error() != admob::kAdMobErrorNone) {
             qDebug() << this << "::setX ERROR code" << future.Error() << "message" << future.ErrorMessage();
             return;
-        }
+        }*/
         qDebug() << this << "::setX moved to" << x << "," << _y;
         _x = x;
         emit xChanged();
@@ -638,12 +641,15 @@ void QtFirebaseAdMobBanner::setY(const int &y)
 
     if(_y != y) {
         qDebug() << this << "::setY moving to" << _x << "," << y;
+        _banner->MoveTo(_x, y); // NOTE Potential dangerous code? The code below is more safe but will hang until the "I give up limit" is reached on some devices :/
+        /*
         firebase::FutureBase future = _banner->MoveTo(_x, y);
         qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
         if(future.Error() != admob::kAdMobErrorNone) {
             qDebug() << this << "::setY ERROR code" << future.Error() << "message" << future.ErrorMessage();
             return;
         }
+        */
         qDebug() << this << "::setY moved to" << _x << "," << y;
         _y = y;
         emit yChanged();
@@ -827,12 +833,15 @@ void QtFirebaseAdMobBanner::moveTo(int x, int y)
 {
     if(_ready) {
         qDebug() << this << "::moveTo moving to" << x << "," << y;
+        _banner->MoveTo(x, y); // NOTE Potential dangerous code? The code below is more safe but will hang until the "I give up limit" is reached on some devices :/
+        /*
         firebase::FutureBase future = _banner->MoveTo(x, y);
         qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
         if(future.Error() != admob::kAdMobErrorNone) {
             qDebug() << this << "::moveTo ERROR code" << future.Error() << "message" << future.ErrorMessage();
             return;
         }
+        */
 
         if(_x != x) {
             _x = x;
