@@ -250,6 +250,7 @@ signals:
     void widthChanged();
     void heightChanged();
     void requestChanged();
+    void loading();
 
     void error(QtFirebaseAdMob::Error code, QString message);
 
@@ -306,6 +307,8 @@ class QtFirebaseAdMobInterstitial : public QObject
 
     Q_PROPERTY(QString adUnitId READ adUnitId WRITE setAdUnitId NOTIFY adUnitIdChanged)
 
+    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
+
     Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 public:
@@ -321,6 +324,9 @@ public:
     QString adUnitId();
     void setAdUnitId(const QString &adUnitId);
 
+    bool visible() const;
+    void setVisible(bool visible);
+
     QtFirebaseAdMobRequest* request() const;
     void setRequest(QtFirebaseAdMobRequest *request);
 
@@ -329,14 +335,14 @@ signals:
     void loadedChanged();
     void adUnitIdChanged();
     void requestChanged();
+    void loading();
     void error(QtFirebaseAdMob::Error code, QString message);
     void closed();
-    void showed();
+    void visibleChanged();
 
 public slots:
     void load();
     void show();
-
 
 private slots:
     void init();
@@ -353,6 +359,8 @@ private:
     QString _adUnitId;
     QByteArray __adUnitIdByteArray;
     //const char *__adUnitId; // TODO use __adUnitIdByteArray.constData() instead ?
+
+    bool _visible;
 
     QtFirebaseAdMobRequest* _request;
 

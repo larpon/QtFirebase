@@ -3,6 +3,8 @@ message( "QtFirebase: configuring build for supported Firebase target platform..
 isEmpty(QTFIREBASE_SDK_PATH){
     QTFIREBASE_SDK_PATH = $$PWD/firebase_cpp_sdk
     message("No QTFIREBASE_SDK_PATH path sat. Using default (firebase_cpp_sdk) $$QTFIREBASE_SDK_PATH")
+} else {
+    message("Using QTFIREBASE_SDK_PATH ($$QTFIREBASE_SDK_PATH)")
 }
 
 QML_IMPORT_PATH += $$PWD
@@ -15,12 +17,15 @@ INCLUDEPATH += \
 HEADERS += \
     $$PWD/qtfirebase.h \
     $$PWD/src/platformutils.h \
-    $$PWD/src/qtfirebase.h \
-    $$PWD/src/qtfirebase_plugin.h
+    $$PWD/src/qtfirebase.h
 
 SOURCES += \
-    $$PWD/src/qtfirebase.cpp \
-    $$PWD/src/qtfirebase_plugin.cpp
+    $$PWD/src/qtfirebase.cpp
+
+contains(QTPLUGIN,qtfirebase) {
+    HEADERS += $$PWD/src/qtfirebase_plugin.h
+    SOURCES += $$PWD/src/qtfirebase_plugin.cpp
+}
 
 !ios: {
     SOURCES += \

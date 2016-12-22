@@ -607,12 +607,15 @@ void QtFirebaseAdMobBanner::setX(const int &x)
 
     if(_x != x) {
         qDebug() << this << "::setX moving to" << x << "," << _y;
+        _banner->MoveTo(x, _y); // NOTE Potential dangerous code? The code below is more safe but will hang until the "I give up limit" is reached on some devices :/
+        // This can mybe be fixed by using the Listeners for the bounding rect??
+        /*
         firebase::FutureBase future = _banner->MoveTo(x, _y);
         qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
         if(future.Error() != admob::kAdMobErrorNone) {
             qDebug() << this << "::setX ERROR code" << future.Error() << "message" << future.ErrorMessage();
             return;
-        }
+        }*/
         qDebug() << this << "::setX moved to" << x << "," << _y;
         _x = x;
         emit xChanged();
@@ -638,12 +641,15 @@ void QtFirebaseAdMobBanner::setY(const int &y)
 
     if(_y != y) {
         qDebug() << this << "::setY moving to" << _x << "," << y;
+        _banner->MoveTo(_x, y); // NOTE Potential dangerous code? The code below is more safe but will hang until the "I give up limit" is reached on some devices :/
+        /*
         firebase::FutureBase future = _banner->MoveTo(_x, y);
         qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
         if(future.Error() != admob::kAdMobErrorNone) {
             qDebug() << this << "::setY ERROR code" << future.Error() << "message" << future.ErrorMessage();
             return;
         }
+        */
         qDebug() << this << "::setY moved to" << _x << "," << y;
         _y = y;
         emit yChanged();
@@ -806,6 +812,7 @@ void QtFirebaseAdMobBanner::load()
     }
 
     qDebug() << this << "::load() getting request data";
+    emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = _banner->LoadAd(request);
     qFirebase->addFuture(__QTFIREBASE_ID + ".banner.loaded",future);
@@ -826,12 +833,15 @@ void QtFirebaseAdMobBanner::moveTo(int x, int y)
 {
     if(_ready) {
         qDebug() << this << "::moveTo moving to" << x << "," << y;
+        _banner->MoveTo(x, y); // NOTE Potential dangerous code? The code below is more safe but will hang until the "I give up limit" is reached on some devices :/
+        /*
         firebase::FutureBase future = _banner->MoveTo(x, y);
         qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
         if(future.Error() != admob::kAdMobErrorNone) {
             qDebug() << this << "::moveTo ERROR code" << future.Error() << "message" << future.ErrorMessage();
             return;
         }
+        */
 
         if(_x != x) {
             _x = x;
@@ -858,7 +868,7 @@ QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent) : QObj
     _initializing = false;
     _nativeUIElement = 0;
     _isFirstInit = true;
-
+    _visible = false;
     _request = 0;
 
     connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobInterstitial::onFutureEvent);
@@ -919,6 +929,31 @@ void QtFirebaseAdMobInterstitial::setAdUnitId(const QString &adUnitId)
         __adUnitIdByteArray = _adUnitId.toLatin1();
 
         emit adUnitIdChanged();
+    }
+}
+
+bool QtFirebaseAdMobInterstitial::visible() const
+{
+    return _visible;
+}
+
+void QtFirebaseAdMobInterstitial::setVisible(bool visible)
+{
+    if(!_ready) {
+        qDebug() << this << "::setVisible native part not ready";
+        return;
+    }
+
+    if(!_loaded) {
+        qDebug() << this << "::setVisible native part not loaded - so not changing visiblity to" << visible;
+        return;
+    }
+
+    if(!_visible && visible) {
+        show(); // NOTE show will change _visible and emit signal
+    } else {
+        // NOTE An interstitial can't be hidden by any other than the user
+        qInfo() << this << "::setVisible" << visible << " - interstitials can't be hidden programmatically. Not hidding";
     }
 }
 
@@ -1028,13 +1063,14 @@ void QtFirebaseAdMobInterstitial::load()
         qDebug() << this << "::load() not ready";
         return;
     }
-
+    
     if(_request == 0) {
         qDebug() << this << "::load() no request data sat. Not loading";
         return;
     }
 
     qDebug() << this << "::load() getting request data";
+    emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = _interstitial->LoadAd(request);
     qFirebase->addFuture(__QTFIREBASE_ID + ".interstitial.loaded",future);
@@ -1060,14 +1096,21 @@ void QtFirebaseAdMobInterstitial::show()
         return;
     }
 
-    qDebug() << this << "::show() native showed";
-    emit showed();
+    if(!_visible) {
+        _visible = true;
+        emit visibleChanged();
+    }
 
     // TODO dangerous code?!?
     while (_interstitial->GetPresentationState() != admob::InterstitialAd::PresentationState::kPresentationStateHidden) {
         QGuiApplication::processEvents();
     }
     qDebug() << this << "::show() closed";
+
+    if(_visible) {
+        _visible = false;
+        emit visibleChanged();
+    }
 
     setLoaded(false);
     qDebug() << this << "::show() loaded false";
