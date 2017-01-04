@@ -862,7 +862,7 @@ void QtFirebaseAdMobBanner::moveTo(int position)
         qDebug() << this << "::moveTo" << "not ready";
         return;
     }
-    // TODO reflect these changes in x,y coords
+    // TODO reflect these changes in x,y coords. Probably use the Listener callback
     // NOTE Potential dangerous code?
     // The code below is more safe but will hang until the "I give up limit" is reached on some devices if using a waitforfuture... strategy :/
     if(position == PositionTopCenter) {
