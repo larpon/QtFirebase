@@ -25,6 +25,9 @@ Analytics                 |libanalytics.a       |✓|✓
 ~~Remote Config~~	            |~~libremote_config.a~~ | |
 ~~Storage~~	                  |~~libstorage.a~~       | |
 
+## Stability
+The current Firebase C++ SDK (v2.1.0) has a lot of stability issues - which QtFirebase does it's best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
+
 # Examples
 Under heavy construction.
 So far you'll have to look at the source in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) repository.
