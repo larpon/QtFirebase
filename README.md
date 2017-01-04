@@ -2,7 +2,15 @@
 # QtFirebase
 An effort to bring the Firebase C++ API to Qt
 
-# Features
+QtFirebase aim to bring all the features of the Firebase C++ SDK to Qt 5 - both as C++ wrappers and as QML components.
+
+Please bear in mind that the Firebase C++ SDK currently only support the mobile platforms Android and iOS.
+
+You can still build QtFirebase on other platforms as the project provide "empty shells" or placeholder components - they just return default/empty values when used. Because of this you won't see e.g. ads from AdMob in your desktop builds.
+
+This is due to Google's own limitations in the Firebase C++ SDK implementation.
+
+# Features / Status
 The following [features](https://firebase.google.com/docs/cpp/setup) have a working Qt 5 C++ and QML counterpart
 
 Feature | Library | C++ | QML
@@ -17,4 +25,9 @@ Analytics                 |libanalytics.a       |✓|✓
 ~~Remote Config~~	            |~~libremote_config.a~~ | |
 ~~Storage~~	                  |~~libstorage.a~~       | |
 
+# Examples
+Under heavy construction.
+So far you'll have to look at the source in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) repository.
 
+# Documentation
+Under heavy construction.
