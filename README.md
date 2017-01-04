@@ -1,6 +1,6 @@
 <img src="logo.png" align="right" />
 # QtFirebase
-An effort to bring the Firebase C++ API to Qt
+An effort to bring the Firebase C++ API to Qt 5
 
 QtFirebase aim to bring all the features of the Firebase C++ SDK to Qt 5 - both as C++ wrappers and as QML components.
 
