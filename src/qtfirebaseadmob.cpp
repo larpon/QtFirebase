@@ -856,6 +856,39 @@ void QtFirebaseAdMobBanner::moveTo(int x, int y)
     }
 }
 
+void QtFirebaseAdMobBanner::moveTo(int position)
+{
+    if(!_ready) {
+        qDebug() << this << "::moveTo" << "not ready";
+        return;
+    }
+    // TODO reflect these changes in x,y coords
+    // NOTE Potential dangerous code?
+    // The code below is more safe but will hang until the "I give up limit" is reached on some devices if using a waitforfuture... strategy :/
+    if(position == PositionTopCenter) {
+        qDebug() << this << "::moveTo position top-center";
+        _banner->MoveTo(admob::BannerView::kPositionTop);
+    } else if(position == PositionTopLeft) {
+        qDebug() << this << "::moveTo position top-left";
+        _banner->MoveTo(admob::BannerView::kPositionTopLeft);
+    } else if(position == PositionTopRight) {
+        qDebug() << this << "::moveTo position top-right";
+        _banner->MoveTo(admob::BannerView::kPositionTopRight);
+    } else if(position == PositionBottomCenter) {
+        qDebug() << this << "::moveTo position bottom-center";
+        _banner->MoveTo(admob::BannerView::kPositionBottom);
+    } else if(position == PositionBottomLeft) {
+        qDebug() << this << "::moveTo position bottom-left";
+        _banner->MoveTo(admob::BannerView::kPositionBottomLeft);
+    } else if(position == PositionBottomRight) {
+        qDebug() << this << "::moveTo position bottom-right";
+        _banner->MoveTo(admob::BannerView::kPositionBottomRight);
+    } else {
+        qDebug() << this << "::moveTo position unknown" << position;
+    }
+
+}
+
 /*
  * AdMobInterstitial
  *

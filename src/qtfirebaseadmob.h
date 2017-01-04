@@ -209,6 +209,17 @@ class QtFirebaseAdMobBanner : public QObject
     Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 public:
+    enum Position
+    {
+        PositionTopCenter,
+        PositionTopLeft,
+        PositionTopRight,
+        PositionBottomCenter,
+        PositionBottomLeft,
+        PositionBottomRight
+    };
+    Q_ENUM(Position)
+
     QtFirebaseAdMobBanner(QObject* parent = 0);
     ~QtFirebaseAdMobBanner();
 
@@ -259,6 +270,7 @@ public slots:
     void show();
     void hide();
     void moveTo(int x, int y);
+    void moveTo(int position);
 
 private slots:
     void init();
