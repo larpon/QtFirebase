@@ -85,7 +85,7 @@ void QtFirebase::addFuture(QString eventId, firebase::FutureBase future)
     _futureMap.insert(eventId,future);
 
     //if(!_futureWatchTimer->isActive()) {
-    qDebug() << self << "::addFuture" "starting future watch";
+    qDebug() << self << "::addFuture" << "starting future watch";
     _futureWatchTimer->start(1000);
     //}
 
