@@ -1076,6 +1076,7 @@ void QtFirebaseAdMobInterstitial::onFutureEvent(QString eventId, firebase::Futur
         _isFirstInit = false;
 
         // Add listener (can't be done before it's initialized)
+        // TODO NOTE This is probably leaking memory - try to fix it without crashes appearing
         _interstitialAdListener = new QtFirebaseAdMobInterstitialAdListener(this);
         _interstitial->SetListener(_interstitialAdListener);
 
