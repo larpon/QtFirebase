@@ -311,7 +311,7 @@ private:
  * AdMobInterstitial
  */
 
-class QtFirebaseAdMobInterstitialAdListener;
+//class QtFirebaseAdMobInterstitialAdListener;
 
 class QtFirebaseAdMobInterstitial : public QObject
 {
@@ -385,10 +385,11 @@ private:
     QTimer *_initTimer;
 
     firebase::admob::InterstitialAd* _interstitial;
-    QtFirebaseAdMobInterstitialAdListener* _interstitialAdListener;
+    //QtFirebaseAdMobInterstitialAdListener* _interstitialAdListener;
 };
 
 // A listener class to an InterstitialAd.
+/*
 class QtFirebaseAdMobInterstitialAdListener : public firebase::admob::InterstitialAd::Listener {
 
     friend class QtFirebaseAdMobInterstitial;
@@ -408,6 +409,7 @@ public:
 private:
     QtFirebaseAdMobInterstitial* _qtFirebaseAdMobInterstitial;
 };
+*/
 
 #endif // QTFIREBASE_BUILD_ADMOB
 
