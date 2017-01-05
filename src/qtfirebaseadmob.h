@@ -311,7 +311,7 @@ private:
  * AdMobInterstitial
  */
 
-//class QtFirebaseAdMobInterstitialAdListener;
+class QtFirebaseAdMobInterstitialAdListener;
 
 class QtFirebaseAdMobInterstitial : public QObject
 {
@@ -327,6 +327,13 @@ class QtFirebaseAdMobInterstitial : public QObject
     Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 public:
+    enum PresentationState
+    {
+        PresentationStateHidden,
+        PresentationStateCoveringUI
+    };
+    Q_ENUM(PresentationState)
+
     QtFirebaseAdMobInterstitial(QObject* parent = 0);
     ~QtFirebaseAdMobInterstitial();
 
@@ -354,7 +361,7 @@ signals:
     void error(QtFirebaseAdMob::Error code, QString message);
     void closed();
     void visibleChanged();
-    void presentationStateChanged();
+    void presentationStateChanged(int state);
 
 public slots:
     void load();
@@ -363,6 +370,7 @@ public slots:
 private slots:
     void init();
     void onFutureEvent(QString eventId, firebase::FutureBase future);
+    void onPresentationStateChanged(int state);
 
 private:
     QString __QTFIREBASE_ID;
@@ -385,11 +393,10 @@ private:
     QTimer *_initTimer;
 
     firebase::admob::InterstitialAd* _interstitial;
-    //QtFirebaseAdMobInterstitialAdListener* _interstitialAdListener;
+    QtFirebaseAdMobInterstitialAdListener* _interstitialAdListener;
 };
 
 // A listener class to an InterstitialAd.
-/*
 class QtFirebaseAdMobInterstitialAdListener : public firebase::admob::InterstitialAd::Listener {
 
     friend class QtFirebaseAdMobInterstitial;
@@ -401,15 +408,23 @@ public:
 
     void OnPresentationStateChanged(firebase::admob::InterstitialAd* interstitial_ad,
         firebase::admob::InterstitialAd::PresentationState state) override {
+        Q_UNUSED(interstitial_ad); // TODO
         qDebug() << _qtFirebaseAdMobInterstitial << "::OnPresentationStateChanged";
         qDebug("InterstitialAd PresentationState has changed to %d.", state);
-        _qtFirebaseAdMobInterstitial->presentationStateChanged();
+
+        int pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
+
+        if(state == firebase::admob::InterstitialAd::PresentationState::kPresentationStateHidden) {
+            pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
+        } else if(state == firebase::admob::InterstitialAd::PresentationState::kPresentationStateCoveringUI) {
+             pState = QtFirebaseAdMobInterstitial::PresentationStateCoveringUI;
+        }
+        _qtFirebaseAdMobInterstitial->presentationStateChanged(pState);
     }
 
 private:
     QtFirebaseAdMobInterstitial* _qtFirebaseAdMobInterstitial;
 };
-*/
 
 #endif // QTFIREBASE_BUILD_ADMOB
 

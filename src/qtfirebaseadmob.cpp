@@ -906,6 +906,8 @@ QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent) : QObj
 
     connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobInterstitial::onFutureEvent);
 
+    connect(this,&QtFirebaseAdMobInterstitial::presentationStateChanged, this, &QtFirebaseAdMobInterstitial::onPresentationStateChanged);
+
     _initTimer = new QTimer(this);
     _initTimer->setSingleShot(false);
     connect(_initTimer, &QTimer::timeout, this, &QtFirebaseAdMobInterstitial::init);
@@ -1073,10 +1075,9 @@ void QtFirebaseAdMobInterstitial::onFutureEvent(QString eventId, firebase::Futur
         _initializing = false;
         _isFirstInit = false;
 
-        /*
+        // Add listener (can't be done before it's initialized)
         _interstitialAdListener = new QtFirebaseAdMobInterstitialAdListener(this);
         _interstitial->SetListener(_interstitialAdListener);
-        */
 
         setReady(true);
     }
@@ -1093,6 +1094,43 @@ void QtFirebaseAdMobInterstitial::onFutureEvent(QString eventId, firebase::Futur
 
         qDebug() << this << "::onFutureEvent loaded";
         setLoaded(true);
+    }
+}
+
+void QtFirebaseAdMobInterstitial::onPresentationStateChanged(int state)
+{
+    if(state == PresentationStateCoveringUI) {
+        if(!_visible) {
+            _visible = true;
+            emit visibleChanged();
+        }
+    }
+
+    if(state == PresentationStateHidden) {
+        if(_visible) {
+            _visible = false;
+            emit visibleChanged();
+        }
+
+        setLoaded(false);
+        qDebug() << this << "::onPresentationStateChanged() loaded false";
+
+        // NOTE iOS necessities
+        #if defined(Q_OS_IOS)
+
+        setReady(false);
+        qDebug() << this << "::onPresentationStateChanged() ready false";
+
+        // Will be newed when init() is called
+        //delete _interstitial; // NOTE Crashes the app when used
+
+        // NOTE Auto re-initializing because of this: https://firebase.google.com/docs/admob/ios/interstitial#only_show_gadinterstitial_once
+        qDebug() << this << "::onPresentationStateChanged() re-initializing one-time use GADInterstitial";
+        _initTimer->start(500);
+
+        #endif
+
+        emit closed();
     }
 }
 
@@ -1115,7 +1153,6 @@ void QtFirebaseAdMobInterstitial::load()
     qFirebase->addFuture(__QTFIREBASE_ID + ".interstitial.loaded",future);
 }
 
-
 void QtFirebaseAdMobInterstitial::show()
 {
     if(!_ready) {
@@ -1135,39 +1172,4 @@ void QtFirebaseAdMobInterstitial::show()
         return;
     }
 
-    if(!_visible) {
-        _visible = true;
-        emit visibleChanged();
-    }
-
-    // TODO dangerous code?!?
-    while (_interstitial->GetPresentationState() != admob::InterstitialAd::PresentationState::kPresentationStateHidden) {
-        QGuiApplication::processEvents();
-    }
-    qDebug() << this << "::show() closed";
-
-    if(_visible) {
-        _visible = false;
-        emit visibleChanged();
-    }
-
-    setLoaded(false);
-    qDebug() << this << "::show() loaded false";
-
-    // NOTE iOS necessities
-    #if defined(Q_OS_IOS)
-
-    setReady(false);
-    qDebug() << this << "::show() ready false";
-
-    // Will be newed when init() is called
-    //delete _interstitial; // NOTE Crashes the app when used
-
-    // NOTE Auto re-initializing because of this: https://firebase.google.com/docs/admob/ios/interstitial#only_show_gadinterstitial_once
-    qDebug() << this << "::show() re-initializing one-time use GADInterstitial";
-    _initTimer->start(500);
-
-    #endif
-
-    emit closed();
 }
