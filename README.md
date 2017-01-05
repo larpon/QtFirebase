@@ -31,7 +31,7 @@ The current Firebase C++ SDK (v2.1.0) has a lot of stability issues - which QtFi
 # Setup
 For a working and up-to-date example please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README.
 
-In rough terms the following are what needs to be done before you can build against QtFirebase.
+The following outlines what need to be done before you can build and use QtFirebase.
 
 * Download and extract [Google's Firebase C++ SDK](https://firebase.google.com/docs/cpp/setup).
 
@@ -53,6 +53,7 @@ In rough terms the following are what needs to be done before you can build agai
 
 # Examples
 Please look at the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) repository.
+You will find details here on what to add to your different project files (gradle.build, Info.plist etc.)
 
 # Documentation
 Under heavy construction.
