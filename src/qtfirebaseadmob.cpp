@@ -1072,6 +1072,10 @@ void QtFirebaseAdMobInterstitial::onFutureEvent(QString eventId, firebase::Futur
         qDebug() << this << "::onFutureEvent initialized";
         _initializing = false;
         _isFirstInit = false;
+
+        _interstitialAdListener = new QtFirebaseAdMobInterstitialAdListener(this);
+        _interstitial->SetListener(_interstitialAdListener);
+
         setReady(true);
     }
 

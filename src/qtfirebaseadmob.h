@@ -310,6 +310,9 @@ private:
 /*
  * AdMobInterstitial
  */
+
+class QtFirebaseAdMobInterstitialAdListener;
+
 class QtFirebaseAdMobInterstitial : public QObject
 {
     Q_OBJECT
@@ -351,6 +354,7 @@ signals:
     void error(QtFirebaseAdMob::Error code, QString message);
     void closed();
     void visibleChanged();
+    void presentationStateChanged();
 
 public slots:
     void load();
@@ -381,6 +385,28 @@ private:
     QTimer *_initTimer;
 
     firebase::admob::InterstitialAd* _interstitial;
+    QtFirebaseAdMobInterstitialAdListener* _interstitialAdListener;
+};
+
+// A listener class to an InterstitialAd.
+class QtFirebaseAdMobInterstitialAdListener : public firebase::admob::InterstitialAd::Listener {
+
+    friend class QtFirebaseAdMobInterstitial;
+
+public:
+    QtFirebaseAdMobInterstitialAdListener(QtFirebaseAdMobInterstitial* qtFirebaseAdMobInterstitial) {
+        _qtFirebaseAdMobInterstitial = qtFirebaseAdMobInterstitial;
+    }
+
+    void OnPresentationStateChanged(firebase::admob::InterstitialAd* interstitial_ad,
+        firebase::admob::InterstitialAd::PresentationState state) override {
+        qDebug() << _qtFirebaseAdMobInterstitial << "::OnPresentationStateChanged";
+        qDebug("InterstitialAd PresentationState has changed to %d.", state);
+        _qtFirebaseAdMobInterstitial->presentationStateChanged();
+    }
+
+private:
+    QtFirebaseAdMobInterstitial* _qtFirebaseAdMobInterstitial;
 };
 
 #endif // QTFIREBASE_BUILD_ADMOB
