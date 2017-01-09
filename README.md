@@ -60,7 +60,7 @@ Under heavy construction.
 
 # Support
 Possible ways of getting support
-* Open an issue
+* Open an [issue](https://github.com/Larpon/QtFirebase/issues)
 
 Possible ways of giving support
 * Comment helpfully on issues
