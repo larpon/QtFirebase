@@ -72,5 +72,5 @@ Possible ways of giving support
   
 # In the wild
 The following is a list of software that uses QtFirebase
-* [Hammer Bees](http://blackgrain.dk/games/hammerbees/) (Game, Android, iOS)
+* [Hammer Bees](http://blackgrain.dk/games/hammerbees/) (Casual game, [Android](https://play.google.com/store/apps/details?id=com.bitkompot.android.hammerbees.ad), [iOS](https://itunes.apple.com/us/app/hammer-bees-free/id1164069527?ls=1&mt=8))
 * \<your awesome project\>
