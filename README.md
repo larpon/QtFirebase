@@ -57,3 +57,20 @@ You will find details here on what to add to your different project files (gradl
 
 # Documentation
 Under heavy construction.
+
+# Support
+Possible ways of getting support
+* Open an issue
+
+Possible ways of giving support
+* Comment helpfully on issues
+* Fork, Change, Make Pull Request
+* Share online
+* Support the project by [buying QtFirebase &#10084;'s](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4DHVNRBQRRU96)
+  You'll get a personal email full of hearts from [Black Grain](http://blackgrain.dk/games/)!
+  
+  
+# In the wild
+The following is a list of software that uses QtFirebase
+* [Hammer Bees](http://blackgrain.dk/games/hammerbees/) (Game, Android, iOS)
+* \<your awesome project\>
