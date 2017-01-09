@@ -66,7 +66,7 @@ Possible ways of giving support
 * Comment helpfully on issues
 * Fork, Change, Make Pull Request
 * Share online
-* Support the project by [buying QtFirebase &#10084;'s](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4DHVNRBQRRU96)
+* [Buy QtFirebase &#10084;'s](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4DHVNRBQRRU96)
   You'll get a personal email full of hearts from [Black Grain](http://blackgrain.dk/games/)!
   
   
