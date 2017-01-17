@@ -185,6 +185,8 @@ private:
     // Stores the actual char* data so it remains valid throughout a request cycle
     QByteArrayList __testDevicesByteArrayList;
     const char** __testDevices;
+
+    firebase::admob::AdRequest _admobRequest;
 };
 
 /*

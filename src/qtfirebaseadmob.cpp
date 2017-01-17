@@ -381,61 +381,60 @@ admob::AdRequest QtFirebaseAdMobRequest::asAdMobRequest()
     qDebug() << this << "::asAdMobRequest";
 
     // Set some hopefully sane defaults
-    admob::AdRequest request;
 
     // If the app is aware of the user's gender, it can be added to the targeting
     // information. Otherwise, "unknown" should be used.
-    request.gender = admob::kGenderUnknown;
+    _admobRequest.gender = admob::kGenderUnknown;
 
     // This value allows publishers to specify whether they would like the request
     // to be treated as child-directed for purposes of the Children’s Online
     // Privacy Protection Act (COPPA).
     // See http://business.ftc.gov/privacy-and-security/childrens-privacy.
-    request.tagged_for_child_directed_treatment = admob::kChildDirectedTreatmentStateTagged;
+    _admobRequest.tagged_for_child_directed_treatment = admob::kChildDirectedTreatmentStateTagged;
 
     // The user's birthday, if known. Note that months are indexed from one.
-    request.birthday_day = 0;
-    request.birthday_month = 0; // Months begin at 1!
-    request.birthday_year = 0;
+    _admobRequest.birthday_day = 0;
+    _admobRequest.birthday_month = 0; // Months begin at 1!
+    _admobRequest.birthday_year = 0;
 
     // Additional keywords to be used in targeting.
-    request.keyword_count = 0;
+    _admobRequest.keyword_count = 0;
 
     // "Extra" key value pairs can be added to the request as well. Typically
     // these are used when testing new features.
-    request.extras_count = 0;
+    _admobRequest.extras_count = 0;
 
-    request.test_device_id_count = 0;
+    _admobRequest.test_device_id_count = 0;
 
     // Change defaults
     if(_gender != QtFirebaseAdMob::GenderUnknown) {
         if(_gender == QtFirebaseAdMob::GenderFemale)
-            request.gender = admob::kGenderFemale;
+            _admobRequest.gender = admob::kGenderFemale;
         else
-            request.gender = admob::kGenderMale;
+            _admobRequest.gender = admob::kGenderMale;
     }
 
     if(_childDirectedTreatment != QtFirebaseAdMob::ChildDirectedTreatmentTagged) {
         if(_childDirectedTreatment == QtFirebaseAdMob::ChildDirectedTreatmentNotTagged)
-            request.tagged_for_child_directed_treatment = admob::kChildDirectedTreatmentStateNotTagged;
+            _admobRequest.tagged_for_child_directed_treatment = admob::kChildDirectedTreatmentStateNotTagged;
         else
-            request.tagged_for_child_directed_treatment = admob::kChildDirectedTreatmentStateUnknown;
+            _admobRequest.tagged_for_child_directed_treatment = admob::kChildDirectedTreatmentStateUnknown;
     }
 
     if(_birthday.isValid()) {
-        request.birthday_day = _birthday.date().day();
-        request.birthday_month = _birthday.date().month();
-        request.birthday_year = _birthday.date().year();
+        _admobRequest.birthday_day = _birthday.date().day();
+        _admobRequest.birthday_month = _birthday.date().month();
+        _admobRequest.birthday_year = _birthday.date().year();
     }
 
     if(!_keywords.isEmpty()) {
-        request.keyword_count = _keywords.size();
-        request.keywords = __keywords;
+        _admobRequest.keyword_count = _keywords.size();
+        _admobRequest.keywords = __keywords;
     }
 
     if(!_extras.isEmpty()) {
-        request.extras_count = _extras.size();
-        request.extras = __extras;
+        _admobRequest.extras_count = _extras.size();
+        _admobRequest.extras = __extras;
 
         // To debug actual extra key:value pairs
         //qDebug() << this << "::asAdMobRequest" << QString(__extras[1].key) << ":" << QString(__extras[1].value);
@@ -450,17 +449,17 @@ admob::AdRequest QtFirebaseAdMobRequest::asAdMobRequest()
     // NOTE if no test devices are provided - use list from QtFirebaseAdMob singleton if not empty
     if(!_testDevices.isEmpty()) {
         qDebug() << this << "::asAdMobRequest" << "TestDevices" << _testDevices;
-        request.test_device_id_count = __testDevicesByteArrayList.size();
-        request.test_device_ids = __testDevices;
+        _admobRequest.test_device_id_count = __testDevicesByteArrayList.size();
+        _admobRequest.test_device_ids = __testDevices;
     } else {
         if(qFirebaseAdMob->ready()) {
             qDebug() << this << "::asAdMobRequest" << "TestDevices ( from" << qFirebaseAdMob << ")" << qFirebaseAdMob->testDevices();
-            request.test_device_id_count = qFirebaseAdMob->__testDevicesByteArrayList.size();
-            request.test_device_ids = qFirebaseAdMob->__testDevices;
+            _admobRequest.test_device_id_count = qFirebaseAdMob->__testDevicesByteArrayList.size();
+            _admobRequest.test_device_ids = qFirebaseAdMob->__testDevices;
         }
     }
 
-    return request;
+    return _admobRequest;
 }
 
 
