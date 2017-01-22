@@ -2,79 +2,19 @@ TEMPLATE = lib
 
 TARGET = qtfirebase
 
-QT += qml quick widgets
+QT += qml quick
 
 CONFIG += qt plugin c++11
-
-isEmpty(QTFIREBASE_SDK_PATH){
-    QTFIREBASE_SDK_PATH = $$PWD/firebase_cpp_sdk
-    message("No QTFIREBASE_SDK_PATH path sat. Using default (firebase_cpp_sdk) $$QTFIREBASE_SDK_PATH")
-}
 
 QML_IMPORT_PATH = $$PWD
 
 TARGET = $$qtLibraryTarget($$TARGET)
 uri = QtFirebase
 
-DEFINES += QTFIREBASE_BUILD_ADMOB
-
-
-INCLUDEPATH += \
-    $$PWD \
-    $$PWD/src \
-    $$QTFIREBASE_SDK_PATH/include
-
-HEADERS += \
-    $$PWD/src/qtfirebase_plugin.h \
-    $$PWD/src/call_once.h \
-    $$PWD/src/singleton.h \
-    $$PWD/src/platformutils.h \
-    $$PWD/src/qtfirebase.h
-
-SOURCES += \
-    $$PWD/src/qtfirebase_plugin.cpp \
-    $$PWD/src/qtfirebase.cpp
-
-!ios: {
-    SOURCES += \
-        $$PWD/src/platformutils.cpp
-}
-
-RESOURCES += \
-    qtfirebase.qrc
-
-
-
-android: {
-    QT += androidextras gui-private
-
-    QTFIREBASE_SDK_LIBS_PATH = $$QTFIREBASE_SDK_PATH/libs/android/$$ANDROID_TARGET_ARCH/gnustl
-
-    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lapp
-    DEPENDPATH += $$QTFIREBASE_SDK_LIBS_PATH
-}
-
-
-
-# AdMob
-contains(DEFINES,QTFIREBASE_BUILD_ADMOB) {
-
-    HEADERS += $$PWD/src/qtfirebaseadmob.h
-    SOURCES += $$PWD/src/qtfirebaseadmob.cpp
-
-    android: {
-        LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -ladmob
-    }
-
-    ios: {
-        LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -ladmob
-    }
-}
-
+include(qtfirebase.pri)
 
 DISTFILES = qmldir \
-    qtfirebase.pri \
-    LICENSE
+    qtfirebase.pri
 
 !equals(_PRO_FILE_PWD_, $$OUT_PWD) {
     copy_qmldir.target = $$OUT_PWD/qmldir
