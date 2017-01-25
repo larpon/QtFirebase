@@ -3,6 +3,8 @@ message( "QtFirebase: configuring build for non-supported Firebase target platfo
 QTFIREBASE_FAKE_PATH = $$PWD/fake
 INCLUDEPATH += $$QTFIREBASE_FAKE_PATH
 
+QML_IMPORT_PATH += $$PWD
+
 HEADERS += \
     $$QTFIREBASE_FAKE_PATH/qtfirebase.h \
     $$QTFIREBASE_FAKE_PATH/src/qtfirebase.h
