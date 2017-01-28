@@ -3,6 +3,12 @@ unix {
     message("QtFirebase branch $$GIT_BRANCH_NAME")
 }
 
+!contains(QTFIREBASE_CONFIG,"noautoregister") {
+    DEFINES += QTFIREBASE_AUTO_REGISTER
+    HEADERS += $$PWD/qtfirebase.h
+    SOURCES += $$PWD/qtfirebase.cpp
+}
+
 contains(QTFIREBASE_CONFIG,"analytics") {
     DEFINES += QTFIREBASE_BUILD_ANALYTICS
 }

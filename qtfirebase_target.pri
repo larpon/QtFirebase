@@ -15,7 +15,6 @@ INCLUDEPATH += \
     $$QTFIREBASE_SDK_PATH/include
 
 HEADERS += \
-    $$PWD/qtfirebase.h \
     $$PWD/src/platformutils.h \
     $$PWD/src/qtfirebase.h
 
