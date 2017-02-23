@@ -5,8 +5,8 @@ unix {
 
 !contains(QTFIREBASE_CONFIG,"noautoregister") {
     DEFINES += QTFIREBASE_AUTO_REGISTER
-    HEADERS += $$PWD/qtfirebase.h
-    SOURCES += $$PWD/qtfirebase.cpp
+    HEADERS += $$PWD/qtfirebase_register.h
+    SOURCES += $$PWD/qtfirebase_register.cpp
 }
 
 contains(QTFIREBASE_CONFIG,"analytics") {

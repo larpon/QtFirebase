@@ -1,3 +1,3 @@
 #if defined(QTFIREBASE_AUTO_REGISTER)
-#include "qtfirebase.h"
+#include "qtfirebase_register.h"
 #endif
