@@ -25,8 +25,13 @@ Analytics                 |libanalytics.a       |✓|✓
 ~~Remote Config~~	            |~~libremote_config.a~~ | |
 ~~Storage~~	                  |~~libstorage.a~~       | |
 
+Tested with Firebase C++ SDK
+* v2.1.0
+* v2.1.1
+* v2.1.2
+
 ## Stability
-The current Firebase C++ SDK (v2.1.0) has a lot of stability issues - which QtFirebase does it's best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
+The current Firebase C++ SDK (v2.1.x) has a lot of stability issues - which QtFirebase does it's best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
 
 # Setup
 For a working and up-to-date example please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README.
@@ -73,4 +78,5 @@ Possible ways of giving support
 # In the wild
 The following is a list of software that uses QtFirebase
 * [Hammer Bees](http://blackgrain.dk/games/hammerbees/) (Casual game, [Android](https://play.google.com/store/apps/details?id=com.bitkompot.android.hammerbees.ad), [iOS](https://itunes.apple.com/us/app/hammer-bees-free/id1164069527?ls=1&mt=8))
+* [Dead Ascend](http://blackgrain.dk/games/deadascend/) (Open Source, Aventure game, [Android](https://play.google.com/store/apps/details?id=com.blackgrain.android.deadascend.ad), [iOS](https://itunes.apple.com/us/app/dead-ascend/id1197443665?ls=1&mt=8))
 * \<your awesome project\>
