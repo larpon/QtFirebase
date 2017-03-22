@@ -26,3 +26,8 @@ contains(DEFINES,QTFIREBASE_BUILD_ADMOB) {
     HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebaseadmob.h
 }
 
+# Remote Config
+contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
+    HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebaseremoteconfig.h
+}
+

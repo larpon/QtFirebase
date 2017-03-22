@@ -132,5 +132,24 @@ contains(DEFINES,QTFIREBASE_BUILD_ADMOB) {
     LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -ladmob
 }
 
+# RemoteConfig
+contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
+    message( "QtFirebase including RemoteConfig" )
+
+    #TODO remote config on ios
+    ios: {
+        message( "QtFirebase RemoteConfig not tested on ios" )
+        LIBS += \
+            -F$$QTFIREBASE_FRAMEWORKS_ROOT/RemoteConfig/Frameworks \
+            -framework RemoteConfig \
+    }
+
+    HEADERS += $$PWD/src/qtfirebaseremoteconfig.h
+    SOURCES += $$PWD/src/qtfirebaseremoteconfig.cpp
+
+    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lremote_config
+}
+
+
 LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lapp
 

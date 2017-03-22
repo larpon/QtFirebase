@@ -1,5 +1,4 @@
 <img src="logo.png" align="right" />
-
 # QtFirebase
 An effort to bring the Firebase C++ API to Qt 5
 
@@ -23,7 +22,7 @@ Analytics                 |libanalytics.a       |✓|✓
 ~~Realtime Database~~	        |~~libdatabase.a~~      | |
 ~~Invites and Dynamic Links~~	|~~libinvites.a~~       | |
 ~~Cloud Messaging~~	          |~~libmessaging.a~~     | |
-~~Remote Config~~	            |~~libremote_config.a~~ | |
+~~Remote Config~~	            |~~libremote_config.a~~ |✓|✓
 ~~Storage~~	                  |~~libstorage.a~~       | |
 
 Tested with Firebase C++ SDK
@@ -79,5 +78,5 @@ Possible ways of giving support
 # In the wild
 The following is a list of software that uses QtFirebase
 * [Hammer Bees](http://blackgrain.dk/games/hammerbees/) (Casual game, [Android](https://play.google.com/store/apps/details?id=com.bitkompot.android.hammerbees.ad), [iOS](https://itunes.apple.com/us/app/hammer-bees-free/id1164069527?ls=1&mt=8))
-* [Dead Ascend](http://blackgrain.dk/games/deadascend/) (Open Source, Adventure game, [Android](https://play.google.com/store/apps/details?id=com.blackgrain.android.deadascend.ad), [iOS](https://itunes.apple.com/us/app/dead-ascend/id1197443665?ls=1&mt=8))
+* [Dead Ascend](http://blackgrain.dk/games/deadascend/) (Open Source, Aventure game, [Android](https://play.google.com/store/apps/details?id=com.blackgrain.android.deadascend.ad), [iOS](https://itunes.apple.com/us/app/dead-ascend/id1197443665?ls=1&mt=8))
 * \<your awesome project\>

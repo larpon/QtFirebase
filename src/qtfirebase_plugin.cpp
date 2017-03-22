@@ -8,6 +8,11 @@
 #include "src/qtfirebaseadmob.h"
 # endif // QTFIREBASE_BUILD_ADMOB
 
+
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
+#include "src/qtfirebaseremoteconfig.h"
+# endif // QTFIREBASE_BUILD_REMOTE_CONFIG
+
 #include <qqml.h>
 
 void QtFirebasePlugin::registerTypes(const char *uri)
@@ -23,6 +28,10 @@ void QtFirebasePlugin::registerTypes(const char *uri)
     qmlRegisterType<QtFirebaseAdMobRequest>(uri, 1, 0, "AdMobRequest");
     qmlRegisterType<QtFirebaseAdMobBanner>(uri, 1, 0, "AdMobBanner");
     qmlRegisterType<QtFirebaseAdMobInterstitial>(uri, 1, 0, "AdMobInterstitial");
+    #endif
+
+    #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
+    qmlRegisterType<QtFirebaseRemoteConfig>(uri, 1, 0, "RemoteConfig");
     #endif
 }
 

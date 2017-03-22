@@ -138,7 +138,6 @@ void QtFirebase::processEvents()
             if(_futureMap.remove(i.key()) >= 1)
                 qDebug() << self << "::processEvents" << "removed future event" << i.key();
             emit futureEvent(i.key(),i.value());
-
             // To easen events up:
             //break;
         }
