@@ -10,6 +10,7 @@ pod 'Firebase'
 pod 'Firebase/Core'
 pod 'Firebase/Analytics'
 pod 'Firebase/AdMob'
+pod 'Firebase/RemoteConfig'
 
 target 'Empty' do
 
