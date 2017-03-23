@@ -568,16 +568,16 @@ void QtFirebaseAdMobBanner::setVisible(bool visible)
         if(visible) {
             firebase::FutureBase future = _banner->Show();
             qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
-            if(future.Error() != admob::kAdMobErrorNone) {
-                qDebug() << this << "::setVisible" << visible <<  "ERROR code" << future.Error() << "message" << future.ErrorMessage();
+            if(future.error() != admob::kAdMobErrorNone) {
+                qDebug() << this << "::setVisible" << visible <<  "ERROR code" << future.error() << "message" << future.error_message();
                 return;
             }
             qDebug() << this << "::setVisible native showed";
         } else {
             firebase::FutureBase future = _banner->Hide();
             qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
-            if(future.Error() != admob::kAdMobErrorNone) {
-                qDebug() << this << "::setVisible" << visible << "ERROR code" << future.Error() << "message" << future.ErrorMessage();
+            if(future.error() != admob::kAdMobErrorNone) {
+                qDebug() << this << "::setVisible" << visible << "ERROR code" << future.error() << "message" << future.error_message();
                 return;
             }
             qDebug() << this << "::setVisible native hidden";
@@ -755,8 +755,8 @@ void QtFirebaseAdMobBanner::onFutureEvent(QString eventId, firebase::FutureBase 
 
     if(eventId == __QTFIREBASE_ID+".banner.init") {
 
-        if (future.Error() != admob::kAdMobErrorNone) {
-            qDebug() << this << "::onFutureEvent" << "initializing failed." << "ERROR: Action failed with error code and message: " << future.Error() << future.ErrorMessage();
+        if (future.error() != admob::kAdMobErrorNone) {
+            qDebug() << this << "::onFutureEvent" << "initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
             _initializing = false;
             return;
         }
@@ -772,11 +772,11 @@ void QtFirebaseAdMobBanner::onFutureEvent(QString eventId, firebase::FutureBase 
 
     if(eventId == __QTFIREBASE_ID+".banner.loaded") {
 
-        if (future.Error() != admob::kAdMobErrorNone) {
-            int errorCode = future.Error();
-            qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << future.ErrorMessage();
+        if (future.error() != admob::kAdMobErrorNone) {
+            int errorCode = future.error();
+            qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << future.error_message();
             // TODO fix me
-            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode),QString(future.ErrorMessage()));
+            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode),QString(future.error_message()));
             return;
         }
 
@@ -1060,8 +1060,8 @@ void QtFirebaseAdMobInterstitial::onFutureEvent(QString eventId, firebase::Futur
 
     if(eventId == __QTFIREBASE_ID+".interstitial.init") {
 
-        if (future.Error() != admob::kAdMobErrorNone) {
-            qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.Error() << future.ErrorMessage();
+        if (future.error() != admob::kAdMobErrorNone) {
+            qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
             _initializing = false;
             return;
         }
@@ -1084,11 +1084,11 @@ void QtFirebaseAdMobInterstitial::onFutureEvent(QString eventId, firebase::Futur
 
     if(eventId == __QTFIREBASE_ID+".interstitial.loaded") {
 
-        if (future.Error() != admob::kAdMobErrorNone) {
-            int errorCode = future.Error();
-            qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << future.ErrorMessage();
+        if (future.error() != admob::kAdMobErrorNone) {
+            int errorCode = future.error();
+            qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << future.error_message();
             // TODO fix me
-            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode),QString(future.ErrorMessage()));
+            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode),QString(future.error_message()));
             return;
         }
 
@@ -1167,8 +1167,8 @@ void QtFirebaseAdMobInterstitial::show()
 
     firebase::FutureBase future = _interstitial->Show();
     qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
-    if(future.Error() != admob::kAdMobErrorNone) {
-        qDebug() << this << "::show ERROR code" << future.Error() << "message" << future.ErrorMessage();
+    if(future.error() != admob::kAdMobErrorNone) {
+        qDebug() << this << "::show ERROR code" << future.error() << "message" << future.error_message();
         return;
     }
 
