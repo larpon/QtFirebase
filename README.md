@@ -1,4 +1,5 @@
 <img src="logo.png" align="right" />
+
 # QtFirebase
 An effort to bring the Firebase C++ API to Qt 5
 
@@ -22,16 +23,18 @@ Analytics                 |libanalytics.a       |✓|✓
 ~~Realtime Database~~	        |~~libdatabase.a~~      | |
 ~~Invites and Dynamic Links~~	|~~libinvites.a~~       | |
 ~~Cloud Messaging~~	          |~~libmessaging.a~~     | |
-~~Remote Config~~	            |~~libremote_config.a~~ |✓|✓
+Remote Config             |libremote_config.a   |✓|✓
 ~~Storage~~	                  |~~libstorage.a~~       | |
 
 Tested with Firebase C++ SDK
 * v2.1.0
 * v2.1.1
 * v2.1.2
+* v3.1.0
 
 ## Stability
-The current Firebase C++ SDK (v2.1.x) has a lot of stability issues - which QtFirebase does it's best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
+The current Firebase C++ SDK (v3.x) has a lot of stability issues - which QtFirebase does it's best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
+Please use the latest SDK version to get the latest fixes.
 
 # Setup
 For a working and up-to-date example please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README.
