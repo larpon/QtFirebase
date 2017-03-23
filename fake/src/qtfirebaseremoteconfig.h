@@ -27,7 +27,7 @@ public:
     };
     Q_ENUM(Error)
 
-    explicit QtFirebaseRemoteConfig(QObject *parent = 0){}
+    explicit QtFirebaseRemoteConfig(QObject *parent = 0){Q_UNUSED(parent)}
     ~QtFirebaseRemoteConfig() {}
     QtFirebaseRemoteConfig *instance() {
             if(self == 0) {
