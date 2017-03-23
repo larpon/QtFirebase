@@ -17,6 +17,11 @@ contains(QTFIREBASE_CONFIG,"admob") {
     DEFINES += QTFIREBASE_BUILD_ADMOB
 }
 
+contains(QTFIREBASE_CONFIG,"remote_config") {
+    DEFINES += QTFIREBASE_BUILD_REMOTE_CONFIG
+}
+
+
 DISTFILES += \
     $$PWD/LICENSE
 

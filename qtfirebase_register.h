@@ -26,6 +26,17 @@
 
 # endif // QTFIREBASE_BUILD_ADMOB
 
+
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
+
+#if defined(QTFIREBASE_FAKE_BUILD)
+    #include "fake/src/qtfirebaseremoteconfig.h"
+#else
+    #include "src/qtfirebaseremoteconfig.h"
+#endif
+
+# endif // QTFIREBASE_BUILD_REMOTE_CONFIG
+
 static void registerQtFirebase() {
 
     #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_ANALYTICS)
@@ -39,6 +50,9 @@ static void registerQtFirebase() {
     qmlRegisterType<QtFirebaseAdMobInterstitial>("QtFirebase", 1, 0, "AdMobInterstitial");
     #endif
 
+    #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
+    qmlRegisterType<QtFirebaseRemoteConfig>("QtFirebase", 1, 0, "RemoteConfig");
+    #endif
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerQtFirebase)

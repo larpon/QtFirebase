@@ -22,7 +22,7 @@ Analytics                 |libanalytics.a       |✓|✓
 ~~Realtime Database~~	        |~~libdatabase.a~~      | |
 ~~Invites and Dynamic Links~~	|~~libinvites.a~~       | |
 ~~Cloud Messaging~~	          |~~libmessaging.a~~     | |
-~~Remote Config~~	            |~~libremote_config.a~~ | |
+~~Remote Config~~	            |~~libremote_config.a~~ |✓|✓
 ~~Storage~~	                  |~~libstorage.a~~       | |
 
 Tested with Firebase C++ SDK
