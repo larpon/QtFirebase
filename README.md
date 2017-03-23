@@ -33,7 +33,7 @@ Tested with Firebase C++ SDK
 * v3.1.0
 
 ## Stability
-The current Firebase C++ SDK (v3.x) has a lot of stability issues - which QtFirebase does it's best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
+The Firebase C++ SDK has a lot of stability issues - which QtFirebase does it's best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
 Please use the latest SDK version to get the latest fixes.
 
 # Setup
