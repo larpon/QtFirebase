@@ -13,49 +13,6 @@
 #define qFirebaseRemoteConfig (static_cast<QtFirebaseRemoteConfig *>(QtFirebaseRemoteConfig::instance()))
 
 #include "firebase/remote_config.h"
-/*How to use in QML example
- * 1. First add parameters in remote config in google firebase console
-
-  RemoteConfig{
-        id: remoteConfig
-        onReadyChanged: {
-            console.log("RemoteConfig ready changed:"+ready);
-            if(ready)
-            {
-                //2. Init remote config with parameters you want to retrieve and default values
-                //default value returned if fetch config from server failed
-                remoteConfig.addParameter("TestLong", 0);
-                remoteConfig.addParameter("TestBool", false);
-                remoteConfig.addParameter("TestDouble", 3.14);
-                remoteConfig.addParameter("TestString","xxx");
-                //3. Initiate fetch (in this example set cache expiration time to 1 second)
-                //Be aware of set low cache expiration time since it will cause too much
-                //requests to server, and it may cause you will be blocked for some time.
-                //This called server throttling, server just refuse your requests for some time and
-                //then begin accept connections again
-                //Default time cache expiration is 12 hours
-
-                remoteConfig.requestConfig(1);
-            }
-        }
-        onLoadedChanged:{
-            console.log("RemoteConfig loaded changed:"+loaded);
-            if(loaded)
-            {
-
-                //4. Retrieve data if loading success
-                console.log("RemoteConfig TestLong:" + remoteConfig.getParameterValue("TestLong"));
-                console.log("RemoteConfig TestBool:" + remoteConfig.getParameterValue("TestBool"));
-                console.log("RemoteConfig TestDouble:" + remoteConfig.getParameterValue("TestDouble"));
-                console.log("RemoteConfig TestString:" + remoteConfig.getParameterValue("TestString"));
-            }
-        }
-        onError:{
-            //5. Handle errors
-            console.log("RemoteConfig error:" + message);
-        }
-    }
- */
 
 class QtFirebaseRemoteConfig : public QObject
 {
@@ -73,7 +30,6 @@ public:
 
     };
     Q_ENUM(Error)
-
 
     QtFirebaseRemoteConfig *instance() {
             if(self == 0) {
