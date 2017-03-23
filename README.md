@@ -76,8 +76,7 @@ Possible ways of giving support
 * Share online
 * [Buy QtFirebase &#10084;'s](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4DHVNRBQRRU96)
   You'll get a personal email full of hearts from [Black Grain](http://blackgrain.dk/games/)!
-  
-  
+
 # In the wild
 The following is a list of software that uses QtFirebase
 * [Hammer Bees](http://blackgrain.dk/games/hammerbees/) (Casual game, [Android](https://play.google.com/store/apps/details?id=com.bitkompot.android.hammerbees.ad), [iOS](https://itunes.apple.com/us/app/hammer-bees-free/id1164069527?ls=1&mt=8))
