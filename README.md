@@ -27,10 +27,17 @@ Remote Config             |libremote_config.a   |✓|✓
 ~~Storage~~	                  |~~libstorage.a~~       | |
 
 Tested with Firebase C++ SDK
+
+**Base, AdMob, Analytics**
+Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be8328a063956c2d2139fa9ab7152d955cc2)
 * v2.1.0
 * v2.1.1
 * v2.1.2
+
+**Base, AdMob, Analytics, RemoteConfig**
 * v3.1.0
+
+Building against the latest version of the Firebase C++ SDK is always recommended.
 
 ## Stability
 The Firebase C++ SDK has a lot of stability issues - which QtFirebase does it's best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
@@ -43,7 +50,8 @@ The following outlines what need to be done before you can build and use QtFireb
 
 * Download and extract [Google's Firebase C++ SDK](https://firebase.google.com/docs/cpp/setup).
 
-* **Android**
+## Android
+Make sure you have `Google Services` installed and updated on the *target* device. Firebase won't work without it.
 
   * Enable gradle in your QtCreator build options
   * Add some lines to `gradle.build`
@@ -51,7 +59,7 @@ The following outlines what need to be done before you can build and use QtFireb
   * Add some lines to `local.properties`
   * Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/)
 
-* **iOS**
+## iOS
 
   * [Install CocoaPods](http://stackoverflow.com/questions/20755044/how-to-install-cocoa-pods) if you haven't already
   * Run `pod install` in the `src/ios/CocoaPods` directory
