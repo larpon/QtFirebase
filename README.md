@@ -27,6 +27,7 @@ Remote Config             |libremote_config.a   |✓|✓
 ~~Storage~~	                  |~~libstorage.a~~       | |
 
 Tested with Firebase C++ SDK versions:
+
 **Base, AdMob, Analytics**
 Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be8328a063956c2d2139fa9ab7152d955cc2)
 * v2.1.0
