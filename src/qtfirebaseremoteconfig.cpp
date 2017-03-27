@@ -8,7 +8,7 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
     QObject(parent),
     _ready(false),
     _initializing(false),
-    _loaded(false),
+    _cacheExpirationTime(firebase::remote_config::kDefaultCacheExpiration*1000),//milliseconds
     __appId(nullptr)
 {
     __QTFIREBASE_ID = QString().sprintf("%8p", this);
@@ -45,7 +45,6 @@ void QtFirebaseRemoteConfig::addParameterInternal(const QString &name, const QVa
 
 QVariant QtFirebaseRemoteConfig::getParameterValue(const QString &name) const
 {
-
     if(_parameters.contains(name))
     {
         return _parameters[name];
@@ -60,26 +59,33 @@ bool QtFirebaseRemoteConfig::ready()
 
 void QtFirebaseRemoteConfig::setReady(bool ready)
 {
-    qDebug() << this << "::setReady" << ready<<_ready;
+    qDebug() << this << "::setReady" << ready;
     if (_ready != ready) {
         _ready = ready;
-        qDebug() << this << "::setReady" << "emit ready";
         emit readyChanged();
     }
 }
 
-bool QtFirebaseRemoteConfig::loaded()
+QVariantMap QtFirebaseRemoteConfig::parameters() const
 {
-    return _loaded;
+    return _parameters;
 }
 
-void QtFirebaseRemoteConfig::setLoaded(bool loaded)
+void QtFirebaseRemoteConfig::setParameters(const QVariantMap &map)
 {
-    if(_loaded != loaded) {
-        _loaded = loaded;
-        qDebug() << this << "::setLoaded" << _loaded;
-        emit loadedChanged();
-    }
+    _parameters = map;
+    emit parametersChanged();
+}
+
+long long QtFirebaseRemoteConfig::cacheExpirationTime() const
+{
+    return _cacheExpirationTime;
+}
+
+void QtFirebaseRemoteConfig::setCacheExpirationTime(long long timeMs)
+{
+    _cacheExpirationTime = timeMs;
+    emit cacheExpirationTimeChanged();
 }
 
 void QtFirebaseRemoteConfig::addParameter(const QString &name, long long defaultValue)
@@ -121,59 +127,67 @@ void QtFirebaseRemoteConfig::init()
 
 void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase future)
 {
-    qDebug()<<"QtFirebaseRemoteConfig"<<"::onFutureEvent"<<eventId;
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
 
-    if(eventId == __QTFIREBASE_ID+".config.fetch")
+    qDebug()<<self<<"::onFutureEvent"<<eventId;
+    if(eventId != __QTFIREBASE_ID+".config.fetch")
+        return;
+
+    if(future.status() != firebase::kFutureStatusComplete)
     {
-        if(future.status() != firebase::kFutureStatusComplete)
-        {
-            qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
-            _initializing = false;
-            return;
-        }
-        qDebug() << this << "::onFutureEvent initialized";
+        qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.ErrorMessage();
         _initializing = false;
+        return;
+    }
+    qDebug() << this << "::onFutureEvent initialized ok";
+    _initializing = false;
 
-        bool activate_result = remote_config::ActivateFetched();
+    bool fetchActivated = remote_config::ActivateFetched();
+    //On first run even if we have activateResult failed we still can get cached values
+    qDebug()<<self<<QString("ActivateFetched %1").arg(fetchActivated ? "succeeded" : "failed");
 
-        qDebug()<<QString("ActivateFetched %1").arg(activate_result ? "succeeded" : "failed");
+    const remote_config::ConfigInfo& info = remote_config::GetInfo();
 
-        const remote_config::ConfigInfo& info = remote_config::GetInfo();
+    qDebug()<<self<<QString("Info last_fetch_time_ms=%1 fetch_status=%2 failure_reason=%3")
+            .arg(QString::number(info.fetch_time))
+            .arg(info.last_fetch_status)
+            .arg(info.last_fetch_failure_reason);
 
-        qDebug()<<QString("Info last_fetch_time_ms=%1 fetch_status=%2 failure_reason=%3")
-                .arg(QString::number(info.fetch_time))
-                .arg(info.last_fetch_status)
-                .arg(info.last_fetch_failure_reason);
-
-        ParametersMap parametersUpdated;
-        for(ParametersMap::const_iterator it = _parameters.begin(); it!=_parameters.end();++it)
+    if(info.last_fetch_status == remote_config::kLastFetchStatusSuccess)
+    {
+        QVariantMap updatedParameters;
+        for(QVariantMap::const_iterator it = _parameters.begin(); it!=_parameters.end();++it)
         {
             const QVariant& value = it.value();
 
             Q_ASSERT(value.type() == QVariant::Bool ||
                      value.type() == QVariant::LongLong ||
+                     value.type() == QVariant::Int ||
                      value.type() == QVariant::Double ||
                      value.type() == QVariant::String);
 
             if(value.type() == QVariant::Bool)
             {
-                parametersUpdated[it.key()] = remote_config::GetBoolean(it.key().toUtf8().constData());
+                updatedParameters[it.key()] = remote_config::GetBoolean(it.key().toUtf8().constData());
             }
             else if(value.type() == QVariant::LongLong)
             {
-                parametersUpdated[it.key()] = remote_config::GetLong(it.key().toUtf8().constData());
+                updatedParameters[it.key()] = remote_config::GetLong(it.key().toUtf8().constData());
+            }
+            else if(value.type() == QVariant::Int)
+            {
+                updatedParameters[it.key()] = remote_config::GetLong(it.key().toUtf8().constData());
             }
             else if(value.type() == QVariant::Double)
             {
-                parametersUpdated[it.key()] = remote_config::GetDouble(it.key().toUtf8().constData());
+                updatedParameters[it.key()] = remote_config::GetDouble(it.key().toUtf8().constData());
             }
             else if(value.type() == QVariant::String)
             {
                 //Cause crash
                 //std::string result = remote_config::GetString(it.key().toUtf8().constData());
-                //parametersUpdated[it.key()] = QString(result.c_str());
+                //updatedParameters[it.key()] = QString(result.c_str());
 
                 std::vector<unsigned char> out = remote_config::GetData(it.key().toUtf8().constData());
                 QByteArray data;
@@ -181,12 +195,10 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
                 {
                     data.append(out[i]);
                 }
-                parametersUpdated[it.key()] = QString(data);
+                updatedParameters[it.key()] = QString(data);
             }
         }
 
-
-        _parameters = parametersUpdated;
         //SDK code for data (char array) container
         /*{
           std::vector<unsigned char> result = remote_config::GetData("TestData");
@@ -208,53 +220,63 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
         for (auto s = keys.begin(); s != keys.end(); ++s) {
           printf("  %s", s->c_str());
         }*/
-
-        future.Release();
-
-        if(info.last_fetch_status == remote_config::kLastFetchStatusSuccess)
+        setParameters(updatedParameters);
+    }
+    else
+    {
+        if(info.last_fetch_failure_reason == remote_config::kFetchFailureReasonInvalid)
         {
-            setLoaded(true);
+            emit error(kFetchFailureReasonInvalid, "The fetch has not yet failed.");
+        }
+        else if(info.last_fetch_failure_reason == remote_config::kFetchFailureReasonThrottled)
+        {
+            emit error(kFetchFailureReasonThrottled, "Throttled by the server. You are sending too many fetch requests in too short a time.");
         }
         else
         {
-            if(info.last_fetch_failure_reason == remote_config::kFetchFailureReasonInvalid)
-            {
-                emit error(kFetchFailureReasonInvalid, "The fetch has not yet failed.");
-            }
-            else if(info.last_fetch_failure_reason == remote_config::kFetchFailureReasonThrottled)
-            {
-                emit error(kFetchFailureReasonThrottled, "Throttled by the server. You are sending too many fetch requests in too short a time.");
-            }
-            else
-            {
-                emit error(kFetchFailureReasonError, "Failure reason is unknown");
-            }
+            emit error(kFetchFailureReasonError, "Failure reason is unknown");
         }
     }
+    future.Release();
 }
 
-void QtFirebaseRemoteConfig::requestConfig(long long cacheExpirationInSeconds)
+void QtFirebaseRemoteConfig::fetch()
 {
-    _loaded = false;
+    fetch(_cacheExpirationTime<1000 ? 0 : _cacheExpirationTime/1000);
+}
+
+void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
+{
     if(_parameters.size() == 0)
+    {
+        qDebug()<<self<<"::fetch not started, parameters were not initialized";
         return;
+    }
+    qDebug()<<self<<"::fetch with expirationtime"<<cacheExpirationInSeconds<<"seconds";
 
-    qDebug()<<"QtFirebaseRemoteConfig::requestConfig with expirationtime"<<cacheExpirationInSeconds<<"sec";
-
-    std::unique_ptr<remote_config::ConfigKeyValueVariant[]> defaults(
-                new remote_config::ConfigKeyValueVariant[_parameters.size()]);
-
-
-    uint cnt = 0;
-    for(ParametersMap::const_iterator it = _parameters.begin(); it!=_parameters.end();++it)
+    QVariantMap filteredMap;
+    for(QVariantMap::const_iterator it = _parameters.begin(); it!=_parameters.end();++it)
     {
         const QVariant& value = it.value();
+        if(value.type() == QVariant::Bool ||
+                value.type() == QVariant::LongLong ||
+                value.type() == QVariant::Int ||
+                value.type() == QVariant::Double ||
+                value.type() == QVariant::String)
+        {
+            filteredMap[it.key()] = value;
+        }
+    }
 
-        Q_ASSERT(value.type() == QVariant::Bool ||
-                 value.type() == QVariant::LongLong ||
-                 value.type() == QVariant::Double ||
-                 value.type() == QVariant::String);
+    std::unique_ptr<remote_config::ConfigKeyValueVariant[]> defaults(
+                new remote_config::ConfigKeyValueVariant[filteredMap.size()]);
 
+    qDebug()<<"original map:"<<_parameters;
+    qDebug()<<"Filtered map:"<<filteredMap;
+    uint cnt = 0;
+    for(QVariantMap::const_iterator it = filteredMap.begin(); it!=filteredMap.end();++it)
+    {
+        const QVariant& value = it.value();
 
         if(value.type() == QVariant::Bool)
         {
@@ -265,6 +287,11 @@ void QtFirebaseRemoteConfig::requestConfig(long long cacheExpirationInSeconds)
         {
             defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
                                                                  value.toLongLong()};
+        }
+        else if(value.type() == QVariant::Int)
+        {
+            defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
+                                                                 value.toInt()};
         }
         else if(value.type() == QVariant::Double)
         {
@@ -287,7 +314,7 @@ void QtFirebaseRemoteConfig::requestConfig(long long cacheExpirationInSeconds)
         }
         cnt++;
     }
-    remote_config::SetDefaults(defaults.get(), _parameters.size());
+    remote_config::SetDefaults(defaults.get(), filteredMap.size());
 
     //Cause crash
     /*remote_config::SetConfigSetting(remote_config::kConfigSettingDeveloperMode, "1");
@@ -296,7 +323,12 @@ void QtFirebaseRemoteConfig::requestConfig(long long cacheExpirationInSeconds)
         qDebug()<<"Failed to enable developer mode";
     }*/
 
-    qDebug() << self << "::requestConfig" << "start fetching...";
+    qDebug() << self << "::fetch" << "run fetching...";
     auto future = remote_config::Fetch(cacheExpirationInSeconds);
     qFirebase->addFuture(__QTFIREBASE_ID + ".config.fetch",future);
+}
+
+void QtFirebaseRemoteConfig::fetchNow()
+{
+    fetch(0);
 }
