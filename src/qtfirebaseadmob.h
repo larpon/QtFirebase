@@ -14,6 +14,7 @@
 #include "firebase/admob/types.h"
 #include "firebase/admob/banner_view.h"
 #include "firebase/admob/interstitial_ad.h"
+#include "firebase/admob/rewarded_video.h"
 
 #include <QDebug>
 #include <QList>
@@ -428,7 +429,116 @@ private:
     QtFirebaseAdMobInterstitial* _qtFirebaseAdMobInterstitial;
 };
 
-#endif // QTFIREBASE_BUILD_ADMOB
 
+/*
+ * AdMobRewardedVideoAd
+ *
+ * Similar to interstitial but also contains time on the Ad,
+ * when time is out user can close the banner and get reward.
+ * Reward is a value of float type (can be coins/starts/points in your game)
+ * To setup create rewarded Ad on your adMob account page and put identifier to setAdUnitId.
+ * The value of reward should be set in the account page as well.
+ * Limitation: reward type does not supported now.
+ *  Example QML code
+ *
+ * AdMobRewardedVideoAd {
+ *     adUnitId: "your banner id"
+ *
+ *     onReadyChanged: if(ready) load()
+ *
+ *     onClosed: load()
+ *
+ *     request: AdMobRequest {
+ *              }
+ *
+ *     onRewarded: {
+ *         console.log("Rewarded with reward:" + type + ", value:" + value);
+ *     }
+ *
+ *     onError: {
+ *         console.log("Rewarded failed with error code",code,"and message",message)
+ *     }
+ *  }
+ */
+
+class QtFirebaseAdMobRewardedVideoAd : public QObject, public firebase::admob::rewarded_video::Listener
+{
+    Q_OBJECT
+
+    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
+    Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
+    Q_PROPERTY(QString adUnitId READ adUnitId WRITE setAdUnitId NOTIFY adUnitIdChanged)
+    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
+    Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
+
+public:
+    enum PresentationState
+    {
+        PresentationStateHidden,
+        PresentationStateCoveringUI
+    };
+    Q_ENUM(PresentationState)
+
+    QtFirebaseAdMobRewardedVideoAd(QObject* parent = 0);
+    ~QtFirebaseAdMobRewardedVideoAd();
+
+    bool ready() const;
+    void setReady(bool ready);
+
+    bool loaded() const;
+    void setLoaded(bool loaded);
+
+    QString adUnitId() const;
+    void setAdUnitId(const QString &adUnitId);
+
+    bool visible() const;
+    void setVisible(bool visible);
+
+    QtFirebaseAdMobRequest* request() const;
+    void setRequest(QtFirebaseAdMobRequest *request);
+
+signals:
+    void readyChanged();
+    void loadedChanged();
+    void adUnitIdChanged();
+    void requestChanged();
+    void loading();
+    void error(int code, QString message);
+    void closed();
+    void visibleChanged();
+    void presentationStateChanged(int state);
+    void rewarded(QString type, float value);
+
+public slots:
+    void load();
+    void show();
+
+private slots:
+    void init();
+    void onFutureEvent(QString eventId, firebase::FutureBase future);
+    void onPresentationStateChanged(int state);
+
+private:
+
+    void OnRewarded(firebase::admob::rewarded_video::RewardItem reward) override;
+    void OnPresentationStateChanged(firebase::admob::rewarded_video::PresentationState state) override;
+
+    QString __QTFIREBASE_ID;
+    bool _ready;
+    bool _initializing;
+    bool _loaded;
+    bool _isFirstInit;
+    bool _visible;
+
+    QString _adUnitId;
+    QByteArray __adUnitIdByteArray;
+    QtFirebaseAdMobRequest* _request;
+
+    void *_nativeUIElement;
+
+    QTimer _initTimer;
+};
+
+#endif // QTFIREBASE_BUILD_ADMOB
 
 #endif // QTFIREBASE_ADMOB_H

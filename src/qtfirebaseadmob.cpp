@@ -1173,3 +1173,309 @@ void QtFirebaseAdMobInterstitial::show()
     }
 
 }
+/*
+ * AdMobRewardedVideoAd
+ *
+ */
+
+QtFirebaseAdMobRewardedVideoAd::QtFirebaseAdMobRewardedVideoAd(QObject* parent):
+    QObject(parent),
+    _ready(false),
+    _loaded(false),
+    _initializing(false),
+    _isFirstInit(true),
+    _visible(false),
+    _request(nullptr),
+    _nativeUIElement(nullptr)
+{
+    __QTFIREBASE_ID = QString().sprintf("%8p", this);
+
+    connect(qFirebase, &QtFirebase::futureEvent, this, &QtFirebaseAdMobRewardedVideoAd::onFutureEvent);
+    connect(this,&QtFirebaseAdMobRewardedVideoAd::presentationStateChanged, this, &QtFirebaseAdMobRewardedVideoAd::onPresentationStateChanged);
+
+    _initTimer.setSingleShot(false);
+    connect(&_initTimer, &QTimer::timeout, this, &QtFirebaseAdMobRewardedVideoAd::init);
+    _initTimer.start(500);
+}
+
+QtFirebaseAdMobRewardedVideoAd::~QtFirebaseAdMobRewardedVideoAd()
+{
+    if(_ready) {
+        firebase::admob::rewarded_video::Destroy();
+        qDebug() << this << "::~QtFirebaseAdMobRewardedVideoAd" << "Destroyed";
+    }
+    _initTimer.stop();
+}
+
+bool QtFirebaseAdMobRewardedVideoAd::ready() const
+{
+    return _ready;
+}
+
+void QtFirebaseAdMobRewardedVideoAd::setReady(bool ready)
+{
+    if (_ready != ready) {
+        _ready = ready;
+        emit readyChanged();
+    }
+}
+
+bool QtFirebaseAdMobRewardedVideoAd::loaded() const
+{
+    return _loaded;
+}
+
+void QtFirebaseAdMobRewardedVideoAd::setLoaded(bool loaded)
+{
+    if(_loaded != loaded) {
+        _loaded = loaded;
+        emit loadedChanged();
+    }
+}
+
+QString QtFirebaseAdMobRewardedVideoAd::adUnitId() const
+{
+    return _adUnitId;
+}
+
+void QtFirebaseAdMobRewardedVideoAd::setAdUnitId(const QString &adUnitId)
+{
+    if(_adUnitId != adUnitId) {
+        _adUnitId = adUnitId;
+        __adUnitIdByteArray = _adUnitId.toLatin1();
+        emit adUnitIdChanged();
+    }
+}
+
+bool QtFirebaseAdMobRewardedVideoAd::visible() const
+{
+    return _visible;
+}
+
+void QtFirebaseAdMobRewardedVideoAd::setVisible(bool visible)
+{
+    if(!_ready) {
+        qDebug() << this << "::setVisible native part not ready";
+        return;
+    }
+
+    if(!_loaded) {
+        qDebug() << this << "::setVisible native part not loaded - so not changing visiblity to" << visible;
+        return;
+    }
+
+    if(!_visible && visible) {
+        show(); // NOTE show will change _visible and emit signal
+    } else {
+        // NOTE An interstitial can't be hidden by any other than the user
+        qInfo() << this << "::setVisible" << visible << " - interstitials can't be hidden programmatically. Not hidding";
+    }
+}
+
+QtFirebaseAdMobRequest *QtFirebaseAdMobRewardedVideoAd::request() const
+{
+    return _request;
+}
+
+void QtFirebaseAdMobRewardedVideoAd::setRequest(QtFirebaseAdMobRequest *request)
+{
+    if(_request != request) {
+        _request = request;
+        emit requestChanged();
+    }
+}
+
+void QtFirebaseAdMobRewardedVideoAd::init()
+{
+    if(!qFirebase->ready()) {
+        qDebug() << this << "::init" << "base not ready";
+        return;
+    }
+
+    if(!qFirebaseAdMob->ready()) {
+        qDebug() << this << "::init" << "AdMob base not ready";
+        return;
+    }
+
+    if(_adUnitId.isEmpty()) {
+        qDebug() << this << "::init" << "adUnitId must be set in order to initialize the interstitial";
+        return;
+    }
+
+    if(_isFirstInit && !PlatformUtils::getNativeWindow()) {
+        qDebug() << this << "::init" << "no native ui element. Waiting for it...";
+        return;
+    }
+
+    // TODO test if this actually nessecary anymore
+    if(!_nativeUIElement && !PlatformUtils::getNativeWindow()) {
+        qDebug() << this << "::init" << "no native ui element";
+        return;
+    }
+
+    if(!_nativeUIElement && PlatformUtils::getNativeWindow()) {
+        qDebug() << this << "::init" << "setting native ui element";
+        _nativeUIElement = PlatformUtils::getNativeWindow();
+    }
+
+    if(!_ready && !_initializing) {
+        _initializing = true;
+        firebase::FutureBase future = firebase::admob::rewarded_video::Initialize();
+        qFirebase->addFuture(__QTFIREBASE_ID + ".rewardedvideoad.init", future);
+    }
+}
+
+void QtFirebaseAdMobRewardedVideoAd::onFutureEvent(QString eventId, firebase::FutureBase future)
+{
+    if(!eventId.startsWith(__QTFIREBASE_ID))
+        return;
+
+    qDebug()<<this<<"QtFirebaseAdMobInterstitial::onFutureEvent";
+
+    if(eventId == __QTFIREBASE_ID+".rewardedvideoad.init")
+    {
+        if (future.error() != admob::kAdMobErrorNone)
+        {
+            qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
+            _initializing = false;
+        }
+        else
+        {
+            _initTimer.stop();
+            qDebug() << this << "::onFutureEvent initialized";
+            _initializing = false;
+            _isFirstInit = false;
+            firebase::admob::rewarded_video::SetListener(this);
+            setReady(true);
+        }
+    }
+    else if(eventId == __QTFIREBASE_ID+".rewardedvideoad.loaded")
+    {
+        int errorCode = future.error();
+        if (future.error() != admob::kAdMobErrorNone)
+        {
+            QString errorMessage = future.error_message();
+            QtFirebaseAdMob::Error qtFirebaseErrorCode = qFirebaseAdMob->convertAdMobErrorCode(errorCode);
+            qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << errorMessage;
+            emit error(static_cast<int>(qtFirebaseErrorCode), errorMessage);
+        }
+        else
+        {
+            qDebug() << this << "::onFutureEvent loaded";
+            setLoaded(true);
+        }
+    }
+    future.Release();
+}
+
+void QtFirebaseAdMobRewardedVideoAd::onPresentationStateChanged(int state)
+{
+    if(state == QtFirebaseAdMobInterstitial::PresentationStateCoveringUI) {
+        if(!_visible) {
+            _visible = true;
+            emit visibleChanged();
+        }
+    }
+
+    if(state == QtFirebaseAdMobInterstitial::PresentationStateHidden) {
+        if(_visible) {
+            _visible = false;
+            emit visibleChanged();
+        }
+
+        setLoaded(false);
+        qDebug() << this << "::onPresentationStateChanged() loaded false";
+
+        // NOTE iOS necessities
+        /*#if defined(Q_OS_IOS)
+
+        setReady(false);
+        qDebug() << this << "::onPresentationStateChanged() ready false";
+
+        // Will be newed when init() is called
+        //delete _interstitial; // NOTE Crashes the app when used
+
+        // NOTE Auto re-initializing because of this: https://firebase.google.com/docs/admob/ios/interstitial#only_show_gadinterstitial_once
+        qDebug() << this << "::onPresentationStateChanged() re-initializing one-time use GADInterstitial";
+        _initTimer->start(500);
+
+        #endif*/
+
+        emit closed();
+    }
+}
+
+void QtFirebaseAdMobRewardedVideoAd::load()
+{
+    if(!_ready) {
+        qDebug() << this << "::load() not ready";
+        return;
+    }
+
+    if(_request == 0) {
+        qDebug() << this << "::load() no request data sat. Not loading";
+        return;
+    }
+
+    qDebug() << this << "::load() getting request data";
+    emit loading();
+    admob::AdRequest request = _request->asAdMobRequest();
+    firebase::FutureBase future = firebase::admob::rewarded_video::LoadAd( __adUnitIdByteArray.constData(), request);
+    qFirebase->addFuture(__QTFIREBASE_ID + ".rewardedvideoad.loaded",future);
+}
+
+void QtFirebaseAdMobRewardedVideoAd::show()
+{
+    if(!_ready) {
+        qDebug() << this << "::show() not ready - so not showing";
+        return;
+    }
+
+    if(!_loaded) {
+        qDebug() << this << "::show() not loaded - so not showing";
+        return;
+    }
+
+    _nativeUIElement = qFirebase->getNativeWindow();
+    firebase::FutureBase future = firebase::admob::rewarded_video::Show(static_cast<admob::AdParent>(_nativeUIElement));
+    qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
+    if(future.error() != admob::kAdMobErrorNone) {
+        qDebug() << this << "::show ERROR code" << future.error() << "message" << future.error_message();
+        return;
+    }
+}
+
+void QtFirebaseAdMobRewardedVideoAd::OnRewarded(firebase::admob::rewarded_video::RewardItem reward)
+{
+    QString type = reward.reward_type.c_str();
+    qDebug()<<this<<QString("Rewarding user of %1 with amount %2")
+              .arg(type)
+              .arg(QString::number(reward.amount));
+
+    emit rewarded(type, reward.amount);
+
+}
+void QtFirebaseAdMobRewardedVideoAd::OnPresentationStateChanged(firebase::admob::rewarded_video::PresentationState state)
+{
+    if(state == firebase::admob::rewarded_video::kPresentationStateHidden)
+    {
+        qDebug()<<this<<"kPresentationStateHidden";
+    }
+    else if(state == firebase::admob::rewarded_video::kPresentationStateCoveringUI)
+    {
+        qDebug()<<this<<"kPresentationStateCoveringUI";
+    }
+    else if(state == firebase::admob::rewarded_video::kPresentationStateVideoHasStarted)
+    {
+        qDebug()<<this<<"kPresentationStateVideoHasStarted";
+    }
+
+    int pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
+
+    if(state == firebase::admob::rewarded_video::kPresentationStateHidden) {
+        pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
+    } else if(state == firebase::admob::rewarded_video::kPresentationStateCoveringUI) {
+         pState = QtFirebaseAdMobInterstitial::PresentationStateCoveringUI;
+    }
+    emit presentationStateChanged(pState);
+}

@@ -185,28 +185,19 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
             }
             else if(value.type() == QVariant::String)
             {
-                //Cause crash
-                //std::string result = remote_config::GetString(it.key().toUtf8().constData());
-                //updatedParameters[it.key()] = QString(result.c_str());
+                std::string result = remote_config::GetString(it.key().toUtf8().constData());
+                updatedParameters[it.key()] = QString(result.c_str());
 
-                std::vector<unsigned char> out = remote_config::GetData(it.key().toUtf8().constData());
+                //Code for data type
+                /*std::vector<unsigned char> out = remote_config::GetData(it.key().toUtf8().constData());
                 QByteArray data;
                 for (size_t i = 0; i < out.size(); ++i)
                 {
                     data.append(out[i]);
                 }
-                updatedParameters[it.key()] = QString(data);
+                updatedParameters[it.key()] = QString(data);*/
             }
         }
-
-        //SDK code for data (char array) container
-        /*{
-          std::vector<unsigned char> result = remote_config::GetData("TestData");
-          for (size_t i = 0; i < result.size(); ++i) {
-            const unsigned char value = result[i];
-            printf("TestData[%d] = 0x%02x", i, value);
-          }
-        }*/
 
         //SDK code to print out the keys
         /*std::vector<std::string> keys = remote_config::GetKeys();
@@ -220,6 +211,7 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
         for (auto s = keys.begin(); s != keys.end(); ++s) {
           printf("  %s", s->c_str());
         }*/
+
         setParameters(updatedParameters);
     }
     else
@@ -266,13 +258,15 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
         {
             filteredMap[it.key()] = value;
         }
+        else
+        {
+            qWarning()<<self<<"Data type:"<<value.typeName()<<" not supported";
+        }
     }
 
     std::unique_ptr<remote_config::ConfigKeyValueVariant[]> defaults(
                 new remote_config::ConfigKeyValueVariant[filteredMap.size()]);
 
-    qDebug()<<"original map:"<<_parameters;
-    qDebug()<<"Filtered map:"<<filteredMap;
     uint cnt = 0;
     for(QVariantMap::const_iterator it = filteredMap.begin(); it!=filteredMap.end();++it)
     {
@@ -301,22 +295,19 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
 
         else if(value.type() == QVariant::String)
         {
-            //Strings cause crash on extracting from fetch
-            //So workaround in by using data set type
+            defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toLatin1().constData(),
+                                                                 value.toString().toUtf8().constData()};
 
-            /*defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toLatin1().constData(),
-                                                                 value.toString().toLatin1().constData()};*/
-
-            QByteArray data = value.toString().toUtf8();
+            //Code for data type
+            /*QByteArray data = value.toString().toUtf8();
             defaults[cnt] = remote_config::ConfigKeyValueVariant{
                                 it.key().toUtf8().constData(),
-                                firebase::Variant::FromMutableBlob(data.constData(), data.size())};
+                                firebase::Variant::FromMutableBlob(data.constData(), data.size())};*/
         }
         cnt++;
     }
     remote_config::SetDefaults(defaults.get(), filteredMap.size());
 
-    //Cause crash
     /*remote_config::SetConfigSetting(remote_config::kConfigSettingDeveloperMode, "1");
     if ((*remote_config::GetConfigSetting(remote_config::kConfigSettingDeveloperMode)
                 .c_str()) != '1') {
