@@ -260,6 +260,63 @@ public slots:
 
 };
 
+/*
+ * AdMobRewardedVideoAd
+ */
+
+class QtFirebaseAdMobRewardedVideoAd : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
+    Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
+    Q_PROPERTY(QString adUnitId READ adUnitId WRITE setAdUnitId NOTIFY adUnitIdChanged)
+    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
+    Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
+
+public:
+    enum PresentationState
+    {
+        PresentationStateHidden,
+        PresentationStateCoveringUI
+    };
+    Q_ENUM(PresentationState)
+
+    QtFirebaseAdMobRewardedVideoAd(QObject* parent = 0){Q_UNUSED(parent);}
+    ~QtFirebaseAdMobRewardedVideoAd(){}
+
+    bool ready()const {return false;}
+    void setReady(bool ready){Q_UNUSED(ready);}
+
+    bool loaded()const {return false;}
+    void setLoaded(bool loaded){Q_UNUSED(loaded);}
+
+    QString adUnitId()const {return QString();}
+    void setAdUnitId(const QString &adUnitId){Q_UNUSED(adUnitId);}
+
+    bool visible() const{return false;}
+    void setVisible(bool visible){Q_UNUSED(visible);}
+
+    QtFirebaseAdMobRequest* request() const{return nullptr;}
+    void setRequest(QtFirebaseAdMobRequest *request){Q_UNUSED(request);}
+
+signals:
+    void readyChanged();
+    void loadedChanged();
+    void adUnitIdChanged();
+    void requestChanged();
+    void loading();
+    void error(int code, QString message);
+    void closed();
+    void visibleChanged();
+    void presentationStateChanged(int state);
+    void rewarded(QString type, float value);
+
+public slots:
+    void load(){}
+    void show(){}
+};
+
 #endif // QTFIREBASE_BUILD_ADMOB
 
 

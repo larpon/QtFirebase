@@ -452,7 +452,7 @@ private:
  *              }
  *
  *     onRewarded: {
- *         console.log("Rewarded with coins:" + value);
+ *         console.log("Rewarded with reward:" + type + ", value:" + value);
  *     }
  *
  *     onError: {
@@ -507,7 +507,7 @@ signals:
     void closed();
     void visibleChanged();
     void presentationStateChanged(int state);
-    void rewarded(float value);
+    void rewarded(QString type, float value);
 
 public slots:
     void load();
@@ -540,6 +540,5 @@ private:
 };
 
 #endif // QTFIREBASE_BUILD_ADMOB
-
 
 #endif // QTFIREBASE_ADMOB_H

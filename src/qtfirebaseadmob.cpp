@@ -1447,15 +1447,12 @@ void QtFirebaseAdMobRewardedVideoAd::show()
 
 void QtFirebaseAdMobRewardedVideoAd::OnRewarded(firebase::admob::rewarded_video::RewardItem reward)
 {
-    qDebug()<<QString("Rewarding user with %1")
+    QString type = reward.reward_type.c_str();
+    qDebug()<<this<<QString("Rewarding user of %1 with amount %2")
+              .arg(type)
               .arg(QString::number(reward.amount));
 
-    //We could get reward type (which is identifier name in firebase console)
-    //but unfortunately any access of string object cause crash
-    //So just use amount only
-    //qDebug()<<this<<"award type empty:"<<reward.reward_type.empty();
-    //qDebug()<<this<<"award type:"<<reward.reward_type.c_str();
-    emit rewarded(reward.amount);
+    emit rewarded(type, reward.amount);
 
 }
 void QtFirebaseAdMobRewardedVideoAd::OnPresentationStateChanged(firebase::admob::rewarded_video::PresentationState state)
