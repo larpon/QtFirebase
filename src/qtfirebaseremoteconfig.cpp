@@ -136,7 +136,7 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
 
     if(future.status() != firebase::kFutureStatusComplete)
     {
-        qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.ErrorMessage();
+        qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
         _initializing = false;
         return;
     }
