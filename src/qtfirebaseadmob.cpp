@@ -1436,7 +1436,16 @@ void QtFirebaseAdMobRewardedVideoAd::show()
         return;
     }
 
-    _nativeUIElement = qFirebase->getNativeWindow();
+    if(!_nativeUIElement && !PlatformUtils::getNativeWindow()) {
+        qDebug() << this << "::init" << "no native ui element";
+        return;
+    }
+
+    if(!_nativeUIElement && PlatformUtils::getNativeWindow()) {
+        qDebug() << this << "::init" << "setting native ui element";
+        _nativeUIElement = PlatformUtils::getNativeWindow();
+    }
+
     firebase::FutureBase future = firebase::admob::rewarded_video::Show(static_cast<admob::AdParent>(_nativeUIElement));
     qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
     if(future.error() != admob::kAdMobErrorNone) {

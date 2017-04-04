@@ -28,6 +28,7 @@ void QtFirebasePlugin::registerTypes(const char *uri)
     qmlRegisterType<QtFirebaseAdMobRequest>(uri, 1, 0, "AdMobRequest");
     qmlRegisterType<QtFirebaseAdMobBanner>(uri, 1, 0, "AdMobBanner");
     qmlRegisterType<QtFirebaseAdMobInterstitial>(uri, 1, 0, "AdMobInterstitial");
+    qmlRegisterType<QtFirebaseAdMobRewardedVideoAd>(uri, 1, 0, "AdMobRewardedVideoAd");
     #endif
 
     #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
