@@ -1,7 +1,3 @@
-unix {
-    GIT_BRANCH_NAME = $$system(git rev-parse --abbrev-ref HEAD)
-    message("QtFirebase branch $$GIT_BRANCH_NAME")
-}
 
 !contains(QTFIREBASE_CONFIG,"noautoregister") {
     DEFINES += QTFIREBASE_AUTO_REGISTER
@@ -31,4 +27,11 @@ android|ios {
     include(qtfirebase_target.pri)
 } else {
     include(qtfirebase_dummy.pri)
+}
+
+exists(.git) {
+    unix {
+        GIT_BRANCH_NAME = $$system(git rev-parse --abbrev-ref HEAD)
+        message("QtFirebase branch $$GIT_BRANCH_NAME")
+    }
 }
