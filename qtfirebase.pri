@@ -23,7 +23,8 @@ contains(QTFIREBASE_CONFIG,"remote_config") {
 
 
 DISTFILES += \
-    $$PWD/LICENSE
+    $$PWD/LICENSE \
+    $$PWD/README.md
 
 # Currently supported Firebase targets
 android|ios {
