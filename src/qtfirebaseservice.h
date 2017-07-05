@@ -8,6 +8,9 @@ template <typename ResultType> const ResultType* result(const void* p) {
   return p==nullptr ? nullptr : static_cast<const ResultType*>(p);
 }
 
+void printQtVariant(const QVariant& v, const QString& tab = QString());
+void printFbVariant(const firebase::Variant& v, const QString& tab = QString());
+
 class QtFirebaseService: public QObject
 {
     Q_OBJECT

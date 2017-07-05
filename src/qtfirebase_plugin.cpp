@@ -22,6 +22,14 @@
 
 #include <qqml.h>
 
+static QObject *QtFirebaseDbProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+    return qFirebaseDb;
+}
+
+
 void QtFirebasePlugin::registerTypes(const char *uri)
 {
     // @uri QtFirebase
@@ -47,9 +55,10 @@ void QtFirebasePlugin::registerTypes(const char *uri)
     #endif
 
     #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
-    qmlRegisterType<QtFirebaseDb>(uri, 1, 0, "DataBase");
+    qmlRegisterSingletonType<QtFirebaseDb>(uri, 1, 0, "DataBase", QtFirebaseDbProvider);
+    qmlRegisterUncreatableType<QtFirebaseDbQuery>(uri, 1, 0, "DbQuery", "Get query object from DbRequest, do not create it");
     qmlRegisterType<QtFirebaseDbRequest>(uri, 1, 0, "DbRequest");
-    qmlRegisterType<QtFirebaseDataSnapshot>(uri, 1, 0, "DataSnapshot");
+    qmlRegisterUncreatableType<QtFirebaseDataSnapshot>(uri, 1, 0, "DataSnapshot", "Get snapshot object from DbRequest, do not create it");
     #endif
 }
 

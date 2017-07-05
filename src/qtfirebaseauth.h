@@ -14,6 +14,7 @@
 class QtFirebaseAuth : public QtFirebaseService
 {
     Q_OBJECT
+    Q_PROPERTY(bool running READ isRunning NOTIFY runningChanged)
     Q_PROPERTY(bool signedIn READ isSignedIn NOTIFY signedInChanged)
 public:
     QtFirebaseAuth *instance()
@@ -25,25 +26,61 @@ public:
         }
         return self;
     }
+    enum Error{
+        kAuthErrorNone = firebase::auth::kAuthErrorNone,
+        kAuthErrorUnimplemented = firebase::auth::kAuthErrorUnimplemented,
+        kAuthErrorFailure = firebase::auth::kAuthErrorFailure
+    };
+    Q_ENUM(Error)
+
+    enum Action{
+        ActRegister,
+        ActSignIn,
+        ActSignOut
+    };
+    Q_ENUM(Action)
 
 public slots:
+    //Control
     void registerUser(const QString& email, const QString& pass);
     void signIn(const QString& email, const QString& pass);
-    bool isSignedIn();
     void signOut();
+
+    //Status
+    bool isSignedIn() const;
+    bool isRunning() const;
+    int errorId() const;
+    QString errorMsg() const;
+
+    //Data
+    QString getEmail() const;
+    QString getDisplayName() const;
+    bool emailVerified() const;
+    QString getPhotoUrl() const;
+    QString getUid() const;
 signals:
     void signedInChanged();
-    //void error(Error code, QString message);
+    void runningChanged();
+    void completed(bool success, int actionId);
 protected:
     explicit QtFirebaseAuth(QObject *parent = 0);
-     void timerEvent(QTimerEvent *e);
-
+    void timerEvent(QTimerEvent *e);
 private:
+    void clearError();
+    void setComplete(bool complete);
+    void setSignIn(bool value);
+    void setError(int errId, const QString& errMsg = QString());
     void init() override;
     void onFutureEvent(QString eventId, firebase::FutureBase future) override;
 
     static QtFirebaseAuth *self;
     firebase::auth::Auth* m_auth;
+
+    bool m_complete;
+    bool m_signedIn;
+    int m_errId;
+    QString m_errMsg;
+    int m_action;
 
     Q_DISABLE_COPY(QtFirebaseAuth)
 };

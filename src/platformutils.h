@@ -27,7 +27,6 @@ public:
     #else
     static void getNativeWindow();
     #endif
-
 };
 
 #endif // PLATFORMUTILS_H
