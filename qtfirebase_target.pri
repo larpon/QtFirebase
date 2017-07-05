@@ -16,10 +16,12 @@ INCLUDEPATH += \
 
 HEADERS += \
     $$PWD/src/platformutils.h \
-    $$PWD/src/qtfirebase.h
+    $$PWD/src/qtfirebase.h \
+    $$PWD/src/qtfirebaseservice.h
 
 SOURCES += \
-    $$PWD/src/qtfirebase.cpp
+    $$PWD/src/qtfirebase.cpp \
+    $$PWD/src/qtfirebaseservice.cpp
 
 contains(QTPLUGIN,qtfirebase) {
     HEADERS += $$PWD/src/qtfirebase_plugin.h
@@ -136,10 +138,12 @@ contains(DEFINES,QTFIREBASE_BUILD_ADMOB) {
 contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
     message( "QtFirebase including RemoteConfig" )
 
+    #TODO remote config on ios
     ios: {
+        message( "QtFirebase RemoteConfig not tested on ios" )
         LIBS += \
-            -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebaseRemoteConfig/Frameworks/frameworks \
-            -framework FirebaseRemoteConfig
+            -F$$QTFIREBASE_FRAMEWORKS_ROOT/RemoteConfig/Frameworks \
+            -framework RemoteConfig \
     }
 
     HEADERS += $$PWD/src/qtfirebaseremoteconfig.h
@@ -148,6 +152,42 @@ contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
     LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lremote_config
 }
 
+# Auth
+contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
+    message( "QtFirebase including Auth" )
+
+    #TODO auth on ios
+    ios: {
+        message( "QtFirebase Auth not tested on ios" )
+        LIBS += \
+            -F$$QTFIREBASE_FRAMEWORKS_ROOT/Auth/Frameworks \
+            -framework Auth \
+    }
+
+    HEADERS += $$PWD/src/qtfirebaseauth.h
+    SOURCES += $$PWD/src/qtfirebaseauth.cpp
+
+    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lauth
+}
+
+
+# Database
+contains(DEFINES,QTFIREBASE_BUILD_DATABASE) {
+    message( "QtFirebase including Database" )
+
+    #TODO database on ios
+    ios: {
+        message( "QtFirebase Database not tested on ios" )
+        LIBS += \
+            -F$$QTFIREBASE_FRAMEWORKS_ROOT/Database/Frameworks \
+            -framework Database \
+    }
+
+    HEADERS += $$PWD/src/qtfirebasedb.h
+    SOURCES += $$PWD/src/qtfirebasedb.cpp
+
+    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -ldatabase
+}
 
 LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lapp
 

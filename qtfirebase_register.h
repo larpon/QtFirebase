@@ -37,6 +37,28 @@
 
 # endif // QTFIREBASE_BUILD_REMOTE_CONFIG
 
+
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_AUTH)
+
+#if defined(QTFIREBASE_FAKE_BUILD)
+    #include "fake/src/qtfirebaseauth.h"
+#else
+    #include "src/qtfirebaseauth.h"
+#endif
+
+# endif // QTFIREBASE_BUILD_AUTH
+
+
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
+
+#if defined(QTFIREBASE_FAKE_BUILD)
+    #include "fake/src/qtfirebasedb.h"
+#else
+    #include "src/qtfirebasedb.h"
+#endif
+
+# endif // QTFIREBASE_BUILD_DATABASE
+
 static void registerQtFirebase() {
 
     #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_ANALYTICS)
@@ -54,6 +76,16 @@ static void registerQtFirebase() {
 
     #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
     qmlRegisterType<QtFirebaseRemoteConfig>("QtFirebase", 1, 0, "RemoteConfig");
+    #endif
+
+    #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_AUTH)
+    qmlRegisterType<QtFirebaseAuth>("QtFirebase", 1, 0, "Auth");
+    #endif
+
+    #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
+    qmlRegisterType<QtFirebaseDb>("QtFirebase", 1, 0, "DataBase");
+    qmlRegisterType<QtFirebaseDbRequest>("QtFirebase", 1, 0, "DbRequest");
+    qmlRegisterType<QtFirebaseDataSnapshot>("QtFirebase", 1, 0, "DataSnapshot");
     #endif
 }
 
