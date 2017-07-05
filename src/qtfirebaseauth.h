@@ -1,0 +1,53 @@
+#ifndef QTFIREBASEAUTH_H
+#define QTFIREBASEAUTH_H
+
+#include "qtfirebaseservice.h"
+#include "firebase/auth.h"
+
+#ifdef QTFIREBASE_BUILD_AUTH
+    #include "src/qtfirebase.h"
+    #if defined(qFirebaseAuth)
+        #undef qFirebaseAuth
+    #endif
+#define qFirebaseAuth (static_cast<QtFirebaseAuth *>(QtFirebaseAuth::instance()))
+
+class QtFirebaseAuth : public QtFirebaseService
+{
+    Q_OBJECT
+    Q_PROPERTY(bool signedIn READ isSignedIn NOTIFY signedInChanged)
+public:
+    QtFirebaseAuth *instance()
+    {
+        if(self == nullptr)
+        {
+            self = new QtFirebaseAuth(0);
+            qDebug() << self << "::instance" << "singleton";
+        }
+        return self;
+    }
+
+public slots:
+    void registerUser(const QString& email, const QString& pass);
+    void signIn(const QString& email, const QString& pass);
+    bool isSignedIn();
+    void signOut();
+signals:
+    void signedInChanged();
+    //void error(Error code, QString message);
+protected:
+    explicit QtFirebaseAuth(QObject *parent = 0);
+     void timerEvent(QTimerEvent *e);
+
+private:
+    void init() override;
+    void onFutureEvent(QString eventId, firebase::FutureBase future) override;
+
+    static QtFirebaseAuth *self;
+    firebase::auth::Auth* m_auth;
+
+    Q_DISABLE_COPY(QtFirebaseAuth)
+};
+
+#endif //QTFIREBASE_BUILD_AUTH
+
+#endif // QTFIREBASEAUTH_H
