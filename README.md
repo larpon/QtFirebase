@@ -19,8 +19,8 @@ Feature | Library | C++ | QML
 Base                      |libapp.a             |✓|✓
 AdMob                     |libadmob.a           |✓|✓
 Analytics                 |libanalytics.a       |✓|✓
-~~Authentication~~	          |~~libauth.a~~          | |
-~~Realtime Database~~	        |~~libdatabase.a~~      | |
+Authentication	          |libauth.a          |limited|limited
+Realtime Database	        |libdatabase.a      |limited|limited
 ~~Invites and Dynamic Links~~	|~~libinvites.a~~       | |
 ~~Cloud Messaging~~	          |~~libmessaging.a~~     | |
 Remote Config             |libremote_config.a   |✓|✓
