@@ -26,7 +26,7 @@ Analytics                 |libanalytics.a       |✓|✓
 Remote Config             |libremote_config.a   |✓|✓
 ~~Storage~~	                  |~~libstorage.a~~       | |
 
-Tested with Firebase C++ SDK versions:
+Tested Firebase C++ SDK versions:
 
 **Base, AdMob, Analytics**
 Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be8328a063956c2d2139fa9ab7152d955cc2)
@@ -36,6 +36,7 @@ Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be832
 
 **Base, AdMob, Analytics, RemoteConfig**
 * v3.1.0
+* v4.0.1
 
 We recommend you build against the latest version of the Firebase C++ SDK.
 
