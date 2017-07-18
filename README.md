@@ -22,7 +22,7 @@ Analytics                 |libanalytics.a       |✓|✓
 ~~Authentication~~	          |~~libauth.a~~          | |
 ~~Realtime Database~~	        |~~libdatabase.a~~      | |
 ~~Invites and Dynamic Links~~	|~~libinvites.a~~       | |
-~~Cloud Messaging~~	          |~~libmessaging.a~~     |in-progress |:wrench:
+~~Cloud Messaging~~	          |~~libmessaging.a~~     |in progress |:wrench:
 Remote Config             |libremote_config.a   |✓|✓
 ~~Storage~~	                  |~~libstorage.a~~       | |
 
