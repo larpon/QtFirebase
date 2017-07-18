@@ -49,6 +49,17 @@ void QtFirebaseAnalytics::setUserProperty(const QString &propertyName, const QSt
     analytics::SetUserProperty(propertyName.toLatin1().constData(), propertyValue.toLatin1().constData());
 }
 
+void QtFirebaseAnalytics::setCurrentScreen(const QString &screenName)
+{
+    if(!_ready) {
+        qDebug() << this << "::setCurrentScreen native part not ready";
+        return;
+    }
+
+    qDebug() << this << "::setCurrentScreen" << screenName ;
+    analytics::SetCurrentScreen(screenName.toLatin1().constData(), screenName.toLatin1().constData());
+}
+
 void QtFirebaseAnalytics::logEvent(const QString &name)
 {
     if(!_ready) {
