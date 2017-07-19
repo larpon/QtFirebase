@@ -67,6 +67,7 @@ signals:
 public slots:
     void setUserId(const QString &userId) { Q_UNUSED(userId); }
     void setUserProperty(const QString &propertyName, const QString &propertyValue) { Q_UNUSED(propertyName); Q_UNUSED(propertyValue); }
+    void setCurrentScreen(const QString &screenName, const QString &screenClass) { Q_UNUSED(screenName); Q_UNUSED(screenClass); }
     void logEvent(const QString &name) { Q_UNUSED(name); }
     void logEvent(const QString &name, const QString &parameterName, const QString &parameterValue) { Q_UNUSED(name); Q_UNUSED(parameterName); Q_UNUSED(parameterValue); }
     void logEvent(const QString &name, const QString &parameterName, const double parameterValue) { Q_UNUSED(name); Q_UNUSED(parameterName); Q_UNUSED(parameterValue); }

@@ -74,6 +74,7 @@ signals:
 public slots:
     void setUserId(const QString &userId);
     void setUserProperty(const QString &propertyName, const QString &propertyValue);
+    void setCurrentScreen(const QString &screenName, const QString &screenClass);
     void logEvent(const QString &name);
     void logEvent(const QString &name, const QString &parameterName, const QString &parameterValue);
     void logEvent(const QString &name, const QString &parameterName, const double parameterValue);
