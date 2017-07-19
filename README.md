@@ -20,7 +20,7 @@ Base                      |libapp.a             |✓|✓
 AdMob                     |libadmob.a           |✓|✓
 Analytics                 |libanalytics.a       |✓|✓
 ~~Authentication~~	          |~~libauth.a~~          | |
-~~Realtime Database~~	        |~~libdatabase.a~~      | |
+~~Realtime Database~~	        |~~libdatabase.a~~      |in progress |:wrench:
 ~~Invites and Dynamic Links~~	|~~libinvites.a~~       | |
 ~~Cloud Messaging~~	          |~~libmessaging.a~~     |in progress |:wrench:
 Remote Config             |libremote_config.a   |✓|✓
