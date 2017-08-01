@@ -5,19 +5,17 @@ PlatformUtils::PlatformUtils()
 
 }
 
-#if defined(__ANDROID__)
+#if defined(Q_OS_ANDROID)
 jobject PlatformUtils::getNativeWindow()
 {
-    QPlatformNativeInterface *interface = QGuiApplication::platformNativeInterface();
+    QAndroidJniEnvironment env;
 
-    jobject activity = (jobject)interface->nativeResourceForIntegration("QtActivity");
+    QAndroidJniObject activity = QtAndroid::androidActivity();
 
-    // Another way?
-    //jobject activity = (jobject)QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
+    jobject globalActivity = env->NewGlobalRef(activity.object());
 
-    return activity;
+    return globalActivity;
 }
-
 #else
 void PlatformUtils::getNativeWindow()
 {
