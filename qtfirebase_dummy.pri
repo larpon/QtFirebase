@@ -31,3 +31,6 @@ contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
     HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebaseremoteconfig.h
 }
 
+SOURCES += \
+    $$PWD/fake/src/qtfirebase.cpp
+

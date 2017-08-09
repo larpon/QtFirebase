@@ -63,7 +63,7 @@ private:
     static QtFirebaseRemoteConfig *self;
     Q_DISABLE_COPY(QtFirebaseRemoteConfig)
 };
-
 #endif //QTFIREBASE_BUILD_REMOTE_CONFIG
 
 #endif // QTFIREBASEREMOTECONFIG_H
+
