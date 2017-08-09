@@ -1,4 +1,4 @@
-#include "qtfirebaseremoteconfig.h"
+QtFirebaseAnalytics *QtFirebaseAnalytics::self = 0;#include "qtfirebaseremoteconfig.h"
 #include <memory>
 namespace remote_config = ::firebase::remote_config;
 

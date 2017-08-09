@@ -30,7 +30,7 @@ public:
 
     explicit QtFirebaseRemoteConfig(QObject *parent = 0){}
     ~QtFirebaseRemoteConfig() {}
-    QtFirebaseRemoteConfig *instance() {
+    static QtFirebaseRemoteConfig *instance() {
             if(self == 0) {
                 self = new QtFirebaseRemoteConfig(0);
             }
@@ -63,7 +63,7 @@ private:
     static QtFirebaseRemoteConfig *self;
     Q_DISABLE_COPY(QtFirebaseRemoteConfig)
 };
-
 #endif //QTFIREBASE_BUILD_REMOTE_CONFIG
 
 #endif // QTFIREBASEREMOTECONFIG_H
+

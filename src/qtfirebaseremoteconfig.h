@@ -82,7 +82,7 @@ public:
     };
     Q_ENUM(Error)
 
-    QtFirebaseRemoteConfig *instance() {
+    static QtFirebaseRemoteConfig *instance() {
         if(self == 0) {
             self = new QtFirebaseRemoteConfig(0);
             qDebug() << self << "::instance" << "singleton";
