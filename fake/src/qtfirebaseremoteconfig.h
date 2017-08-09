@@ -30,7 +30,7 @@ public:
 
     explicit QtFirebaseRemoteConfig(QObject *parent = 0){}
     ~QtFirebaseRemoteConfig() {}
-    QtFirebaseRemoteConfig *instance() {
+    static QtFirebaseRemoteConfig *instance() {
             if(self == 0) {
                 self = new QtFirebaseRemoteConfig(0);
             }
