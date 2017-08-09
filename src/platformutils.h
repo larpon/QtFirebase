@@ -5,13 +5,14 @@
 #include <QWindow>
 #include <QGuiApplication>
 
-#if defined(__ANDROID__)
+#if defined(Q_OS_ANDROID)
 #include <QAndroidJniObject>
 #include <QAndroidJniEnvironment>
-#include <jni.h>
+#include <QtAndroid>
+#include "jni.h"
 #endif
 
-#if defined(__ANDROID__) || defined(Q_OS_IOS)
+#if defined(Q_OS_IOS)
 #include <qpa/qplatformnativeinterface.h>
 #endif
 
@@ -22,12 +23,11 @@ public:
 
     #if defined(Q_OS_IOS)
     static void* getNativeWindow();
-    #elif defined(__ANDROID__)
+    #elif defined(Q_OS_ANDROID)
     static jobject getNativeWindow();
     #else
     static void getNativeWindow();
     #endif
-
 };
 
 #endif // PLATFORMUTILS_H
