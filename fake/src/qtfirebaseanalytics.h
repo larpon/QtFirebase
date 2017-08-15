@@ -50,7 +50,7 @@ public:
     unsigned int sessionTimeout() const { return 0; }
     void setSessionTimeout(unsigned int sessionTimeout) { Q_UNUSED(sessionTimeout); }
 
-    QString userId() const { return ""; }
+    QString userId() const { return QStringLiteral(""); }
     Q_INVOKABLE void unsetUserId() {}
 
     QVariantList userProperties() const { return QVariantList(); }
@@ -77,9 +77,7 @@ public slots:
 private:
     static QtFirebaseAnalytics *self;
     Q_DISABLE_COPY(QtFirebaseAnalytics)
-
 };
+
 #endif // QTFIREBASE_BUILD_ANALYTICS
-
-
 #endif // QTFIREBASE_ANALYTICS_H
