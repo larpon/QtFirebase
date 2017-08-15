@@ -1,5 +1,6 @@
 #include "qtfirebaseremoteconfig.h"
 #include <memory>
+
 namespace remote_config = ::firebase::remote_config;
 
 QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self = 0;
@@ -117,7 +118,6 @@ void QtFirebaseRemoteConfig::init()
 
     if(!_ready && !_initializing) {
         _initializing = true;
-
         remote_config::Initialize(*qFirebase->firebaseApp());
         qDebug() << self << "::init" << "native initialized";
         _initializing = false;
@@ -130,8 +130,8 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
 
-    qDebug()<<self<<"::onFutureEvent"<<eventId;
-    if(eventId != __QTFIREBASE_ID+".config.fetch")
+    qDebug() << self << "::onFutureEvent" << eventId;
+    if(eventId != __QTFIREBASE_ID + QStringLiteral(".config.fetch"))
         return;
 
     if(future.status() != firebase::kFutureStatusComplete)
@@ -145,14 +145,14 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
 
     bool fetchActivated = remote_config::ActivateFetched();
     //On first run even if we have activateResult failed we still can get cached values
-    qDebug()<<self<<QString("ActivateFetched %1").arg(fetchActivated ? "succeeded" : "failed");
+    qDebug() << self << QString(QStringLiteral("ActivateFetched %1")).arg(fetchActivated ? QStringLiteral("succeeded") : QStringLiteral("failed"));
 
     const remote_config::ConfigInfo& info = remote_config::GetInfo();
 
-    qDebug()<<self<<QString("Info last_fetch_time_ms=%1 fetch_status=%2 failure_reason=%3")
-            .arg(QString::number(info.fetch_time))
-            .arg(info.last_fetch_status)
-            .arg(info.last_fetch_failure_reason);
+    qDebug() << self << QString(QStringLiteral("Info last_fetch_time_ms=%1 fetch_status=%2 failure_reason=%3"))
+                .arg(QString::number(info.fetch_time))
+                .arg(info.last_fetch_status)
+                .arg(info.last_fetch_failure_reason);
 
     if(info.last_fetch_status == remote_config::kLastFetchStatusSuccess)
     {
@@ -186,7 +186,7 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
             else if(value.type() == QVariant::String)
             {
                 std::string result = remote_config::GetString(it.key().toUtf8().constData());
-                updatedParameters[it.key()] = QString(result.c_str());
+                updatedParameters[it.key()] = QString(QString::fromUtf8(result.c_str()));
 
                 //Code for data type
                 /*std::vector<unsigned char> out = remote_config::GetData(it.key().toUtf8().constData());
@@ -201,10 +201,10 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
 
         //SDK code to print out the keys
         /*std::vector<std::string> keys = remote_config::GetKeys();
-        qDebug()<<"QtFirebaseRemoteConfig GetKeys:";
+        qDebug() << "QtFirebaseRemoteConfig GetKeys:";
         for (auto s = keys.begin(); s != keys.end(); ++s)
         {
-            qDebug()<<s->c_str();
+            qDebug() << s->c_str();
         }
         keys = remote_config::GetKeysByPrefix("TestD");
         printf("GetKeysByPrefix(\"TestD\"):");
@@ -218,15 +218,15 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
     {
         if(info.last_fetch_failure_reason == remote_config::kFetchFailureReasonInvalid)
         {
-            emit error(kFetchFailureReasonInvalid, "The fetch has not yet failed.");
+            emit error(kFetchFailureReasonInvalid, QStringLiteral("The fetch has not yet failed."));
         }
         else if(info.last_fetch_failure_reason == remote_config::kFetchFailureReasonThrottled)
         {
-            emit error(kFetchFailureReasonThrottled, "Throttled by the server. You are sending too many fetch requests in too short a time.");
+            emit error(kFetchFailureReasonThrottled, QStringLiteral("Throttled by the server. You are sending too many fetch requests in too short a time."));
         }
         else
         {
-            emit error(kFetchFailureReasonError, "Failure reason is unknown");
+            emit error(kFetchFailureReasonError, QStringLiteral("Failure reason is unknown"));
         }
     }
     future.Release();
@@ -275,28 +275,28 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
         if(value.type() == QVariant::Bool)
         {
             defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
-                                                                 value.toBool()};
+                    value.toBool()};
         }
         else if(value.type() == QVariant::LongLong)
         {
             defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
-                                                                 value.toLongLong()};
+                    value.toLongLong()};
         }
         else if(value.type() == QVariant::Int)
         {
             defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
-                                                                 value.toInt()};
+                    value.toInt()};
         }
         else if(value.type() == QVariant::Double)
         {
             defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
-                                                                 value.toDouble()};
+                    value.toDouble()};
         }
 
         else if(value.type() == QVariant::String)
         {
             defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toLatin1().constData(),
-                                                                 value.toString().toUtf8().constData()};
+                    value.toString().toUtf8().constData()};
 
             //Code for data type
             /*QByteArray data = value.toString().toUtf8();
@@ -316,7 +316,7 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
 
     qDebug() << self << "::fetch" << "run fetching...";
     auto future = remote_config::Fetch(cacheExpirationInSeconds);
-    qFirebase->addFuture(__QTFIREBASE_ID + ".config.fetch",future);
+    qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.fetch"), future);
 }
 
 void QtFirebaseRemoteConfig::fetchNow()
