@@ -32,6 +32,7 @@ class QtFirebaseAnalytics : public QObject
 
     Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
     Q_PROPERTY(QVariantList userProperties READ userProperties WRITE setUserProperties NOTIFY userPropertiesChanged)
+
 public:
     explicit QtFirebaseAnalytics(QObject* parent = 0);
     ~QtFirebaseAnalytics();
@@ -43,6 +44,7 @@ public:
         }
         return self;
     }
+
     bool checkInstance(const char *function);
 
     bool ready();
@@ -99,9 +101,7 @@ private:
     QString _userId;
 
     QVariantList _userProperties;
-
 };
+
 #endif // QTFIREBASE_BUILD_ANALYTICS
-
-
 #endif // QTFIREBASE_ANALYTICS_H
