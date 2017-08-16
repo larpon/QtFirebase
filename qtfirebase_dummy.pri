@@ -37,10 +37,5 @@ contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
     HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebaseremoteconfig.h
 }
 
-# Remote Config
-contains(DEFINES,QTFIREBASE_BUILD_AUTHENTICATE) {
-    HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebaseauthenticate.h
-}
-
 SOURCES += \
     $$PWD/fake/src/qtfirebase.cpp
