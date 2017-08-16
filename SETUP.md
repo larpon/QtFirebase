@@ -60,70 +60,70 @@ include(../extensions/QtFirebase/qtfirebase.pri) # <- /path/to/QtFirebase/qtfire
 ```
     
 ## Android specifics
-    Make sure you have `Google Services` installed and updated on the *target* device. Firebase won't work without it.
-    Further more the project needs gradle and the Android NDK (r10d +) to build on Android.
+Make sure you have `Google Services` installed and updated on the *target* device. Firebase won't work without it.
+Further more the project needs gradle and the Android NDK (r10d +) to build on Android.
 
-    #### Gradle setup
-    Enable gradle in your QtCreator build options
+#### Gradle setup
+Enable gradle in your QtCreator build options
 
-    Add these lines to your project's `gradle.build`
-    Edit path in `/path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/android/gradle.properties`
-    Edit path in `/path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/android/local.properties`
+Add these lines to your project's `gradle.build`
+Edit path in `/path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/android/gradle.properties`
+Edit path in `/path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/android/local.properties`
 
-    Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/)
+Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/)
 
-    Add the services to your xml file from the below link: https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/AndroidManifest.xml
+Add the services to your xml file from the below link: https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/AndroidManifest.xml
 
 
 ## iOS specifics
 
-    Download the Firebase iOS Framework from the below Link and extract it to $$PWD/src/ios/Firebase/
-    https://firebase.google.com/docs/ios/setup#frameworks
-    Add some entries in Info.plist
-    Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/)
+Download the Firebase iOS Framework from the below Link and extract it to $$PWD/src/ios/Firebase/
+https://firebase.google.com/docs/ios/setup#frameworks
+Add some entries in Info.plist
+Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/)
 
-    The project currently uses CocoaPods to build on iOS.
-  
-    * [Install CocoaPods](http://stackoverflow.com/questions/20755044/how-to-install-cocoa-pods) on your Mac host if you haven't already.
-    * Run `pod install`:
-       ```
-       # cd /path/to/QtFirebase/src/ios/CocoaPods
-       # From our example:
-       cd /path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/ios/CocoaPods
-       pod install
-       ```
-    * Run `make_ios_joined_statics.sh` from the QtFirebase project root:
-       ```
-       cd /path/to/QtFirebase/
-       ./make_ios_joined_statics.sh
-       ```
-    * Verify that a set of `lib<name>.a` exists in `/path/to/sdk/firebase_cpp_sdk/libs/ios`
-       ```
-       cd /path/to/sdk/firebase_cpp_sdk/libs/ios/
-       ls | grep lib
-   
-       libadmob.a
-       libanalytics.a
-       libapp.a
-       libremote_config.a
-       ```
-       This step is important as the `make_ios_joined_statics.sh` uses `libtool` to join each of the static libs used from each supported architecture into one combined static lib to link against. We have yet to find out why this is necessary for the project to run properly.
+The project currently uses CocoaPods to build on iOS.
+
+* [Install CocoaPods](http://stackoverflow.com/questions/20755044/how-to-install-cocoa-pods) on your Mac host if you haven't already.
+* Run `pod install`:
+```
+# cd /path/to/QtFirebase/src/ios/CocoaPods
+# From our example:
+cd /path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/ios/CocoaPods
+pod install
+```
+* Run `make_ios_joined_statics.sh` from the QtFirebase project root:
+```
+cd /path/to/QtFirebase/
+./make_ios_joined_statics.sh
+```
+* Verify that a set of `lib<name>.a` exists in `/path/to/sdk/firebase_cpp_sdk/libs/ios`
+```
+cd /path/to/sdk/firebase_cpp_sdk/libs/ios/
+ls | grep lib
+
+libadmob.a
+libanalytics.a
+libapp.a
+libremote_config.a
+```
+This step is important as the `make_ios_joined_statics.sh` uses `libtool` to join each of the static libs used from each supported architecture into one combined static lib to link against. We have yet to find out why this is necessary for the project to run properly.
    
 ## Push the *Run* button
 
-  If you build for Android or iOS you should see output like the following in the "General Messages" tab of QtCreator
-  ```
-  Project MESSAGE: QtFirebase: configuring build for supported Firebase target platform...
-  Project MESSAGE: No QTFIREBASE_SDK_PATH path sat. Using default (firebase_cpp_sdk) /path/to/projects/QtFirebaseExample/extensions/QtFirebase/firebase_cpp_sdk
-  Project MESSAGE: QtFirebase Android base
-  Project MESSAGE: QtFirebase including Analytics
-  Project MESSAGE: QtFirebase including AdMob
-  Project MESSAGE: This project is using private headers and will therefore be tied to this specific Qt module build version.
-  Project MESSAGE: Running this project against other versions of the Qt modules may crash at any arbitrary point.
-  Project MESSAGE: This is not a bug, but a result of using Qt internals. You have been warned!
-  ```
+If you build for Android or iOS you should see output like the following in the "General Messages" tab of QtCreator
+```
+Project MESSAGE: QtFirebase: configuring build for supported Firebase target platform...
+Project MESSAGE: No QTFIREBASE_SDK_PATH path sat. Using default (firebase_cpp_sdk) /path/to/projects/QtFirebaseExample/extensions/QtFirebase/firebase_cpp_sdk
+Project MESSAGE: QtFirebase Android base
+Project MESSAGE: QtFirebase including Analytics
+Project MESSAGE: QtFirebase including AdMob
+Project MESSAGE: This project is using private headers and will therefore be tied to this specific Qt module build version.
+Project MESSAGE: Running this project against other versions of the Qt modules may crash at any arbitrary point.
+Project MESSAGE: This is not a bug, but a result of using Qt internals. You have been warned!
+```
 
-  If you are building for Desktop target the output should be something like this:
-  ```
-  Project MESSAGE: QtFirebase: configuring build for non-supported Firebase target platform...
-  ```
+If you are building for Desktop target the output should be something like this:
+```
+Project MESSAGE: QtFirebase: configuring build for non-supported Firebase target platform...
+```
