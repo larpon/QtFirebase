@@ -29,7 +29,8 @@ public:
     };
     Q_ENUM(Error)
 
-    explicit QtFirebaseRemoteConfig(QObject *parent = 0){Q_UNUSED(parent);}
+    explicit QtFirebaseRemoteConfig(QObject *parent = 0){ Q_UNUSED(parent); }
+
     ~QtFirebaseRemoteConfig() {}
 
     static QtFirebaseRemoteConfig *instance() {
@@ -53,7 +54,8 @@ public slots:
     void addParameter(const QString &name, double defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
     void addParameter(const QString &name, const QString& defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
     void addParameter(const QString &name, bool defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
-    QVariant getParameterValue(const QString &name) const {return name;}
+    QVariant getParameterValue(const QString) const{ return QString(); }
+
     void fetch(){}
     void fetchNow(){}
 
