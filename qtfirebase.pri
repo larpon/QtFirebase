@@ -1,5 +1,5 @@
 # Add the path to your firebase c++ lib on QTFIREBASE_SDK_PATH to your pro / pri file
-# example: QTFIREBASE_SDK_PATH = /home/user/Projects/qt-apps-gradle/library/firebase/firebase_cpp_sdk/
+# example: QTFIREBASE_SDK_PATH = /home/user/Projects/libraries/firebase/firebase_cpp_sdk/
 
 !contains(QTFIREBASE_CONFIG,"noautoregister") {
     DEFINES += QTFIREBASE_AUTO_REGISTER
