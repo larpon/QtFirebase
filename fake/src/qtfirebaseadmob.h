@@ -212,6 +212,82 @@ public slots:
 
 
 /*
+ * AdMobNativeExpressAd
+ */
+class AdMobNativeExpressAd : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
+    Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
+
+    Q_PROPERTY(QString adUnitId READ adUnitId WRITE setAdUnitId NOTIFY adUnitIdChanged)
+
+    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
+
+    Q_PROPERTY(int x READ getX WRITE setX NOTIFY xChanged)
+    Q_PROPERTY(int y READ getY WRITE setY NOTIFY yChanged)
+    Q_PROPERTY(int width READ getWidth WRITE setWidth NOTIFY widthChanged)
+    Q_PROPERTY(int height READ getHeight WRITE setHeight NOTIFY heightChanged)
+
+    Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
+
+public:
+    AdMobNativeExpressAd(QObject* parent = 0) { Q_UNUSED(parent); }
+    ~AdMobNativeExpressAd() {}
+
+    bool ready() { return false; }
+    void setReady(bool ready) { Q_UNUSED(ready); }
+
+    bool loaded() { return false; }
+    void setLoaded(bool loaded) { Q_UNUSED(loaded); }
+
+    QString adUnitId() { return ""; }
+    void setAdUnitId(const QString &adUnitId) { Q_UNUSED(adUnitId); }
+
+    bool visible() { return false; }
+    void setVisible(bool visible) { Q_UNUSED(visible); }
+
+    int getX() { return 0; }
+    void setX(const int &x) { Q_UNUSED(x); }
+
+    int getY() { return 0; }
+    void setY(const int &y) { Q_UNUSED(y); }
+
+    int getWidth() {return 0; }
+    void setWidth(const int &width) { Q_UNUSED(width); }
+
+    int getHeight() { return 0; }
+    void setHeight(const int &height) { Q_UNUSED(height); }
+
+    QtFirebaseAdMobRequest* request()  { return 0; }
+    void setRequest(QtFirebaseAdMobRequest *request) { Q_UNUSED(request); }
+
+signals:
+    void readyChanged();
+    void loadedChanged();
+    void adUnitIdChanged();
+
+    void visibleChanged();
+    void xChanged();
+    void yChanged();
+    void widthChanged();
+    void heightChanged();
+    void requestChanged();
+
+    void loading();
+
+    void error(int errorCode);
+
+public slots:
+    void load() {}
+    void show() {}
+    void hide() {}
+    void moveTo(int x, int y) { Q_UNUSED(x); Q_UNUSED(y); }
+
+};
+
+/*
  * AdMobInterstitial
  */
 class QtFirebaseAdMobInterstitial : public QObject
