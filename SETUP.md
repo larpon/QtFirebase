@@ -59,7 +59,7 @@ QTFIREBASE_CONFIG += analytics admob
 include(../extensions/QtFirebase/qtfirebase.pri) # <- /path/to/QtFirebase/qtfirebase.pri
 ```
     
-## Android
+## Android specifics
     Make sure you have `Google Services` installed and updated on the *target* device. Firebase won't work without it.
     Further more the project needs gradle and the Android NDK (r10d +) to build on Android.
 
@@ -75,7 +75,7 @@ include(../extensions/QtFirebase/qtfirebase.pri) # <- /path/to/QtFirebase/qtfire
     Add the services to your xml file from the below link: https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/AndroidManifest.xml
 
 
-## iOS
+## iOS specifics
 
     Download the Firebase iOS Framework from the below Link and extract it to $$PWD/src/ios/Firebase/
     https://firebase.google.com/docs/ios/setup#frameworks
