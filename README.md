@@ -14,17 +14,27 @@ This is due to Google's own limitations in the Firebase C++ SDK implementation.
 # Features / Status
 The following [features](https://firebase.google.com/docs/cpp/setup) have a working Qt 5 C++ and QML counterpart
 
-Feature | Library | C++ | QML
-------- | ------- | --- | ---
-Base                      |libapp.a             |✓|✓
-AdMob                     |libadmob.a           |✓|✓
-Analytics                 |libanalytics.a       |✓|✓
-~~Authentication~~	          |~~libauth.a~~          | |
-~~Realtime Database~~	        |~~libdatabase.a~~      |in progress |:wrench:
-~~Invites and Dynamic Links~~	|~~libinvites.a~~       | |
-~~Cloud Messaging~~	          |~~libmessaging.a~~     |in progress |:wrench:
-Remote Config             |libremote_config.a   |✓|✓
-~~Storage~~	                  |~~libstorage.a~~       | |
+Feature | Library | C++ | QML | Credits
+------- | ------- | --- | --- | -------
+Base                      |libapp.a             |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
+AdMob                     |libadmob.a           |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
+Analytics                 |libanalytics.a       |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
+~~Authentication~~	          |~~libauth.a~~          |in progress |:wrench: |[Isy](https://github.com/isipisi281)
+~~Realtime Database~~	        |~~libdatabase.a~~      |in progress |:wrench: |[greenfield932](https://github.com/greenfield932)
+~~Invites and Dynamic Links~~	|~~libinvites.a~~       | | |
+Cloud Messaging	          |libmessaging.a     |✓|✓|[Isy](https://github.com/isipisi281)
+Remote Config             |libremote_config.a   |✓|✓|[greenfield932](https://github.com/greenfield932)
+~~Storage~~	                  |~~libstorage.a~~       | | |
+
+## Contributors
+With out these good people this project would not exist.
+
+[Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder),
+[greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
+[Isy](https://github.com/isipisi281) (Cloud Messaging, Misc.),
+[Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.), 
+[li3p](https://github.com/li3p) (Misc.),
+
 
 Tested Firebase C++ SDK versions:
 
@@ -47,32 +57,11 @@ Please use the latest SDK version to get the latest fixes.
 # Setup
 For a working and up-to-date example please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README.
 
-The following outlines what need to be done before you can build and use QtFirebase.
-
-* Download and extract [Google's Firebase C++ SDK](https://firebase.google.com/docs/cpp/setup).
-
-## Android
-Make sure you have `Google Services` installed and updated on the *target* device. Firebase won't work without it.
-
-  * Enable gradle in your QtCreator build options
-  * Add some lines to `gradle.build`
-  * Add some lines to `gradle.properties`
-  * Add some lines to `local.properties`
-  * Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/)
-  * Add the services to your xml file from the below link:
-  * https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/AndroidManifest.xml
-
-
-## iOS
-  * Download the Firebase iOS Framework from the below Link and extract it to $$PWD/src/ios/Firebase/
-  * https://firebase.google.com/docs/ios/setup#frameworks
-  * Add some entries in Info.plist
-  * Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/)
-
+Please see [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) for instructions on how to setup QtFirebase in your QtCreator project.
 
 # Examples
 Please look at the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) repository.
-You will find details here on what to add to your different project files (gradle.build, Info.plist etc.)
+In [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) you will find details on what to add to your different project files (gradle.build, Info.plist etc.)
 
 # Documentation
 Under heavy construction.
