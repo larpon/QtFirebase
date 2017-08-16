@@ -59,11 +59,13 @@ Make sure you have `Google Services` installed and updated on the *target* devic
   * Add some lines to `gradle.properties`
   * Add some lines to `local.properties`
   * Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/)
+  * Add the services to your xml file from the below link:
+  * https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/AndroidManifest.xml
+
 
 ## iOS
-
-  * [Install CocoaPods](http://stackoverflow.com/questions/20755044/how-to-install-cocoa-pods) if you haven't already
-  * Run `pod install` in the `src/ios/CocoaPods` directory
+  * Download the Firebase iOS Framework from the below Link and extract it to $$PWD/src/ios/Firebase/
+  * https://firebase.google.com/docs/ios/setup#frameworks
   * Add some entries in Info.plist
   * Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/)
 

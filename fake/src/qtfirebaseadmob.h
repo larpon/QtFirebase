@@ -71,7 +71,7 @@ public:
     bool ready() { return false; }
     void setReady(bool ready) { Q_UNUSED(ready); }
 
-    QString appId() { return ""; }
+    QString appId() { return QStringLiteral(""); }
     void setAppId(const QString &appId) { Q_UNUSED(appId); }
 
     QVariantList testDevices() { return QVariantList(); }
@@ -88,10 +88,10 @@ private:
 
 };
 
-
 /*
  * AdMobRequest
  */
+
 class QtFirebaseAdMobRequest : public QObject
 {
     Q_OBJECT
@@ -137,6 +137,7 @@ signals:
 /*
  * AdMobBanner
  */
+
 class QtFirebaseAdMobBanner : public QObject
 {
     Q_OBJECT
@@ -165,7 +166,7 @@ public:
     bool loaded() { return false; }
     void setLoaded(bool loaded) { Q_UNUSED(loaded); }
 
-    QString adUnitId() { return ""; }
+    QString adUnitId() { return QStringLiteral(""); }
     void setAdUnitId(const QString &adUnitId) { Q_UNUSED(adUnitId); }
 
     bool visible() { return false; }
@@ -207,9 +208,7 @@ public slots:
     void show() {}
     void hide() {}
     void moveTo(int x, int y) { Q_UNUSED(x); Q_UNUSED(y); }
-
 };
-
 
 /*
  * AdMobNativeExpressAd
@@ -290,6 +289,7 @@ public slots:
 /*
  * AdMobInterstitial
  */
+
 class QtFirebaseAdMobInterstitial : public QObject
 {
     Q_OBJECT
@@ -311,7 +311,7 @@ public:
     bool loaded() { return false; }
     void setLoaded(bool loaded) { Q_UNUSED(loaded); }
 
-    QString adUnitId() { return ""; }
+    QString adUnitId() { return QStringLiteral(""); }
     void setAdUnitId(const QString &adUnitId) { Q_UNUSED(adUnitId); }
 
     bool visible() { return false; }
@@ -333,7 +333,6 @@ signals:
 public slots:
     void load() {}
     void show() {}
-
 };
 
 /*
@@ -394,6 +393,4 @@ public slots:
 };
 
 #endif // QTFIREBASE_BUILD_ADMOB
-
-
 #endif // QTFIREBASE_ADMOB_H

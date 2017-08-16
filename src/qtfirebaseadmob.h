@@ -27,6 +27,7 @@
 /*
  * AdMob (Base singleton object)
  */
+
 class QtFirebaseAdMob : public QObject
 {
     // friend classes so they can read the __testDevices
@@ -124,6 +125,7 @@ private:
 /*
  * AdMob Request
  */
+
 class QtFirebaseAdMobRequest : public QObject
 {
     Q_OBJECT
@@ -194,6 +196,7 @@ private:
 /*
  * AdMobBanner
  */
+
 class QtFirebaseAdMobBanner : public QObject
 {
     Q_OBJECT
@@ -307,11 +310,10 @@ private:
     QTimer *_initTimer;
 
     firebase::admob::BannerView* _banner;
-
 };
 
 /*
- * AdMobNativeExpress
+ * AdMobNativeExpressAd
  */
 class QtFirebaseAdMobNativeExpressAd : public QObject
 {
@@ -428,7 +430,6 @@ private:
     firebase::admob::NativeExpressAdView* _nativeAd;
 
 };
-
 
 /*
  * AdMobInterstitial
@@ -549,7 +550,6 @@ private:
     QtFirebaseAdMobInterstitial* _qtFirebaseAdMobInterstitial;
 };
 
-
 /*
  * AdMobRewardedVideoAd
  *
@@ -660,5 +660,4 @@ private:
 };
 
 #endif // QTFIREBASE_BUILD_ADMOB
-
 #endif // QTFIREBASE_ADMOB_H
