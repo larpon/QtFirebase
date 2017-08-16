@@ -1,5 +1,5 @@
 # Setup
-How to setup up QtFirebase for inclusion and to utilize Firebase in your project.
+How to setup up QtFirebase for inclusion and to utilize Firebase modules in your project.
 
 For a working and up-to-date example that can be compiled in QtCreator please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README. (The example app links back here).
 
@@ -31,7 +31,7 @@ You can either symlink the Firebase C++ SDK to the default search path OR set th
 
 #### Symlink method
 ```
-ln -s /path/to/sdk/firebase_cpp_sdk /path/to/projects/QtFirebaseExample/extensions/QtFirebase/firebase_cpp_sdk
+ln -s /path/to/sdk/firebase_cpp_sdk /path/to/projects/QtFirebase/firebase_cpp_sdk
 ```
 
 #### `QTFIREBASE_SDK_PATH` variable method
@@ -44,43 +44,87 @@ QtFirebaseExample
 |_App
     |_App.pro
 ```
+
 Locate the lines:
 ```
 # NOTE QTFIREBASE_SDK_PATH can be symlinked to match $$PWD/firebase_cpp_sdk
-QTFIREBASE_CONFIG += analytics admob
-# include QtFirebase
-include(../extensions/QtFirebase/qtfirebase.pri)
+...
 ```
-Change it to match your path(s)
+
+Change it to match your path(s) - or leave it to use default `$$PWD/firebase_cpp_sdk`
 ```
 QTFIREBASE_SDK_PATH = /path/to/sdk/firebase_cpp_sdk
-QTFIREBASE_CONFIG += analytics admob
-# include QtFirebase
-include(../extensions/QtFirebase/qtfirebase.pri) # <- /path/to/QtFirebase/qtfirebase.pri
 ```
-    
-## Android specifics
-Make sure you have `Google Services` installed and updated on the *target* device. Firebase won't work without it.
-Further more the project needs gradle and the Android NDK (r10d +) to build on Android.
+([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/App.pro#L68-L72))
+
+#### Choose Firebase modules
+In your project's `.pro` (sub)project file (before including `qtfirebase.pri`) - choose the modules to include:
+```
+QTFIREBASE_CONFIG += analytics messaging admob remote_config
+```
+([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/App.pro#L68-L72))
+
+#### include QtFirebase
+Finally include `qtfirebase.pri` in your project's `.pro` file.
+```
+include(/path/to/QtFirebase/qtfirebase.pri)
+```
+([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/App.pro#L68-L72))
+
+
+## Desktop specific setup
+As Firebase C++ SDK does not support desktop apps - no further setup is needed.
+
+QtFirebase provides "empty shells" or "placeholders" for desktop builds and ***no*** firebase libraries are linked to the application.
+
+## Android specific setup
+When building QtFirebase for Android targets you need the following extra steps to get everything running.
+
+### General
+
+#### Ensure target device has `Google Services` apk installed
+Make sure you have `Google Services` apk installed and updated on the *target* device. Firebase won't work without it.
+Further more the project needs `gradle` and the Android NDK (r10d +) to build on Android.
 
 #### Gradle setup
 Enable gradle in your QtCreator build options
 
-Add these lines to your project's `gradle.build`
-Edit path in `/path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/android/gradle.properties`
-Edit path in `/path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/android/local.properties`
+Edit lines in your project's `gradle.build` to match your dependencies / modules. ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/android/build.gradle#L164-L187))
 
+Edit paths to match your setup in `/path/to/QtFirebase/src/android/gradle.properties`. ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/android/gradle.properties))
+
+Edit paths to match your setup in `/path/to/QtFirebase/src/android/local.properties`.([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/android/local.properties))
+
+#### Firebase configuration
 Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/)
 
-Add the services to your xml file from the below link: https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/AndroidManifest.xml
+### Firebase Messaging specific
+**Note***
+*Using Messaging is only possible with Qt 5.9+ due to some gradle dependencies that needs recent versions the Android SDK/NDK. Upgrading these will also "force" you to upgrade Qt (because of some bugs in QtCreator) in order for it all to work"*
+
+So. If you intend to use Messaging you need some additional setup on Android.
+
+You'll need to have recent versions of your Android SDK/NDK toolchain in order for it to work.
+```
+Android SDK Build-Tools >= 25.0.0
+Android NDK >= r11c
+```
+`gradle >= 2.3.3` [like here](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/android/build.gradle#L18)
+
+#### Services
+Add Messaging specific services to your AndroidManifest.xml file. ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/android/AndroidManifest.xml#L47-L63)).
+
 
 
 ## iOS specifics
 
 Download the Firebase iOS Framework from the below Link and extract it to $$PWD/src/ios/Firebase/
 https://firebase.google.com/docs/ios/setup#frameworks
-Add some entries in Info.plist
-Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/)
+
+
+Add entries in Info.plist. ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/ios/Info.plist#L66-L71))
+
+Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/). ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/App.pro#L54-L56))
 
 The project currently uses CocoaPods to build on iOS.
 
@@ -118,6 +162,7 @@ Project MESSAGE: No QTFIREBASE_SDK_PATH path sat. Using default (firebase_cpp_sd
 Project MESSAGE: QtFirebase Android base
 Project MESSAGE: QtFirebase including Analytics
 Project MESSAGE: QtFirebase including AdMob
+...
 Project MESSAGE: This project is using private headers and will therefore be tied to this specific Qt module build version.
 Project MESSAGE: Running this project against other versions of the Qt modules may crash at any arbitrary point.
 Project MESSAGE: This is not a bug, but a result of using Qt internals. You have been warned!
