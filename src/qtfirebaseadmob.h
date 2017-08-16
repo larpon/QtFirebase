@@ -306,7 +306,7 @@ private:
 
     QTimer *_initTimer;
 
-    firebase::admob::NativeExpressAdView* _banner;
+    firebase::admob::BannerView* _banner;
 
 };
 
@@ -425,7 +425,7 @@ private:
 
     QTimer *_initTimer;
 
-    firebase::admob::BannerView* _banner;
+    firebase::admob::NativeExpressAdView* _nativeAd;
 
 };
 

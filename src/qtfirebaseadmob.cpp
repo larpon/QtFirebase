@@ -731,7 +731,7 @@ void QtFirebaseAdMobBanner::init()
     if(!_ready && !_initializing) {
         _initializing = true;
 
-        _banner = new admob::NativeExpressAdView();
+        _banner = new admob::BannerView();
 
         admob::AdSize ad_size;
         ad_size.ad_size_type = admob::kAdSizeStandard;
@@ -925,8 +925,8 @@ QtFirebaseAdMobNativeAd::QtFirebaseAdMobNativeAd(QObject *parent) : QObject(pare
 QtFirebaseAdMobNativeAd::~QtFirebaseAdMobNativeAd()
 {
     if(_ready) {
-        _banner->Destroy();
-        qFirebase->waitForFutureCompletion(_banner->DestroyLastResult()); // TODO MAYBE move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
+        _nativeAd->Destroy();
+        qFirebase->waitForFutureCompletion(_nativeAd->DestroyLastResult()); // TODO MAYBE move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
         qDebug() << this << "::~QtFirebaseAdMobBanner" << "Destroyed banner";
     }
 }
@@ -992,7 +992,7 @@ void QtFirebaseAdMobNativeAd::setVisible(bool visible)
 
     if(_visible != visible) {
         if(visible) {
-            firebase::FutureBase future = _banner->Show();
+            firebase::FutureBase future = _nativeAd->Show();
             qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
             if(future.error() != admob::kAdMobErrorNone) {
                 qDebug() << this << "::setVisible" << visible <<  "ERROR code" << future.error() << "message" << future.error_message();
@@ -1000,7 +1000,7 @@ void QtFirebaseAdMobNativeAd::setVisible(bool visible)
             }
             qDebug() << this << "::setVisible native showed";
         } else {
-            firebase::FutureBase future = _banner->Hide();
+            firebase::FutureBase future = _nativeAd->Hide();
             qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
             if(future.error() != admob::kAdMobErrorNone) {
                 qDebug() << this << "::setVisible" << visible << "ERROR code" << future.error() << "message" << future.error_message();
@@ -1032,7 +1032,7 @@ void QtFirebaseAdMobNativeAd::setX(const int &x)
 
     if(_x != x) {
         qDebug() << this << "::setX moving to" << x << "," << _y;
-        _banner->MoveTo(x, _y); // NOTE Potential dangerous code? The code below is more safe but will hang until the "I give up limit" is reached on some devices :/
+        _nativeAd->MoveTo(x, _y); // NOTE Potential dangerous code? The code below is more safe but will hang until the "I give up limit" is reached on some devices :/
         // This can mybe be fixed by using the Listeners for the bounding rect??
         /*
         firebase::FutureBase future = _banner->MoveTo(x, _y);
@@ -1066,7 +1066,7 @@ void QtFirebaseAdMobNativeAd::setY(const int &y)
 
     if(_y != y) {
         qDebug() << this << "::setY moving to" << _x << "," << y;
-        _banner->MoveTo(_x, y); // NOTE Potential dangerous code? The code below is more safe but will hang until the "I give up limit" is reached on some devices :/
+        _nativeAd->MoveTo(_x, y); // NOTE Potential dangerous code? The code below is more safe but will hang until the "I give up limit" is reached on some devices :/
         /*
         firebase::FutureBase future = _banner->MoveTo(_x, y);
         qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
@@ -1157,7 +1157,7 @@ void QtFirebaseAdMobNativeAd::init()
     if(!_ready && !_initializing) {
         _initializing = true;
 
-        _banner = new admob::NativeExpressAdView();
+        _nativeAd = new admob::NativeExpressAdView();
 
         admob::AdSize ad_size;
         ad_size.ad_size_type = admob::kAdSizeStandard;
@@ -1167,7 +1167,7 @@ void QtFirebaseAdMobNativeAd::init()
         // A reference to an iOS UIView or an Android Activity.
         // This is the parent UIView or Activity of the banner view.
         qDebug() << this << "::init initializing with AdUnitID" << __adUnitIdByteArray.constData();
-        firebase::FutureBase future = _banner->Initialize(static_cast<admob::AdParent>(_nativeUIElement), __adUnitIdByteArray.constData(), ad_size);
+        firebase::FutureBase future = _nativeAd->Initialize(static_cast<admob::AdParent>(_nativeUIElement), __adUnitIdByteArray.constData(), ad_size);
         qDebug() << this << "::init" << "native initialized";
         qFirebase->addFuture(__QTFIREBASE_ID + ".nativead.init",future);
 
@@ -1239,7 +1239,7 @@ void QtFirebaseAdMobNativeAd::load()
     qDebug() << this << "::load() getting request data";
     emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
-    firebase::FutureBase future = _banner->LoadAd(request);
+    firebase::FutureBase future = _nativeAd->LoadAd(request);
     qFirebase->addFuture(__QTFIREBASE_ID + ".nativead.loaded",future);
 }
 
@@ -1258,7 +1258,7 @@ void QtFirebaseAdMobNativeAd::moveTo(int x, int y)
 {
     if(_ready) {
         qDebug() << this << "::moveTo moving to" << x << "," << y;
-        _banner->MoveTo(x, y); // NOTE Potential dangerous code? The code below is more safe but will hang until the "I give up limit" is reached on some devices :/
+        _nativeAd->MoveTo(x, y); // NOTE Potential dangerous code? The code below is more safe but will hang until the "I give up limit" is reached on some devices :/
         /*
         firebase::FutureBase future = _banner->MoveTo(x, y);
         qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
@@ -1292,22 +1292,22 @@ void QtFirebaseAdMobNativeAd::moveTo(int position)
     // The code below is more safe but will hang until the "I give up limit" is reached on some devices if using a waitforfuture... strategy :/
     if(position == PositionTopCenter) {
         qDebug() << this << "::moveTo position top-center";
-        _banner->MoveTo(admob::NativeExpressAdView::kPositionTop);
+        _nativeAd->MoveTo(admob::NativeExpressAdView::kPositionTop);
     } else if(position == PositionTopLeft) {
         qDebug() << this << "::moveTo position top-left";
-        _banner->MoveTo(admob::NativeExpressAdView::kPositionTopLeft);
+        _nativeAd->MoveTo(admob::NativeExpressAdView::kPositionTopLeft);
     } else if(position == PositionTopRight) {
         qDebug() << this << "::moveTo position top-right";
-        _banner->MoveTo(admob::NativeExpressAdView::kPositionTopRight);
+        _nativeAd->MoveTo(admob::NativeExpressAdView::kPositionTopRight);
     } else if(position == PositionBottomCenter) {
         qDebug() << this << "::moveTo position bottom-center";
-        _banner->MoveTo(admob::NativeExpressAdView::kPositionBottom);
+        _nativeAd->MoveTo(admob::NativeExpressAdView::kPositionBottom);
     } else if(position == PositionBottomLeft) {
         qDebug() << this << "::moveTo position bottom-left";
-        _banner->MoveTo(admob::NativeExpressAdView::kPositionBottomLeft);
+        _nativeAd->MoveTo(admob::NativeExpressAdView::kPositionBottomLeft);
     } else if(position == PositionBottomRight) {
         qDebug() << this << "::moveTo position bottom-right";
-        _banner->MoveTo(admob::NativeExpressAdView::kPositionBottomRight);
+        _nativeAd->MoveTo(admob::NativeExpressAdView::kPositionBottomRight);
     } else {
         qDebug() << this << "::moveTo position unknown" << position;
     }
