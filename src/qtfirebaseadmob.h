@@ -313,7 +313,7 @@ private:
 /*
  * AdMobNativeExpress
  */
-class QtFirebaseAdMobNativeAd : public QObject
+class QtFirebaseAdMobNativeExpressAd : public QObject
 {
     Q_OBJECT
 
@@ -343,8 +343,8 @@ public:
     };
     Q_ENUM(Position)
 
-    QtFirebaseAdMobNativeAd(QObject* parent = 0);
-    ~QtFirebaseAdMobNativeAd();
+    QtFirebaseAdMobNativeExpressAd(QObject* parent = 0);
+    ~QtFirebaseAdMobNativeExpressAd();
 
     bool ready();
     void setReady(bool ready);

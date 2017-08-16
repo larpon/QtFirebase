@@ -890,10 +890,10 @@ void QtFirebaseAdMobBanner::moveTo(int position)
 
 
 /*
- * AdMobBanner
+ * AdMobNativeExpressAd
  *
  */
-QtFirebaseAdMobNativeAd::QtFirebaseAdMobNativeAd(QObject *parent) : QObject(parent)
+QtFirebaseAdMobNativeExpressAd::QtFirebaseAdMobNativeExpressAd(QObject *parent) : QObject(parent)
 {
     __QTFIREBASE_ID = QString().sprintf("%8p", this);
     _ready = false;
@@ -913,30 +913,30 @@ QtFirebaseAdMobNativeAd::QtFirebaseAdMobNativeAd(QObject *parent) : QObject(pare
     //connect(this,&QtFirebaseAdMobNativeAd::visibleChanged, this, &QtFirebaseAdMobNativeAd::onVisibleChanged);
 
     _initTimer = new QTimer(this);
-    connect(_initTimer, &QTimer::timeout, this, &QtFirebaseAdMobNativeAd::init);
+    connect(_initTimer, &QTimer::timeout, this, &QtFirebaseAdMobNativeExpressAd::init);
     _initTimer->start(500);
 
-    connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobNativeAd::onFutureEvent);
+    connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobNativeExpressAd::onFutureEvent);
 
-    connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobNativeAd::onApplicationStateChanged);
+    connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobNativeExpressAd::onApplicationStateChanged);
 
 }
 
-QtFirebaseAdMobNativeAd::~QtFirebaseAdMobNativeAd()
+QtFirebaseAdMobNativeExpressAd::~QtFirebaseAdMobNativeExpressAd()
 {
     if(_ready) {
         _nativeAd->Destroy();
         qFirebase->waitForFutureCompletion(_nativeAd->DestroyLastResult()); // TODO MAYBE move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
-        qDebug() << this << "::~QtFirebaseAdMobBanner" << "Destroyed banner";
+        qDebug() << this << "::~QtFirebaseAdMobNativeExpressAd" << "Destroyed";
     }
 }
 
-bool QtFirebaseAdMobNativeAd::ready()
+bool QtFirebaseAdMobNativeExpressAd::ready()
 {
     return _ready;
 }
 
-void QtFirebaseAdMobNativeAd::setReady(bool ready)
+void QtFirebaseAdMobNativeExpressAd::setReady(bool ready)
 {
     if (_ready != ready) {
         _ready = ready;
@@ -944,12 +944,12 @@ void QtFirebaseAdMobNativeAd::setReady(bool ready)
     }
 }
 
-bool QtFirebaseAdMobNativeAd::loaded()
+bool QtFirebaseAdMobNativeExpressAd::loaded()
 {
     return _loaded;
 }
 
-void QtFirebaseAdMobNativeAd::setLoaded(bool loaded)
+void QtFirebaseAdMobNativeExpressAd::setLoaded(bool loaded)
 {
     if(_loaded != loaded) {
         _loaded = loaded;
@@ -958,12 +958,12 @@ void QtFirebaseAdMobNativeAd::setLoaded(bool loaded)
     }
 }
 
-QString QtFirebaseAdMobNativeAd::adUnitId()
+QString QtFirebaseAdMobNativeExpressAd::adUnitId()
 {
     return _adUnitId;
 }
 
-void QtFirebaseAdMobNativeAd::setAdUnitId(const QString &adUnitId)
+void QtFirebaseAdMobNativeExpressAd::setAdUnitId(const QString &adUnitId)
 {
     if(_adUnitId != adUnitId) {
         _adUnitId = adUnitId;
@@ -973,12 +973,12 @@ void QtFirebaseAdMobNativeAd::setAdUnitId(const QString &adUnitId)
     }
 }
 
-bool QtFirebaseAdMobNativeAd::visible()
+bool QtFirebaseAdMobNativeExpressAd::visible()
 {
     return _visible;
 }
 
-void QtFirebaseAdMobNativeAd::setVisible(bool visible)
+void QtFirebaseAdMobNativeExpressAd::setVisible(bool visible)
 {
     if(!_ready) {
         qDebug() << this << "::setVisible native part not ready";
@@ -998,7 +998,7 @@ void QtFirebaseAdMobNativeAd::setVisible(bool visible)
                 qDebug() << this << "::setVisible" << visible <<  "ERROR code" << future.error() << "message" << future.error_message();
                 return;
             }
-            qDebug() << this << "::setVisible native showed";
+            qDebug() << this << "::setVisible native express ad showed";
         } else {
             firebase::FutureBase future = _nativeAd->Hide();
             qFirebase->waitForFutureCompletion(future); // TODO move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
@@ -1006,19 +1006,19 @@ void QtFirebaseAdMobNativeAd::setVisible(bool visible)
                 qDebug() << this << "::setVisible" << visible << "ERROR code" << future.error() << "message" << future.error_message();
                 return;
             }
-            qDebug() << this << "::setVisible native hidden";
+            qDebug() << this << "::setVisible native express ad hidden";
         }
         _visible = visible;
         emit visibleChanged();
     }
 }
 
-int QtFirebaseAdMobNativeAd::getX()
+int QtFirebaseAdMobNativeExpressAd::getX()
 {
     return _x;
 }
 
-void QtFirebaseAdMobNativeAd::setX(const int &x)
+void QtFirebaseAdMobNativeExpressAd::setX(const int &x)
 {
     if(!_ready) {
         qDebug() << this << "::setX native part not ready - so not moving";
@@ -1047,12 +1047,12 @@ void QtFirebaseAdMobNativeAd::setX(const int &x)
     }
 }
 
-int QtFirebaseAdMobNativeAd::getY()
+int QtFirebaseAdMobNativeExpressAd::getY()
 {
     return _y;
 }
 
-void QtFirebaseAdMobNativeAd::setY(const int &y)
+void QtFirebaseAdMobNativeExpressAd::setY(const int &y)
 {
     if(!_ready) {
         qDebug() << this << "::setY native part not ready - so not moving";
@@ -1081,12 +1081,12 @@ void QtFirebaseAdMobNativeAd::setY(const int &y)
     }
 }
 
-int QtFirebaseAdMobNativeAd::getWidth()
+int QtFirebaseAdMobNativeExpressAd::getWidth()
 {
     return _width;
 }
 
-void QtFirebaseAdMobNativeAd::setWidth(const int &width)
+void QtFirebaseAdMobNativeExpressAd::setWidth(const int &width)
 {
     if(_width != width) {
         _width = width;
@@ -1094,12 +1094,12 @@ void QtFirebaseAdMobNativeAd::setWidth(const int &width)
     }
 }
 
-int QtFirebaseAdMobNativeAd::getHeight()
+int QtFirebaseAdMobNativeExpressAd::getHeight()
 {
     return _height;
 }
 
-void QtFirebaseAdMobNativeAd::setHeight(const int &height)
+void QtFirebaseAdMobNativeExpressAd::setHeight(const int &height)
 {
     if(_height != height) {
         _height = height;
@@ -1107,12 +1107,12 @@ void QtFirebaseAdMobNativeAd::setHeight(const int &height)
     }
 }
 
-QtFirebaseAdMobRequest* QtFirebaseAdMobNativeAd::request() const
+QtFirebaseAdMobRequest* QtFirebaseAdMobNativeExpressAd::request() const
 {
     return _request;
 }
 
-void QtFirebaseAdMobNativeAd::setRequest(QtFirebaseAdMobRequest* request)
+void QtFirebaseAdMobNativeExpressAd::setRequest(QtFirebaseAdMobRequest* request)
 {
     if(_request != request) {
         _request = request;
@@ -1120,7 +1120,7 @@ void QtFirebaseAdMobNativeAd::setRequest(QtFirebaseAdMobRequest* request)
     }
 }
 
-void QtFirebaseAdMobNativeAd::init()
+void QtFirebaseAdMobNativeExpressAd::init()
 {
     //qDebug() << "QtFirebase.AdMobBanner pre-initialize _ready" << _ready << "_init" << _initializing;
     if(!qFirebase->ready()) {
@@ -1165,21 +1165,21 @@ void QtFirebaseAdMobNativeAd::init()
         ad_size.height = getHeight();
 
         // A reference to an iOS UIView or an Android Activity.
-        // This is the parent UIView or Activity of the banner view.
+        // This is the parent UIView or Activity of the native express ad view.
         qDebug() << this << "::init initializing with AdUnitID" << __adUnitIdByteArray.constData();
         firebase::FutureBase future = _nativeAd->Initialize(static_cast<admob::AdParent>(_nativeUIElement), __adUnitIdByteArray.constData(), ad_size);
         qDebug() << this << "::init" << "native initialized";
-        qFirebase->addFuture(__QTFIREBASE_ID + ".nativead.init",future);
+        qFirebase->addFuture(__QTFIREBASE_ID + ".nativeexpressad.init",future);
 
     }
 }
 
-void QtFirebaseAdMobNativeAd::onFutureEvent(QString eventId, firebase::FutureBase future)
+void QtFirebaseAdMobNativeExpressAd::onFutureEvent(QString eventId, firebase::FutureBase future)
 {
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
 
-    if(eventId == __QTFIREBASE_ID+".nativead.init") {
+    if(eventId == __QTFIREBASE_ID+".nativeexpressad.init") {
 
         if (future.error() != admob::kAdMobErrorNone) {
             qDebug() << this << "::onFutureEvent" << "initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
@@ -1196,7 +1196,7 @@ void QtFirebaseAdMobNativeAd::onFutureEvent(QString eventId, firebase::FutureBas
         setReady(true);
     }
 
-    if(eventId == __QTFIREBASE_ID+".nativead.loaded") {
+    if(eventId == __QTFIREBASE_ID+".nativeexpressad.loaded") {
 
         if (future.error() != admob::kAdMobErrorNone) {
             int errorCode = future.error();
@@ -1211,7 +1211,7 @@ void QtFirebaseAdMobNativeAd::onFutureEvent(QString eventId, firebase::FutureBas
     }
 }
 
-void QtFirebaseAdMobNativeAd::onApplicationStateChanged(Qt::ApplicationState state)
+void QtFirebaseAdMobNativeExpressAd::onApplicationStateChanged(Qt::ApplicationState state)
 {
     // NOTE makes sure the ad banner is on top of the Qt surface
     #if defined(__ANDROID__)
@@ -1224,7 +1224,7 @@ void QtFirebaseAdMobNativeAd::onApplicationStateChanged(Qt::ApplicationState sta
     #endif
 }
 
-void QtFirebaseAdMobNativeAd::load()
+void QtFirebaseAdMobNativeExpressAd::load()
 {
     if(!_ready) {
         qDebug() << this << "::load" << "not ready";
@@ -1240,21 +1240,21 @@ void QtFirebaseAdMobNativeAd::load()
     emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = _nativeAd->LoadAd(request);
-    qFirebase->addFuture(__QTFIREBASE_ID + ".nativead.loaded",future);
+    qFirebase->addFuture(__QTFIREBASE_ID + ".nativeexpressad.loaded",future);
 }
 
 
-void QtFirebaseAdMobNativeAd::show()
+void QtFirebaseAdMobNativeExpressAd::show()
 {
     setVisible(true);
 }
 
-void QtFirebaseAdMobNativeAd::hide()
+void QtFirebaseAdMobNativeExpressAd::hide()
 {
     setVisible(false);
 }
 
-void QtFirebaseAdMobNativeAd::moveTo(int x, int y)
+void QtFirebaseAdMobNativeExpressAd::moveTo(int x, int y)
 {
     if(_ready) {
         qDebug() << this << "::moveTo moving to" << x << "," << y;
@@ -1281,7 +1281,7 @@ void QtFirebaseAdMobNativeAd::moveTo(int x, int y)
     }
 }
 
-void QtFirebaseAdMobNativeAd::moveTo(int position)
+void QtFirebaseAdMobNativeExpressAd::moveTo(int position)
 {
     if(!_ready) {
         qDebug() << this << "::moveTo" << "not ready";
