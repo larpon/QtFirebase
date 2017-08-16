@@ -14,17 +14,27 @@ This is due to Google's own limitations in the Firebase C++ SDK implementation.
 # Features / Status
 The following [features](https://firebase.google.com/docs/cpp/setup) have a working Qt 5 C++ and QML counterpart
 
-Feature | Library | C++ | QML
-------- | ------- | --- | ---
-Base                      |libapp.a             |✓|✓
-AdMob                     |libadmob.a           |✓|✓
-Analytics                 |libanalytics.a       |✓|✓
-~~Authentication~~	          |~~libauth.a~~          |in progress |:wrench:
-~~Realtime Database~~	        |~~libdatabase.a~~      |in progress |:wrench:
-~~Invites and Dynamic Links~~	|~~libinvites.a~~       | |
-Cloud Messaging	          |libmessaging.a     |✓|✓
-Remote Config             |libremote_config.a   |✓|✓
-~~Storage~~	                  |~~libstorage.a~~       | |
+Feature | Library | C++ | QML | Credits
+------- | ------- | --- | --- | -------
+Base                      |libapp.a             |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
+AdMob                     |libadmob.a           |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
+Analytics                 |libanalytics.a       |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
+~~Authentication~~	          |~~libauth.a~~          |in progress |:wrench: |[Isy](https://github.com/isipisi281)
+~~Realtime Database~~	        |~~libdatabase.a~~      |in progress |:wrench: |[greenfield932](https://github.com/greenfield932)
+~~Invites and Dynamic Links~~	|~~libinvites.a~~       | | |
+Cloud Messaging	          |libmessaging.a     |✓|✓|[Isy](https://github.com/isipisi281)
+Remote Config             |libremote_config.a   |✓|✓|[greenfield932](https://github.com/greenfield932)
+~~Storage~~	                  |~~libstorage.a~~       | | |
+
+## Contributors
+With out these good people this project would not exist.
+
+[Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder),
+[greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
+[Isy](https://github.com/isipisi281) (Cloud Messaging, Misc.),
+[Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.), 
+[li3p](https://github.com/li3p) (Misc.),
+
 
 Tested Firebase C++ SDK versions:
 
