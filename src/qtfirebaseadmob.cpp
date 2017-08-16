@@ -1169,8 +1169,8 @@ void QtFirebaseAdMobInterstitial::show()
 QtFirebaseAdMobRewardedVideoAd::QtFirebaseAdMobRewardedVideoAd(QObject* parent):
     QObject(parent),
     _ready(false),
-    _loaded(false),
     _initializing(false),
+    _loaded(false),
     _isFirstInit(true),
     _visible(false),
     _request(nullptr),
