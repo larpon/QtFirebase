@@ -1,71 +1,65 @@
-# UNDER CONSTRUCTION
-
 # Setup
-How to setup up QtFirebase for inclusion in your project.
+How to setup up QtFirebase for inclusion and to utilize Firebase in your project.
 
 For a working and up-to-date example that can be compiled in QtCreator please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README. (The example app links back here).
 
 ## Base setup
 
-1. Clone the [QtFirebase](https://github.com/Larpon/QtFirebase) project
+### Clone the [QtFirebase](https://github.com/Larpon/QtFirebase) project
 
-  * **Clone the QtFirebase project** if you haven't already
-  
-    Clone into the "extensions" or "vendor" folder or into any other folder of your choice.
-    Here we use the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) structure.
-    ```
-    cd /path/to/projects/QtFirebaseExample/extensions
-    git clone git@github.com:Larpon/QtFirebase.git
-    ```
+Clone into the "extensions" or "vendor" folder or into any other folder of your choice.
+Here we use the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) structure.
+
+```
+cd /path/to/projects/QtFirebaseExample/extensions
+git clone git@github.com:Larpon/QtFirebase.git
+```
     
-2. Download and extract the latest version of [Google's Firebase C++ SDK](https://firebase.google.com/docs/cpp/setup).
+### Download and extract the latest version of [Google's Firebase C++ SDK](https://firebase.google.com/docs/cpp/setup).
 
-  ```
-  cd /path/to/download
-  wget https://dl.google.com/firebase/sdk/cpp/firebase_cpp_sdk_4.0.3.zip
-  unzip firebase_cpp_sdk_4.0.3.zip -d /path/to/sdk
-  ```
+```
+cd /path/to/download
+wget https://dl.google.com/firebase/sdk/cpp/firebase_cpp_sdk_4.0.3.zip
+unzip firebase_cpp_sdk_4.0.3.zip -d /path/to/sdk
+```
 
-3. Add symlink OR set `QTFIREBASE_SDK_PATH` variable
+### Add symlink OR set `QTFIREBASE_SDK_PATH` variable
 
-  If you have multiple projects using QtFirebase it's a space-saver to have the Firebase C++ SDK (~832 MB) in one place.
+If you have multiple projects using QtFirebase it's a space-saver to have the Firebase C++ SDK (~832 MB) in one place.
 
-  So you can either symlink the Firebase C++ SDK to the default search path OR set the `QTFIREBASE_SDK_PATH` variable to the absolute path of the SDK in your project's `.pro` file for the app build.
+You can either symlink the Firebase C++ SDK to the default search path OR set the `QTFIREBASE_SDK_PATH` variable to the absolute path of the SDK in your project's `.pro` file for the app build.
 
-  * **Symlink**
-  
-    ```
-    ln -s /path/to/sdk/firebase_cpp_sdk /path/to/projects/QtFirebaseExample/extensions/QtFirebase/firebase_cpp_sdk
-    ```
+#### Symlink method
+```
+ln -s /path/to/sdk/firebase_cpp_sdk /path/to/projects/QtFirebaseExample/extensions/QtFirebase/firebase_cpp_sdk
+```
 
-  * **`QTFIREBASE_SDK_PATH` variable**
-  
-    Open the example project with QtCreator `/path/to/projects/QtFirebaseExample/QtFirebaseExample.pro`
-    Navigate to the `App.pro` (sub)project file in the Project pane
-    ```
-    QtFirebaseExample
-    |_...
-    |_App
-        |_App.pro
-    ```
-    Locate the lines:
-    ```
-    # NOTE QTFIREBASE_SDK_PATH can be symlinked to match $$PWD/firebase_cpp_sdk
-    QTFIREBASE_CONFIG += analytics admob
-    # include QtFirebase
-    include(../extensions/QtFirebase/qtfirebase.pri)
-    ```
-    Change it to match your path(s)
-    ```
-    QTFIREBASE_SDK_PATH = /path/to/sdk/firebase_cpp_sdk
-    QTFIREBASE_CONFIG += analytics admob
-    # include QtFirebase
-    include(../extensions/QtFirebase/qtfirebase.pri) # <- /path/to/QtFirebase/qtfirebase.pri
-    ```
+#### `QTFIREBASE_SDK_PATH` variable method
+
+Open your project with QtCreator
+Navigate to the `.pro` (sub)project file in the Project pane
+```
+QtFirebaseExample
+|_...
+|_App
+    |_App.pro
+```
+Locate the lines:
+```
+# NOTE QTFIREBASE_SDK_PATH can be symlinked to match $$PWD/firebase_cpp_sdk
+QTFIREBASE_CONFIG += analytics admob
+# include QtFirebase
+include(../extensions/QtFirebase/qtfirebase.pri)
+```
+Change it to match your path(s)
+```
+QTFIREBASE_SDK_PATH = /path/to/sdk/firebase_cpp_sdk
+QTFIREBASE_CONFIG += analytics admob
+# include QtFirebase
+include(../extensions/QtFirebase/qtfirebase.pri) # <- /path/to/QtFirebase/qtfirebase.pri
+```
     
-4. Almost done
-  
-    ### Android
+## Android
     Make sure you have `Google Services` installed and updated on the *target* device. Firebase won't work without it.
     Further more the project needs gradle and the Android NDK (r10d +) to build on Android.
 
@@ -75,13 +69,13 @@ For a working and up-to-date example that can be compiled in QtCreator please fo
     Add these lines to your project's `gradle.build`
     Edit path in `/path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/android/gradle.properties`
     Edit path in `/path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/android/local.properties`
-  
+
     Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/)
-    
+
     Add the services to your xml file from the below link: https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/AndroidManifest.xml
 
 
-    ## iOS
+## iOS
 
     Download the Firebase iOS Framework from the below Link and extract it to $$PWD/src/ios/Firebase/
     https://firebase.google.com/docs/ios/setup#frameworks
@@ -115,7 +109,7 @@ For a working and up-to-date example that can be compiled in QtCreator please fo
        ```
        This step is important as the `make_ios_joined_statics.sh` uses `libtool` to join each of the static libs used from each supported architecture into one combined static lib to link against. We have yet to find out why this is necessary for the project to run properly.
    
-5. Push the *Run* button
+## Push the *Run* button
 
   If you build for Android or iOS you should see output like the following in the "General Messages" tab of QtCreator
   ```
