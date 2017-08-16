@@ -47,11 +47,11 @@ Please use the latest SDK version to get the latest fixes.
 # Setup
 For a working and up-to-date example please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README.
 
-Please see [SETUP](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) for instructions on how to setup QtFirebase in your QtCreator project.
+Please see [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) for instructions on how to setup QtFirebase in your QtCreator project.
 
 # Examples
 Please look at the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) repository.
-You will find details here on what to add to your different project files (gradle.build, Info.plist etc.)
+In [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) you will find details on what to add to your different project files (gradle.build, Info.plist etc.)
 
 # Documentation
 Under heavy construction.
