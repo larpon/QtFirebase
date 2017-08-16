@@ -19,6 +19,7 @@ class QtFirebaseRemoteConfig : public QObject
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
     Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
     Q_PROPERTY(long long cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
+
 public:
     enum Error
     {
@@ -30,14 +31,15 @@ public:
 
     explicit QtFirebaseRemoteConfig(QObject *parent = 0){}
     ~QtFirebaseRemoteConfig() {}
+
     static QtFirebaseRemoteConfig *instance() {
             if(self == 0) {
                 self = new QtFirebaseRemoteConfig(0);
             }
             return self;
         }
-    bool checkInstance(const char *function);
 
+    bool checkInstance(const char *function);
     bool ready(){return false;}
 
     QVariantMap parameters() const{return QVariantMap();}
@@ -45,14 +47,16 @@ public:
 
     long long cacheExpirationTime() const{return 0;}
     void setCacheExpirationTime(long long timeMs){Q_UNUSED(timeMs);}
+
 public slots:
     void addParameter(const QString &name, long long defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
     void addParameter(const QString &name, double defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
     void addParameter(const QString &name, const QString& defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
     void addParameter(const QString &name, bool defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
-    QVariant getParameterValue(const QString &name) const{return QString();}
+    QVariant getParameterValue(const QString &name) const {return QString();}
     void fetch(){}
     void fetchNow(){}
+
 signals:
     void readyChanged();
     void error(Error code, QString message);
@@ -63,7 +67,6 @@ private:
     static QtFirebaseRemoteConfig *self;
     Q_DISABLE_COPY(QtFirebaseRemoteConfig)
 };
+
 #endif //QTFIREBASE_BUILD_REMOTE_CONFIG
-
 #endif // QTFIREBASEREMOTECONFIG_H
-

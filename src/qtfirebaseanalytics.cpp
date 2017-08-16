@@ -35,7 +35,6 @@ bool QtFirebaseAnalytics::checkInstance(const char *function)
     if (!b)
         qWarning("QtFirebaseAnalytics::%s: Please instantiate the QtFirebaseAnalytics object first", function);
     return b;
-
 }
 
 void QtFirebaseAnalytics::setUserProperty(const QString &propertyName, const QString &propertyValue)
@@ -300,7 +299,6 @@ void QtFirebaseAnalytics::setMinimumSessionDuration(unsigned int minimumSessionD
         emit minimumSessionDurationChanged();
     }
 }
-
 
 void QtFirebaseAnalytics::init()
 {

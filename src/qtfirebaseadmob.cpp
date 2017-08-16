@@ -2,6 +2,7 @@
 
 #include <QGuiApplication>
 #include <qqmlfile.h>
+#include <QString>
 
 namespace admob = ::firebase::admob;
 
@@ -9,6 +10,7 @@ namespace admob = ::firebase::admob;
  * AdMob
  * (Base AdMob Object)
  */
+
 QtFirebaseAdMob *QtFirebaseAdMob::self = 0;
 
 QtFirebaseAdMob::QtFirebaseAdMob(QObject* parent) : QObject(parent)
@@ -29,9 +31,6 @@ QtFirebaseAdMob::QtFirebaseAdMob(QObject* parent) : QObject(parent)
         connect(qFirebase,&QtFirebase::readyChanged, self, &QtFirebaseAdMob::init);
         qFirebase->requestInit();
     }
-
-
-
 }
 
 QtFirebaseAdMob::~QtFirebaseAdMob()
@@ -46,7 +45,6 @@ bool QtFirebaseAdMob::checkInstance(const char *function)
     if (!b)
         qWarning("QtFirebaseAdMob::%s: Please instantiate the QtFirebaseAdMob object first", function);
     return b;
-
 }
 
 QtFirebaseAdMob::Error QtFirebaseAdMob::convertAdMobErrorCode(int admobErrorCode)
@@ -81,7 +79,6 @@ QtFirebaseAdMob::Error QtFirebaseAdMob::convertAdMobErrorCode(int admobErrorCode
     }
 }
 
-
 bool QtFirebaseAdMob::ready()
 {
     return _ready;
@@ -112,7 +109,6 @@ void QtFirebaseAdMob::setAppId(const QString &adMobAppId)
     }
 }
 
-
 QVariantList QtFirebaseAdMob::testDevices()
 {
     return _testDevices;
@@ -122,7 +118,6 @@ void QtFirebaseAdMob::setTestDevices(QVariantList testDevices)
 {
     if(_testDevices != testDevices) {
         _testDevices = testDevices;
-
 
         __testDevicesByteArrayList.clear();
 
@@ -151,7 +146,6 @@ void QtFirebaseAdMob::setTestDevices(QVariantList testDevices)
         emit testDevicesChanged();
     }
 }
-
 
 void QtFirebaseAdMob::init()
 {
@@ -337,7 +331,6 @@ void QtFirebaseAdMobRequest::setExtras(const QVariantList &extras)
     }
 }
 
-
 QVariantList QtFirebaseAdMobRequest::testDevices()
 {
     return _testDevices;
@@ -462,11 +455,11 @@ admob::AdRequest QtFirebaseAdMobRequest::asAdMobRequest()
     return _admobRequest;
 }
 
-
 /*
  * AdMobBanner
  *
  */
+
 QtFirebaseAdMobBanner::QtFirebaseAdMobBanner(QObject *parent) : QObject(parent)
 {
     __QTFIREBASE_ID = QString().sprintf("%8p", this);
@@ -493,7 +486,6 @@ QtFirebaseAdMobBanner::QtFirebaseAdMobBanner(QObject *parent) : QObject(parent)
     connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobBanner::onFutureEvent);
 
     connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobBanner::onApplicationStateChanged);
-
 }
 
 QtFirebaseAdMobBanner::~QtFirebaseAdMobBanner()
@@ -743,8 +735,7 @@ void QtFirebaseAdMobBanner::init()
         qDebug() << this << "::init initializing with AdUnitID" << __adUnitIdByteArray.constData();
         firebase::FutureBase future = _banner->Initialize(static_cast<admob::AdParent>(_nativeUIElement), __adUnitIdByteArray.constData(), ad_size);
         qDebug() << this << "::init" << "native initialized";
-        qFirebase->addFuture(__QTFIREBASE_ID + ".banner.init",future);
-
+        qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".banner.init"),future);
     }
 }
 
@@ -753,7 +744,7 @@ void QtFirebaseAdMobBanner::onFutureEvent(QString eventId, firebase::FutureBase 
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
 
-    if(eventId == __QTFIREBASE_ID+".banner.init") {
+    if(eventId == __QTFIREBASE_ID + QStringLiteral(".banner.init")) {
 
         if (future.error() != admob::kAdMobErrorNone) {
             qDebug() << this << "::onFutureEvent" << "initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
@@ -770,13 +761,13 @@ void QtFirebaseAdMobBanner::onFutureEvent(QString eventId, firebase::FutureBase 
         setReady(true);
     }
 
-    if(eventId == __QTFIREBASE_ID+".banner.loaded") {
+    if(eventId == __QTFIREBASE_ID + QStringLiteral(".banner.loaded")) {
 
         if (future.error() != admob::kAdMobErrorNone) {
             int errorCode = future.error();
             qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << future.error_message();
             // TODO fix me
-            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode),QString(future.error_message()));
+            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode),QString(QString::fromUtf8(future.error_message())));
             return;
         }
 
@@ -788,14 +779,14 @@ void QtFirebaseAdMobBanner::onFutureEvent(QString eventId, firebase::FutureBase 
 void QtFirebaseAdMobBanner::onApplicationStateChanged(Qt::ApplicationState state)
 {
     // NOTE makes sure the ad banner is on top of the Qt surface
-    #if defined(__ANDROID__)
+#if defined(__ANDROID__)
     if(state != Qt::ApplicationActive)
         hide();
     else
         show();
-    #else
+#else
     Q_UNUSED(state);
-    #endif
+#endif
 }
 
 void QtFirebaseAdMobBanner::load()
@@ -814,9 +805,8 @@ void QtFirebaseAdMobBanner::load()
     emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = _banner->LoadAd(request);
-    qFirebase->addFuture(__QTFIREBASE_ID + ".banner.loaded",future);
+    qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".banner.loaded"), future);
 }
-
 
 void QtFirebaseAdMobBanner::show()
 {
@@ -885,13 +875,13 @@ void QtFirebaseAdMobBanner::moveTo(int position)
     } else {
         qDebug() << this << "::moveTo position unknown" << position;
     }
-
 }
 
 /*
  * AdMobInterstitial
  *
  */
+
 QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent) : QObject(parent)
 {
     __QTFIREBASE_ID = QString().sprintf("%8p", this);
@@ -911,7 +901,6 @@ QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent) : QObj
     _initTimer->setSingleShot(false);
     connect(_initTimer, &QTimer::timeout, this, &QtFirebaseAdMobInterstitial::init);
     _initTimer->start(500);
-
 }
 
 QtFirebaseAdMobInterstitial::~QtFirebaseAdMobInterstitial()
@@ -961,7 +950,6 @@ void QtFirebaseAdMobInterstitial::setAdUnitId(const QString &adUnitId)
     if(_adUnitId != adUnitId) {
         _adUnitId = adUnitId;
         __adUnitIdByteArray = _adUnitId.toLatin1();
-
         emit adUnitIdChanged();
     }
 }
@@ -1049,7 +1037,7 @@ void QtFirebaseAdMobInterstitial::init()
         // This is the parent UIView or Activity of the Interstitial view.
         qDebug() << this << "::init initializing with AdUnitID" << __adUnitIdByteArray.constData();
         firebase::FutureBase future = _interstitial->Initialize(static_cast<admob::AdParent>(_nativeUIElement), __adUnitIdByteArray.constData());
-        qFirebase->addFuture(__QTFIREBASE_ID + ".interstitial.init",future);
+        qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".interstitial.init"),future);
     }
 }
 
@@ -1058,7 +1046,7 @@ void QtFirebaseAdMobInterstitial::onFutureEvent(QString eventId, firebase::Futur
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
 
-    if(eventId == __QTFIREBASE_ID+".interstitial.init") {
+    if(eventId == __QTFIREBASE_ID + QStringLiteral(".interstitial.init")) {
 
         if (future.error() != admob::kAdMobErrorNone) {
             qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
@@ -1082,13 +1070,13 @@ void QtFirebaseAdMobInterstitial::onFutureEvent(QString eventId, firebase::Futur
         setReady(true);
     }
 
-    if(eventId == __QTFIREBASE_ID+".interstitial.loaded") {
+    if(eventId == __QTFIREBASE_ID + QStringLiteral(".interstitial.loaded")) {
 
         if (future.error() != admob::kAdMobErrorNone) {
             int errorCode = future.error();
             qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << future.error_message();
             // TODO fix me
-            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode),QString(future.error_message()));
+            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode),QString(QString::fromUtf8(future.error_message())));
             return;
         }
 
@@ -1116,7 +1104,7 @@ void QtFirebaseAdMobInterstitial::onPresentationStateChanged(int state)
         qDebug() << this << "::onPresentationStateChanged() loaded false";
 
         // NOTE iOS necessities
-        #if defined(Q_OS_IOS)
+#if defined(Q_OS_IOS)
 
         setReady(false);
         qDebug() << this << "::onPresentationStateChanged() ready false";
@@ -1128,7 +1116,7 @@ void QtFirebaseAdMobInterstitial::onPresentationStateChanged(int state)
         qDebug() << this << "::onPresentationStateChanged() re-initializing one-time use GADInterstitial";
         _initTimer->start(500);
 
-        #endif
+#endif
 
         emit closed();
     }
@@ -1150,7 +1138,7 @@ void QtFirebaseAdMobInterstitial::load()
     emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = _interstitial->LoadAd(request);
-    qFirebase->addFuture(__QTFIREBASE_ID + ".interstitial.loaded",future);
+    qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".interstitial.loaded"), future);
 }
 
 void QtFirebaseAdMobInterstitial::show()
@@ -1171,8 +1159,8 @@ void QtFirebaseAdMobInterstitial::show()
         qDebug() << this << "::show ERROR code" << future.error() << "message" << future.error_message();
         return;
     }
-
 }
+
 /*
  * AdMobRewardedVideoAd
  *
@@ -1321,7 +1309,7 @@ void QtFirebaseAdMobRewardedVideoAd::init()
     if(!_ready && !_initializing) {
         _initializing = true;
         firebase::FutureBase future = firebase::admob::rewarded_video::Initialize();
-        qFirebase->addFuture(__QTFIREBASE_ID + ".rewardedvideoad.init", future);
+        qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".rewardedvideoad.init"), future);
     }
 }
 
@@ -1330,9 +1318,9 @@ void QtFirebaseAdMobRewardedVideoAd::onFutureEvent(QString eventId, firebase::Fu
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
 
-    qDebug()<<this<<"QtFirebaseAdMobInterstitial::onFutureEvent";
+    qDebug() << this<<"QtFirebaseAdMobInterstitial::onFutureEvent";
 
-    if(eventId == __QTFIREBASE_ID+".rewardedvideoad.init")
+    if(eventId == __QTFIREBASE_ID + QStringLiteral(".rewardedvideoad.init"))
     {
         if (future.error() != admob::kAdMobErrorNone)
         {
@@ -1349,12 +1337,12 @@ void QtFirebaseAdMobRewardedVideoAd::onFutureEvent(QString eventId, firebase::Fu
             setReady(true);
         }
     }
-    else if(eventId == __QTFIREBASE_ID+".rewardedvideoad.loaded")
+    else if(eventId == __QTFIREBASE_ID + QStringLiteral(".rewardedvideoad.loaded"))
     {
         int errorCode = future.error();
         if (future.error() != admob::kAdMobErrorNone)
         {
-            QString errorMessage = future.error_message();
+            QString errorMessage = QString::fromUtf8(future.error_message());
             QtFirebaseAdMob::Error qtFirebaseErrorCode = qFirebaseAdMob->convertAdMobErrorCode(errorCode);
             qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << errorMessage;
             emit error(static_cast<int>(qtFirebaseErrorCode), errorMessage);
@@ -1421,7 +1409,7 @@ void QtFirebaseAdMobRewardedVideoAd::load()
     emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = firebase::admob::rewarded_video::LoadAd( __adUnitIdByteArray.constData(), request);
-    qFirebase->addFuture(__QTFIREBASE_ID + ".rewardedvideoad.loaded",future);
+    qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".rewardedvideoad.loaded"),future);
 }
 
 void QtFirebaseAdMobRewardedVideoAd::show()
@@ -1456,27 +1444,25 @@ void QtFirebaseAdMobRewardedVideoAd::show()
 
 void QtFirebaseAdMobRewardedVideoAd::OnRewarded(firebase::admob::rewarded_video::RewardItem reward)
 {
-    QString type = reward.reward_type.c_str();
-    qDebug()<<this<<QString("Rewarding user of %1 with amount %2")
-              .arg(type)
-              .arg(QString::number(reward.amount));
+    QString type = QString::fromStdString(reward.reward_type.c_str());
+    qDebug() << this << QString(QStringLiteral("Rewarding user of %1 with amount %2")).arg(type).arg(QString::number(reward.amount));
 
     emit rewarded(type, reward.amount);
-
 }
+
 void QtFirebaseAdMobRewardedVideoAd::OnPresentationStateChanged(firebase::admob::rewarded_video::PresentationState state)
 {
     if(state == firebase::admob::rewarded_video::kPresentationStateHidden)
     {
-        qDebug()<<this<<"kPresentationStateHidden";
+        qDebug() << this << "kPresentationStateHidden";
     }
     else if(state == firebase::admob::rewarded_video::kPresentationStateCoveringUI)
     {
-        qDebug()<<this<<"kPresentationStateCoveringUI";
+        qDebug() << this << "kPresentationStateCoveringUI";
     }
     else if(state == firebase::admob::rewarded_video::kPresentationStateVideoHasStarted)
     {
-        qDebug()<<this<<"kPresentationStateVideoHasStarted";
+        qDebug() << this << "kPresentationStateVideoHasStarted";
     }
 
     int pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
@@ -1484,7 +1470,7 @@ void QtFirebaseAdMobRewardedVideoAd::OnPresentationStateChanged(firebase::admob:
     if(state == firebase::admob::rewarded_video::kPresentationStateHidden) {
         pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
     } else if(state == firebase::admob::rewarded_video::kPresentationStateCoveringUI) {
-         pState = QtFirebaseAdMobInterstitial::PresentationStateCoveringUI;
+        pState = QtFirebaseAdMobInterstitial::PresentationStateCoveringUI;
     }
     emit presentationStateChanged(pState);
 }

@@ -71,6 +71,7 @@ class QtFirebaseRemoteConfig : public QObject
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
     Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
     Q_PROPERTY(long long cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
+
 public:
     explicit QtFirebaseRemoteConfig(QObject *parent = 0);
 
@@ -98,6 +99,7 @@ public:
 
     long long cacheExpirationTime() const;
     void setCacheExpirationTime(long long timeMs);
+
 public slots:
     void addParameter(const QString &name, long long defaultValue);
     void addParameter(const QString &name, double defaultValue);
@@ -113,6 +115,7 @@ public slots:
     //https://firebase.google.com/docs/reference/android/com/google/firebase/remoteconfig/FirebaseRemoteConfig#fetch()
     void fetch();
     void fetchNow();//calls fetch with cacheExpirationTime = 0
+
 signals:
     void readyChanged();
     void error(Error code, QString message);
@@ -141,9 +144,7 @@ private:
     QString _appId;
     QByteArray __appIdByteArray;
     const char *__appId;
-
 };
 
 #endif //QTFIREBASE_BUILD_REMOTE_CONFIG
-
 #endif // QTFIREBASEREMOTECONFIG_H

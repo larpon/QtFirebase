@@ -9,7 +9,8 @@ QML_IMPORT_PATH += $$PWD
 
 HEADERS += \
     #$$QTFIREBASE_FAKE_PATH/qtfirebase.h \
-    $$QTFIREBASE_FAKE_PATH/src/qtfirebase.h
+    $$QTFIREBASE_FAKE_PATH/src/qtfirebase.h \
+    \
 
 contains(QTPLUGIN,qtfirebase) {
     HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebase_plugin.h
@@ -19,6 +20,11 @@ contains(QTPLUGIN,qtfirebase) {
 # Analytics
 contains(DEFINES,QTFIREBASE_BUILD_ANALYTICS) {
     HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebaseanalytics.h
+}
+
+# Messaging
+contains(DEFINES,QTFIREBASE_BUILD_MESSAGING) {
+    HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebasemessaging.h
 }
 
 # AdMob
@@ -33,4 +39,3 @@ contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
 
 SOURCES += \
     $$PWD/fake/src/qtfirebase.cpp
-
