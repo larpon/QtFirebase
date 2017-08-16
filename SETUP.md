@@ -3,19 +3,21 @@
 # Setup
 How to setup up QtFirebase for inclusion in your project.
 
-For a working and up-to-date example that can be compiled in QtCreator please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README.
+For a working and up-to-date example that can be compiled in QtCreator please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README. (The example app links back here).
 
 ## Base setup
 
 1. Clone the [QtFirebase](https://github.com/Larpon/QtFirebase) project
 
-  * **Clone the QtFirebase project**
+  * **Clone the QtFirebase project** if you haven't already
   
-    Clone into the "extensions" folder or into other folder of your choice
+    Clone into the "extensions" or "vendor" folder or into any other folder of your choice.
+    Here we use the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) structure.
     ```
     cd /path/to/projects/QtFirebaseExample/extensions
     git clone git@github.com:Larpon/QtFirebase.git
     ```
+    
 2. Download and extract the latest version of [Google's Firebase C++ SDK](https://firebase.google.com/docs/cpp/setup).
 
   ```
@@ -28,7 +30,7 @@ For a working and up-to-date example that can be compiled in QtCreator please fo
 
   If you have multiple projects using QtFirebase it's a space-saver to have the Firebase C++ SDK (~832 MB) in one place.
 
-  So you can either symlink the Firebase C++ SDK to the default search path OR set the `QTFIREBASE_SDK_PATH` variable to the absolute path of the SDK in the `.pro` file for the app build.
+  So you can either symlink the Firebase C++ SDK to the default search path OR set the `QTFIREBASE_SDK_PATH` variable to the absolute path of the SDK in your project's `.pro` file for the app build.
 
   * **Symlink**
   
@@ -63,42 +65,55 @@ For a working and up-to-date example that can be compiled in QtCreator please fo
     
 4. Almost done
   
-  **Android notes**
+    ### Android
+    Make sure you have `Google Services` installed and updated on the *target* device. Firebase won't work without it.
+    Further more the project needs gradle and the Android NDK (r10d +) to build on Android.
+
+    #### Gradle setup
+    Enable gradle in your QtCreator build options
+
+    Add these lines to your project's `gradle.build`
+    Edit path in `/path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/android/gradle.properties`
+    Edit path in `/path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/android/local.properties`
   
-  The project needs gradle and the Android NDK (r10d +) to build on Android.
-  
-  * Enable gradle in your Project build options in QtCreator.
-  * Edit path in `/path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/android/gradle.properties`
-  * Edit path in `/path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/android/local.properties`
+    Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/)
     
-  **iOS Notes**
+    Add the services to your xml file from the below link: https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/AndroidManifest.xml
+
+
+    ## iOS
+
+    Download the Firebase iOS Framework from the below Link and extract it to $$PWD/src/ios/Firebase/
+    https://firebase.google.com/docs/ios/setup#frameworks
+    Add some entries in Info.plist
+    Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/)
+
+    The project currently uses CocoaPods to build on iOS.
   
-  The project uses CocoaPods to build on iOS.
-  
-  * [Install CocoaPods](http://stackoverflow.com/questions/20755044/how-to-install-cocoa-pods) on your Mac host if you haven't already.
-  * Run `pod install`:
-   ```
-   # cd /path/to/QtFirebase/src/ios/CocoaPods
-   # From our example:
-   cd /path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/ios/CocoaPods
-   pod install
-   ```
-  * Run `make_ios_joined_statics.sh` from the QtFirebase project root:
-   ```
-   cd /path/to/QtFirebase/
-   ./make_ios_joined_statics.sh
-   ```
-  * Verify that a set of `lib<name>.a` exists in `/path/to/sdk/firebase_cpp_sdk/libs/ios`
-   ```
-   cd /path/to/sdk/firebase_cpp_sdk/libs/ios/
-   ls | grep lib
+    * [Install CocoaPods](http://stackoverflow.com/questions/20755044/how-to-install-cocoa-pods) on your Mac host if you haven't already.
+    * Run `pod install`:
+       ```
+       # cd /path/to/QtFirebase/src/ios/CocoaPods
+       # From our example:
+       cd /path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/ios/CocoaPods
+       pod install
+       ```
+    * Run `make_ios_joined_statics.sh` from the QtFirebase project root:
+       ```
+       cd /path/to/QtFirebase/
+       ./make_ios_joined_statics.sh
+       ```
+    * Verify that a set of `lib<name>.a` exists in `/path/to/sdk/firebase_cpp_sdk/libs/ios`
+       ```
+       cd /path/to/sdk/firebase_cpp_sdk/libs/ios/
+       ls | grep lib
    
-   libadmob.a
-   libanalytics.a
-   libapp.a
-   libremote_config.a
-   ```
-   This step is important as the `make_ios_joined_statics.sh` uses `libtool` to join each of the static libs used from each supported architecture into one combined static lib to link against. We have yet to find out why this is necessary for the project to run properly.
+       libadmob.a
+       libanalytics.a
+       libapp.a
+       libremote_config.a
+       ```
+       This step is important as the `make_ios_joined_statics.sh` uses `libtool` to join each of the static libs used from each supported architecture into one combined static lib to link against. We have yet to find out why this is necessary for the project to run properly.
    
 5. Push the *Run* button
 
@@ -118,29 +133,3 @@ For a working and up-to-date example that can be compiled in QtCreator please fo
   ```
   Project MESSAGE: QtFirebase: configuring build for non-supported Firebase target platform...
   ```
-
-## Android
-Make sure you have `Google Services` installed and updated on the *target* device. Firebase won't work without it.
-
-### Gradle setup
-Enable gradle in your QtCreator build options
-
-
-Add these lines to your project's `gradle.build`
-
-
-Add some lines to `gradle.properties`
-Add some lines to `local.properties`
-Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/)
-Add the services to your xml file from the below link:
-https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/AndroidManifest.xml
-
-
-## iOS
-
- Download the Firebase iOS Framework from the below Link and extract it to $$PWD/src/ios/Firebase/
- https://firebase.google.com/docs/ios/setup#frameworks
- Add some entries in Info.plist
- Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/)
-
-
