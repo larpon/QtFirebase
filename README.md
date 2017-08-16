@@ -19,10 +19,10 @@ Feature | Library | C++ | QML
 Base                      |libapp.a             |✓|✓
 AdMob                     |libadmob.a           |✓|✓
 Analytics                 |libanalytics.a       |✓|✓
-~~Authentication~~	          |~~libauth.a~~          | |
+~~Authentication~~	          |~~libauth.a~~          |in progress |:wrench:
 ~~Realtime Database~~	        |~~libdatabase.a~~      |in progress |:wrench:
 ~~Invites and Dynamic Links~~	|~~libinvites.a~~       | |
-~~Cloud Messaging~~	          |~~libmessaging.a~~     |in progress |:wrench:
+~~Cloud Messaging~~	          |~~libmessaging.a~~     |✓|✓
 Remote Config             |libremote_config.a   |✓|✓
 ~~Storage~~	                  |~~libstorage.a~~       | |
 
