@@ -129,19 +129,6 @@ or on Unix-like systems run the included script [`$$PWD/src/ios/download_firebas
 
 Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/). ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/App.pro#L54-L56))
 
-~~#### CocoaPods~~
-
-~~The project currently uses CocoaPods to build on iOS.~~
-
-~~[Install CocoaPods](http://stackoverflow.com/questions/20755044/how-to-install-cocoa-pods) on your Mac host if you haven't already.
-Run `pod install`:~~
-```
-# cd /path/to/QtFirebase/src/ios/CocoaPods
-# From our example:
-cd /path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/ios/CocoaPods
-pod install
-```
-
 
 #### Run `make_ios_joined_statics.sh` from the QtFirebase project root:
 ```
@@ -161,6 +148,35 @@ libremote_config.a
 ```
 
 This step is important as the `make_ios_joined_statics.sh` uses `libtool` to join each of the static libs used from each supported architecture into one combined static lib to link against. We have yet to find out why this is necessary for the project to run properly.
+
+
+
+#### CocoaPods (NOT REQUIRED ANYMORE)
+~~The project currently uses CocoaPods to build on iOS.~~
+
+~~[Install CocoaPods](http://stackoverflow.com/questions/20755044/how-to-install-cocoa-pods) on your Mac host if you haven't already.~~
+
+~~Run `pod install`:~~
+```
+# cd /path/to/QtFirebase/src/ios/CocoaPods
+# From our example:
+cd /path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/ios/CocoaPods
+pod install
+```
+
+### Firebase Messaging specific
+So. If you intend to use Messaging on iOS  you need some additional setup.
+
+#### Enable Apple Push
+1. Go to https://developer.apple.com/account
+2. Click on the right side on "Certificates, Identifiers & Profiles"
+3. Click on the right side on "Keys, All"
+4. Click  the "+" icon on the top right
+5. Service Enable "APNs" , enter Key Description Name "Your keyname", on the bottom click "Coninue", on the bottom click "Confirm", and Download the Key.
+2:09
+6. go to https://console.firebase.google.com/
+7. Navigate to **Overview (Gear icon)** -> **Project settings** -> **Cloud Messaging (Tab)** -> Click **Add server key**
+8. Upload your APNs info
    
 ## Push the *Run* button
 
