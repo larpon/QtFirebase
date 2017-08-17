@@ -645,8 +645,8 @@ private:
 
     QString __QTFIREBASE_ID;
     bool _ready;
-    bool _loaded;
     bool _initializing;
+    bool _loaded;
     bool _isFirstInit;
     bool _visible;
 

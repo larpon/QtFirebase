@@ -1,6 +1,6 @@
 #include "qtfirebaseadmob.h"
 
-#include <QGuiApplication>
+//#include <QGuiApplication>
 #include <qqmlfile.h>
 #include <QString>
 
@@ -485,7 +485,7 @@ QtFirebaseAdMobBanner::QtFirebaseAdMobBanner(QObject *parent) : QObject(parent)
 
     connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobBanner::onFutureEvent);
 
-    connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobBanner::onApplicationStateChanged);
+//    connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobBanner::onApplicationStateChanged);
 }
 
 QtFirebaseAdMobBanner::~QtFirebaseAdMobBanner()
@@ -907,7 +907,7 @@ QtFirebaseAdMobNativeExpressAd::QtFirebaseAdMobNativeExpressAd(QObject *parent) 
 
     connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobNativeExpressAd::onFutureEvent);
 
-    connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobNativeExpressAd::onApplicationStateChanged);
+//    connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobNativeExpressAd::onApplicationStateChanged);
 
 }
 
