@@ -118,30 +118,38 @@ Add Messaging specific services to your AndroidManifest.xml file. ([Example](htt
 
 ## iOS specifics
 
-Download the Firebase iOS Framework from the below Link and extract it to $$PWD/src/ios/Firebase/
+#### Download the Firebase iOS Frameworks
+Either download from the below Link and extract it to `$$PWD/src/ios/Firebase/`
 https://firebase.google.com/docs/ios/setup#frameworks
 
+or on Unix-like systems run the included script [`$$PWD/src/ios/download_firebase_ios.sh`](https://github.com/Larpon/QtFirebase/blob/master/src/ios/download_firebase_ios.sh)
 
-Add entries in Info.plist. ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/ios/Info.plist#L66-L71))
+#### Add entries in Info.plist
+([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/ios/Info.plist#L66-L71))
 
 Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/). ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/App.pro#L54-L56))
 
-The project currently uses CocoaPods to build on iOS.
+~~#### CocoaPods~~
 
-* [Install CocoaPods](http://stackoverflow.com/questions/20755044/how-to-install-cocoa-pods) on your Mac host if you haven't already.
-* Run `pod install`:
+~~The project currently uses CocoaPods to build on iOS.~~
+
+~~[Install CocoaPods](http://stackoverflow.com/questions/20755044/how-to-install-cocoa-pods) on your Mac host if you haven't already.
+Run `pod install`:~~
 ```
 # cd /path/to/QtFirebase/src/ios/CocoaPods
 # From our example:
 cd /path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/ios/CocoaPods
 pod install
 ```
-* Run `make_ios_joined_statics.sh` from the QtFirebase project root:
+
+
+#### Run `make_ios_joined_statics.sh` from the QtFirebase project root:
 ```
 cd /path/to/QtFirebase/
 ./make_ios_joined_statics.sh
 ```
-* Verify that a set of `lib<name>.a` exists in `/path/to/sdk/firebase_cpp_sdk/libs/ios`
+
+Verify that a set of `lib<name>.a` exists in `/path/to/sdk/firebase_cpp_sdk/libs/ios`
 ```
 cd /path/to/sdk/firebase_cpp_sdk/libs/ios/
 ls | grep lib
@@ -151,6 +159,7 @@ libanalytics.a
 libapp.a
 libremote_config.a
 ```
+
 This step is important as the `make_ios_joined_statics.sh` uses `libtool` to join each of the static libs used from each supported architecture into one combined static lib to link against. We have yet to find out why this is necessary for the project to run properly.
    
 ## Push the *Run* button
