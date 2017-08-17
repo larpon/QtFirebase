@@ -157,6 +157,17 @@ class QtFirebaseAdMobBanner : public QObject
     Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 public:
+    enum Position
+    {
+        PositionTopCenter,
+        PositionTopLeft,
+        PositionTopRight,
+        PositionBottomCenter,
+        PositionBottomLeft,
+        PositionBottomRight
+    };
+    Q_ENUM(Position)
+
     QtFirebaseAdMobBanner(QObject* parent = 0) { Q_UNUSED(parent); }
     ~QtFirebaseAdMobBanner() {}
 
@@ -208,12 +219,13 @@ public slots:
     void show() {}
     void hide() {}
     void moveTo(int x, int y) { Q_UNUSED(x); Q_UNUSED(y); }
+    void moveTo(int position) { Q_UNUSED(position); }
 };
 
 /*
  * AdMobNativeExpressAd
  */
-class AdMobNativeExpressAd : public QObject
+class QtFirebaseAdMobNativeExpressAd : public QObject
 {
     Q_OBJECT
 
@@ -232,8 +244,19 @@ class AdMobNativeExpressAd : public QObject
     Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 public:
-    AdMobNativeExpressAd(QObject* parent = 0) { Q_UNUSED(parent); }
-    ~AdMobNativeExpressAd() {}
+    enum Position
+    {
+        PositionTopCenter,
+        PositionTopLeft,
+        PositionTopRight,
+        PositionBottomCenter,
+        PositionBottomLeft,
+        PositionBottomRight
+    };
+    Q_ENUM(Position)
+
+    QtFirebaseAdMobNativeExpressAd(QObject* parent = 0) { Q_UNUSED(parent); }
+    ~QtFirebaseAdMobNativeExpressAd() {}
 
     bool ready() { return false; }
     void setReady(bool ready) { Q_UNUSED(ready); }
@@ -283,6 +306,7 @@ public slots:
     void show() {}
     void hide() {}
     void moveTo(int x, int y) { Q_UNUSED(x); Q_UNUSED(y); }
+    void moveTo(int position) { Q_UNUSED(position); }
 
 };
 
