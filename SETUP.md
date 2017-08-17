@@ -175,7 +175,7 @@ So. If you intend to use Messaging on iOS  you need some additional setup.
 5. Service Enable "APNs" , enter Key Description Name "Your keyname", on the bottom click "Coninue", on the bottom click "Confirm", and Download the Key.
 2:09
 6. go to https://console.firebase.google.com/
-7. Navigate to **Overview (Gear icon)** -> **Project settings** -> **Cloud Messaging (Tab)** -> Click **Add server key**
+7. Navigate to **Overview (Gear icon)** -> **Project settings** -> **Cloud Messaging (Tab)**
 8. Upload your APNs info
    
 ## Push the *Run* button
