@@ -71,8 +71,6 @@ ios: {
 
     QTFIREBASE_FRAMEWORKS_ROOT = $$PWD/src/ios/Firebase/
 
-    QMAKE_IOS_DEPLOYMENT_TARGET = 10.0
-
     QMAKE_LFLAGS += -ObjC
 
     HEADERS += \
@@ -158,6 +156,9 @@ contains(DEFINES,QTFIREBASE_BUILD_MESSAGING) {
     message( "QtFirebase including Messaging" )
 
     ios: {
+        message( "QtFirebase Messaging requires iOS v10.x to build. Setting QMAKE_IOS_DEPLOYMENT_TARGET = 10.0" )
+        QMAKE_IOS_DEPLOYMENT_TARGET = 10.0
+
         LIBS += \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Messaging \
             -framework FirebaseMessaging \
