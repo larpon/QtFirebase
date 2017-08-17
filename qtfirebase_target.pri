@@ -38,11 +38,14 @@ RESOURCES += \
     $$PWD/qtfirebase.qrc
 
 android: {
-    # add services to xml file
-    #https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/AndroidManifest.xml
 
-    # add the onNewIntet function to your acivity
-    #https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/src/android/java/com/google/firebase/example/TestappNativeActivity.java
+    # Setup tips
+    #
+    # Add services to xml file
+    # https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/AndroidManifest.xml
+    #
+    # Add the 'onNewIntent' function to your Qt Activity
+    # https://github.com/firebase/quickstart-cpp/blob/e8c20f678a06a28ebb73132abcd79d93b27622d9/messaging/testapp/src/android/java/com/google/firebase/example/TestappNativeActivity.java
 
     message("QtFirebase Android base")
     QT += androidextras gui-private
@@ -53,6 +56,9 @@ android: {
 }
 
 ios: {
+
+    # Setup tips
+    #
     # Download the Google Firebase Framework link for Ios
     # and extract the files to this folder $$PWD/src/ios/Firebase/
     # or use your own folder QTFIREBASE_FRAMEWORKS_ROOT = YOUR/PWD

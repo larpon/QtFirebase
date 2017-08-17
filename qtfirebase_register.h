@@ -61,6 +61,7 @@ static void registerQtFirebase() {
     qmlRegisterType<QtFirebaseAdMob>("QtFirebase", 1, 0, "AdMob");
     qmlRegisterType<QtFirebaseAdMobRequest>("QtFirebase", 1, 0, "AdMobRequest");
     qmlRegisterType<QtFirebaseAdMobBanner>("QtFirebase", 1, 0, "AdMobBanner");
+    qmlRegisterType<QtFirebaseAdMobNativeExpressAd>("QtFirebase", 1, 0, "AdMobNativeExpressAd");
     qmlRegisterType<QtFirebaseAdMobInterstitial>("QtFirebase", 1, 0, "AdMobInterstitial");
     qmlRegisterType<QtFirebaseAdMobRewardedVideoAd>("QtFirebase", 1, 0, "AdMobRewardedVideoAd");
 
