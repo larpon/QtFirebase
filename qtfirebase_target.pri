@@ -96,10 +96,6 @@ ios: {
         -framework UIKit \
         \
 
-    DISTFILES += \
-        $$PWD/src/ios/CocoaPods/Podfile \
-        \ 
-
     INCLUDEPATH += \
         $$QTFIREBASE_SDK_PATH/include \
         $$PWD/src \
