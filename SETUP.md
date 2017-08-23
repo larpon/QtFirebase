@@ -1,5 +1,5 @@
 # Setup
-How to setup up QtFirebase for inclusion and to utilize Firebase modules in your project.
+How to set up QtFirebase for inclusion and to utilize Firebase modules in your project.
 
 For a working and up-to-date example that can be compiled in Qt Creator please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README. (The example app links back here).
 
