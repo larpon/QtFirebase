@@ -7,7 +7,7 @@ QtFirebase aim to bring all the features of the Firebase C++ SDK to Qt 5 - both 
 
 Please bear in mind that the Firebase C++ SDK currently only support the mobile platforms Android and iOS.
 
-You can still build QtFirebase on other platforms as the project provide "empty shells" or placeholder components - they just return default/empty values when used. Because of this you won't see e.g. ads from AdMob in your desktop builds.
+You can still build QtFirebase on other platforms as the project provides "empty shells" or placeholder components - they just return default/empty values when used. Because of this you won't see e.g. ads from AdMob in your desktop builds.
 
 This is due to Google's own limitations in the Firebase C++ SDK implementation.
 
@@ -27,12 +27,12 @@ Remote Config             |libremote_config.a   |✓|✓|[greenfield932](https:/
 ~~Storage~~	                  |~~libstorage.a~~       | | |
 
 ## Contributors
-With out these good people this project would not exist.
+Without these good people this project would not exist.
 
 [Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder),
 [greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
 [Isy](https://github.com/isipisi281) (Cloud Messaging, Misc.),
-[Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.), 
+[Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.),
 [li3p](https://github.com/li3p) (Misc.),
 
 
@@ -51,17 +51,17 @@ Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be832
 We recommend you build against the latest version of the Firebase C++ SDK.
 
 ## Stability
-The Firebase C++ SDK has a lot of stability issues - which QtFirebase does it's best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
+The Firebase C++ SDK has a lot of stability issues - which QtFirebase does its best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
 Please use the latest SDK version to get the latest fixes.
 
 # Setup
 For a working and up-to-date example please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README.
 
-Please see [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) for instructions on how to setup QtFirebase in your QtCreator project.
+Please see [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) for instructions on how to set up QtFirebase in your Qt Creator project.
 
 # Examples
 Please look at the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) repository.
-In [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) you will find details on what to add to your different project files (gradle.build, Info.plist etc.)
+In [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) you will find details on what to add to your project files (gradle.build, Info.plist, etc.).
 
 # Documentation
 Under heavy construction.
