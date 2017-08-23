@@ -1,20 +1,20 @@
 # Setup
-How to setup up QtFirebase for inclusion and to utilize Firebase modules in your project.
+How to set up QtFirebase for inclusion and to utilize Firebase modules in your project.
 
-For a working and up-to-date example that can be compiled in QtCreator please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README. (The example app links back here).
+For a working and up-to-date example that can be compiled in Qt Creator please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README. (The example app links back here).
 
 ## Base setup
 
 ### Clone the [QtFirebase](https://github.com/Larpon/QtFirebase) project
 
-Clone into the "extensions" or "vendor" folder or into any other folder of your choice.
+Clone into the "extensions" or "vendor" folder or into another folder of your choice.
 Here we use the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) structure.
 
 ```
 cd /path/to/projects/QtFirebaseExample/extensions
 git clone git@github.com:Larpon/QtFirebase.git
 ```
-    
+
 ### Download and extract the latest version of [Google's Firebase C++ SDK](https://firebase.google.com/docs/cpp/setup).
 
 ```
@@ -36,8 +36,8 @@ ln -s /path/to/sdk/firebase_cpp_sdk /path/to/projects/QtFirebase/firebase_cpp_sd
 
 #### `QTFIREBASE_SDK_PATH` variable method
 
-Open your project with QtCreator
-Navigate to the `.pro` (sub)project file in the Project pane
+Open your project with Qt Creator.
+Navigate to the `.pro` (sub)project file in the Project pane.
 ```
 QtFirebaseExample
 |_...
@@ -84,10 +84,10 @@ When building QtFirebase for Android targets you need the following extra steps 
 
 #### Ensure target device has `Google Services` apk installed
 Make sure you have `Google Services` apk installed and updated on the *target* device. Firebase won't work without it.
-Further more the project needs `gradle` and the Android NDK (r10d +) to build on Android.
+Furthermore the project needs `gradle` and the Android NDK (r10d+) to build on Android.
 
 #### Gradle setup
-Enable gradle in your QtCreator build options
+Enable gradle in your Qt Creator build options.
 
 Edit lines in your project's `gradle.build` to match your dependencies / modules. ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/android/build.gradle#L164-L187))
 
@@ -99,12 +99,12 @@ Edit paths to match your setup in `/path/to/QtFirebase/src/android/local.propert
 Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/)
 
 ### Firebase Messaging specific
-**Note***
-*Using Messaging is only possible with Qt 5.9+ due to some gradle dependencies that needs recent versions the Android SDK/NDK. Upgrading these will also "force" you to upgrade Qt (because of some bugs in QtCreator) in order for it all to work"*
+**Note**
+*Using Messaging is only possible with Qt 5.9+ due to gradle dependencies that require recent versions of the Android SDK/NDK. Upgrading these will also "force" you to upgrade Qt (because of some bugs in Qt Creator) in order for it all to work*
 
-So. If you intend to use Messaging you need some additional setup on Android.
+To use Messaging on Android there is some additional setup.
 
-You'll need to have recent versions of your Android SDK/NDK toolchain in order for it to work.
+You'll need to have recent versions of the Android SDK/NDK toolchain.
 ```
 Android SDK Build-Tools >= 25.0.0
 Android NDK >= r11c
@@ -119,10 +119,9 @@ Add Messaging specific services to your AndroidManifest.xml file. ([Example](htt
 ## iOS specifics
 
 #### Download the Firebase iOS Frameworks
-Either download from the below Link and extract it to `$$PWD/src/ios/Firebase/`
-https://firebase.google.com/docs/ios/setup#frameworks
+Run the included script [`$$PWD/src/ios/download_firebase_ios.sh`](https://github.com/Larpon/QtFirebase/blob/master/src/ios/download_firebase_ios.sh)
 
-or on Unix-like systems run the included script [`$$PWD/src/ios/download_firebase_ios.sh`](https://github.com/Larpon/QtFirebase/blob/master/src/ios/download_firebase_ios.sh)
+or download Firebase.zip from https://firebase.google.com/download/ios and extract it to `$$PWD/src/ios/`.
 
 #### Add entries in Info.plist
 ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/ios/Info.plist#L66-L71))
@@ -130,57 +129,23 @@ or on Unix-like systems run the included script [`$$PWD/src/ios/download_firebas
 Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/). ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/App.pro#L54-L56))
 
 
-#### Run `make_ios_joined_statics.sh` from the QtFirebase project root:
-```
-cd /path/to/QtFirebase/
-./make_ios_joined_statics.sh
-```
-
-Verify that a set of `lib<name>.a` exists in `/path/to/sdk/firebase_cpp_sdk/libs/ios`
-```
-cd /path/to/sdk/firebase_cpp_sdk/libs/ios/
-ls | grep lib
-
-libadmob.a
-libanalytics.a
-libapp.a
-libremote_config.a
-```
-
-This step is important as the `make_ios_joined_statics.sh` uses `libtool` to join each of the static libs used from each supported architecture into one combined static lib to link against. We have yet to find out why this is necessary for the project to run properly.
-
-
-
-#### CocoaPods (NOT REQUIRED ANYMORE)
-~~The project currently uses CocoaPods to build on iOS.~~
-
-~~[Install CocoaPods](http://stackoverflow.com/questions/20755044/how-to-install-cocoa-pods) on your Mac host if you haven't already.~~
-
-~~Run `pod install`:~~
-```
-# cd /path/to/QtFirebase/src/ios/CocoaPods
-# From our example:
-cd /path/to/projects/QtFirebaseExample/extensions/QtFirebase/src/ios/CocoaPods
-pod install
-```
 
 ### Firebase Messaging specific
-So. If you intend to use Messaging on iOS  you need some additional setup.
+To use Messaging on iOS there is some additional setup.
 
 #### Enable Apple Push
 1. Go to https://developer.apple.com/account
-2. Click on the right side on "Certificates, Identifiers & Profiles"
-3. Click on the right side on "Keys, All"
-4. Click  the "+" icon on the top right
-5. Service Enable "APNs" , enter Key Description Name "Your keyname", on the bottom click "Coninue", on the bottom click "Confirm", and Download the Key.
-2:09
-6. go to https://console.firebase.google.com/
+2. Click on the right side of the page on "Certificates, Identifiers & Profiles"
+3. Click on the right side of the page on "Keys, All"
+4. Click the "+" icon at the top right of the page
+5. Find Service Enable "APNs" and enter Key Description Name "Your keyname". At the bottom of the page click "Continue", then click "Confirm" and download the key.
+6. Go to https://console.firebase.google.com/
 7. Navigate to **Overview (Gear icon)** -> **Project settings** -> **Cloud Messaging (Tab)**
 8. Upload your APNs info
-   
+
 ## Push the *Run* button
 
-If you build for Android or iOS you should see output like the following in the "General Messages" tab of QtCreator
+If you build for Android or iOS you should see output like the following in the "General Messages" tab of Qt Creator
 ```
 Project MESSAGE: QtFirebase: configuring build for supported Firebase target platform...
 Project MESSAGE: No QTFIREBASE_SDK_PATH path sat. Using default (firebase_cpp_sdk) /path/to/projects/QtFirebaseExample/extensions/QtFirebase/firebase_cpp_sdk

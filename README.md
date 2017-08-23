@@ -3,11 +3,11 @@
 # QtFirebase
 An effort to bring the Firebase C++ API to Qt 5
 
-QtFirebase aim to bring all the features of the Firebase C++ SDK to Qt 5 - both as C++ wrappers and as QML components.
+QtFirebase aims to bring all the features of the Firebase C++ SDK to Qt 5 - both as C++ wrappers and as QML components.
 
-Please bear in mind that the Firebase C++ SDK currently only support the mobile platforms Android and iOS.
+Please bear in mind that the Firebase C++ SDK currently only supports the mobile platforms Android and iOS.
 
-You can still build QtFirebase on other platforms as the project provide "empty shells" or placeholder components - they just return default/empty values when used. Because of this you won't see e.g. ads from AdMob in your desktop builds.
+You can still build QtFirebase on other platforms as the project provides "empty shells" or placeholder components - they just return default/empty values when used. Because of this you won't see e.g. ads from AdMob in your desktop builds.
 
 This is due to Google's own limitations in the Firebase C++ SDK implementation.
 
@@ -27,17 +27,15 @@ Remote Config             |libremote_config.a   |✓|✓|[greenfield932](https:/
 ~~Storage~~	                  |~~libstorage.a~~       | | |
 
 ## Contributors
-With out these good people this project would not exist.
+Without these good people this project would not exist.
 
 [Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder),
 [greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
 [Isy](https://github.com/isipisi281) (Cloud Messaging, Misc.),
-[Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.), 
-[li3p](https://github.com/li3p) (Misc.),
+[Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.),
+[li3p](https://github.com/li3p) (Misc.)
 
-
-Tested Firebase C++ SDK versions:
-
+## Tested Firebase C++ SDK versions
 **Base, AdMob, Analytics**
 Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be8328a063956c2d2139fa9ab7152d955cc2)
 * v2.1.0
@@ -51,28 +49,28 @@ Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be832
 We recommend you build against the latest version of the Firebase C++ SDK.
 
 ## Stability
-The Firebase C++ SDK has a lot of stability issues - which QtFirebase does it's best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
+The Firebase C++ SDK has a lot of stability issues - which QtFirebase does its best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
 Please use the latest SDK version to get the latest fixes.
 
 # Setup
 For a working and up-to-date example please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README.
 
-Please see [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) for instructions on how to setup QtFirebase in your QtCreator project.
+Please see [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) for instructions on how to set up QtFirebase in your Qt Creator project.
 
 # Examples
 Please look at the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) repository.
-In [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) you will find details on what to add to your different project files (gradle.build, Info.plist etc.)
+In [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) you will find details on what to add to your project files (gradle.build, Info.plist, etc.).
 
 # Documentation
 Under heavy construction.
 
 # Support
-Possible ways of getting support
+Possible ways of getting support:
 * Open an [issue](https://github.com/Larpon/QtFirebase/issues)
 
 Possible ways of giving support
 * Comment helpfully on issues
-* Fork, Change, Make Pull Request
+* Fork, Change, Make a Pull Request
 * Share online
 * [Buy QtFirebase &#10084;'s](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4DHVNRBQRRU96)
   You'll get a personal email full of hearts from [Black Grain](http://blackgrain.dk/games/)!
