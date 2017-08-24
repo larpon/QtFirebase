@@ -124,6 +124,7 @@ signals:
 
 private slots:
     void addParameterInternal(const QString &name, const QVariant &defaultValue);
+    void beforeInit();
     void init();
     void onFutureEvent(QString eventId, firebase::FutureBase future);
 
