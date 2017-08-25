@@ -19,16 +19,7 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
         qDebug() << self << "::QtFirebaseRemoteConfig" << "singleton";
     }
 
-    if(qFirebase->ready())
-    {
-        //Call init outside of constructor, otherwise signal readyChanged not emited
-        QTimer::singleShot(500, this, SLOT(init()));
-    }
-    else
-    {
-        connect(qFirebase,&QtFirebase::readyChanged, this, &QtFirebaseRemoteConfig::init);
-        qFirebase->requestInit();
-    }
+    QTimer::singleShot(500, this, SLOT(beforeInit()));
     connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
 }
 
@@ -42,6 +33,22 @@ bool QtFirebaseRemoteConfig::checkInstance(const char *function)
 void QtFirebaseRemoteConfig::addParameterInternal(const QString &name, const QVariant &defaultValue)
 {
     _parameters[name] = defaultValue;
+}
+
+void QtFirebaseRemoteConfig::beforeInit()
+{
+    if(qFirebase->ready())
+    {
+        //Call init outside of constructor, otherwise signal readyChanged not emited
+        qDebug() << this << " beforeInit : QtFirebase is ready, call init." ;
+        init();
+    }
+    else
+    {
+        qDebug() << this << " beforeInit : QtFirebase not ready, connect to its readyChanged signal" ;
+        connect(qFirebase,&QtFirebase::readyChanged, this, &QtFirebaseRemoteConfig::init);
+        qFirebase->requestInit();
+    }
 }
 
 QVariant QtFirebaseRemoteConfig::getParameterValue(const QString &name) const
@@ -60,7 +67,7 @@ bool QtFirebaseRemoteConfig::ready()
 
 void QtFirebaseRemoteConfig::setReady(bool ready)
 {
-    qDebug() << this << "::setReady" << ready;
+    qDebug() << this << "::setReady before:" << _ready << "now:" << ready;
     if (_ready != ready) {
         _ready = ready;
         emit readyChanged();
@@ -111,6 +118,7 @@ void QtFirebaseRemoteConfig::addParameter(const QString &name, bool defaultValue
 
 void QtFirebaseRemoteConfig::init()
 {
+    qDebug() << self << "::init" << "called";
     if(!qFirebase->ready()) {
         qDebug() << self << "::init" << "base not ready";
         return;
