@@ -19,7 +19,7 @@ git clone git@github.com:Larpon/QtFirebase.git
 
 ```
 cd /path/to/download
-wget https://dl.google.com/firebase/sdk/cpp/firebase_cpp_sdk_4.0.3.zip
+wget https://dl.google.com/firebase/sdk/cpp/firebase_cpp_sdk_4.1.0.zip
 unzip firebase_cpp_sdk_4.0.3.zip -d /path/to/sdk
 ```
 
