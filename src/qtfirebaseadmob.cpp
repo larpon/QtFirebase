@@ -779,7 +779,8 @@ void QtFirebaseAdMobBanner::onFutureEvent(QString eventId, firebase::FutureBase 
 void QtFirebaseAdMobBanner::onApplicationStateChanged(Qt::ApplicationState state)
 {
     // NOTE makes sure the ad banner is on top of the Qt surface
-#if defined(__ANDROID__)
+#if defined(Q_OS_ANDROID) && !defined(QTFIREBASE_DISABLE_FIX_ANDROID_AUTO_APP_STATE_VISIBILTY)
+    qDebug() << this << "::onApplicationStateChanged" << "Applying visibility fix";
     if(state != Qt::ApplicationActive)
         hide();
     else
@@ -1203,7 +1204,7 @@ void QtFirebaseAdMobNativeExpressAd::onFutureEvent(QString eventId, firebase::Fu
 void QtFirebaseAdMobNativeExpressAd::onApplicationStateChanged(Qt::ApplicationState state)
 {
     // NOTE makes sure the ad banner is on top of the Qt surface
-    #if defined(__ANDROID__)
+    #if defined(Q_OS_ANDROID)
     if(state != Qt::ApplicationActive)
         hide();
     else

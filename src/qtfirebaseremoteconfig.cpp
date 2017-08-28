@@ -1,7 +1,4 @@
 #include "qtfirebaseremoteconfig.h"
-#include <memory>
-
-#include "google_play_services/availability.h"
 
 namespace remote_config = ::firebase::remote_config;
 
@@ -22,14 +19,14 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
         qDebug() << self << "::QtFirebaseRemoteConfig" << "singleton";
     }
 
-    if (PlatformUtils::googleServiceAvailable()) {
-        qDebug() << this << " Google Service is available, now init remote_config" ;
+    if (PlatformUtils::googleServicesAvailable()) {
+        qDebug() << this << " Google Services is available, now init remote_config" ;
 
         //Call init outside of constructor, otherwise signal readyChanged not emited
-        QTimer::singleShot(500, this, SLOT(beforeInit()));
+        QTimer::singleShot(500, this, SLOT(delayedInit()));
         connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
     } else {
-        qDebug() << this << " Google Service is NOT available, CANNOT use remote_config" ;
+        qDebug() << this << " Google Services is NOT available, CANNOT use remote_config" ;
     }
 }
 
@@ -45,16 +42,16 @@ void QtFirebaseRemoteConfig::addParameterInternal(const QString &name, const QVa
     _parameters[name] = defaultValue;
 }
 
-void QtFirebaseRemoteConfig::beforeInit()
+void QtFirebaseRemoteConfig::delayedInit()
 {
     if(qFirebase->ready())
     {
-        qDebug() << this << " beforeInit : QtFirebase is ready, call init." ;
+        qDebug() << this << "::delayedInit : QtFirebase is ready, calling init" ;
         init();
     }
     else
     {
-        qDebug() << this << " beforeInit : QtFirebase not ready, connect to its readyChanged signal" ;
+        qDebug() << this << "::delayedInit : QtFirebase not ready, connecting to its readyChanged signal" ;
         connect(qFirebase,&QtFirebase::readyChanged, this, &QtFirebaseRemoteConfig::init);
         qFirebase->requestInit();
     }

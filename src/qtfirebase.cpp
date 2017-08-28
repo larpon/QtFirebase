@@ -102,7 +102,7 @@ void QtFirebase::requestInit()
 
     if(!_ready) {
 
-        #if defined(__ANDROID__)
+        #if defined(Q_OS_ANDROID)
 
         jobject activity = PlatformUtils::getNativeWindow();
 
@@ -111,7 +111,7 @@ void QtFirebase::requestInit()
         // Create the Firebase app.
         _firebaseApp = firebase::App::Create(firebase::AppOptions(), env, activity);
 
-        #else // __ANDROID__
+        #else // Q_OS_ANDROID
 
         // Create the Firebase app.
         _firebaseApp = firebase::App::Create(firebase::AppOptions());

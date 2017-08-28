@@ -21,7 +21,7 @@ class PlatformUtils
 public:
     PlatformUtils();
 
-    static bool  googleServiceAvailable();
+    static bool  googleServicesAvailable();
 
     #if defined(Q_OS_IOS)
     static void* getNativeWindow();

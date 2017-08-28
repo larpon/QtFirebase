@@ -19,8 +19,9 @@ git clone git@github.com:Larpon/QtFirebase.git
 
 ```
 cd /path/to/download
-wget https://dl.google.com/firebase/sdk/cpp/firebase_cpp_sdk_4.0.3.zip
-unzip firebase_cpp_sdk_4.0.3.zip -d /path/to/sdk
+curl --location https://firebase.google.com/download/cpp --output "firebase_cpp_sdk.zip"
+unzip firebase_cpp_sdk.zip -d /path/to/sdk
+rm firebase_cpp_sdk.zip
 ```
 
 ### Add symlink OR set `QTFIREBASE_SDK_PATH` variable
