@@ -33,7 +33,8 @@ Without these good people this project would not exist.
 [greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
 [Isy](https://github.com/isipisi281) (Cloud Messaging, Misc.),
 [Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.),
-[li3p](https://github.com/li3p) (Misc.)
+[li3p](https://github.com/li3p) (Bugs, Misc.),
+[morebest](https://github.com/morebest) (Bugs, Misc.) 
 
 ## Tested Firebase C++ SDK versions
 **Base, AdMob, Analytics**
