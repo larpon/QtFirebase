@@ -19,6 +19,7 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
         qDebug() << self << "::QtFirebaseRemoteConfig" << "singleton";
     }
 
+    #if defined(Q_OS_ANDROID)
     if (PlatformUtils::googleServicesAvailable()) {
         qDebug() << this << " Google Services is available, now init remote_config" ;
 
@@ -28,6 +29,11 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
     } else {
         qDebug() << this << " Google Services is NOT available, CANNOT use remote_config" ;
     }
+    #else
+    //Call init outside of constructor, otherwise signal readyChanged not emited
+    QTimer::singleShot(500, this, SLOT(delayedInit()));
+    connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
+    #endif
 }
 
 bool QtFirebaseRemoteConfig::checkInstance(const char *function)
