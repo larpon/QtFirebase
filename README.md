@@ -42,9 +42,13 @@ Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be832
 * v2.1.1
 * v2.1.2
 
-**Base, AdMob, Analytics, RemoteConfig**
+**RemoteConfig**
 * v3.1.0
 * v4.0.1
+
+**Cloud Messaging**
+* v4.0.3
+* v4.1.0
 
 We recommend you build against the latest version of the Firebase C++ SDK.
 
