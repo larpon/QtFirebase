@@ -296,7 +296,7 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
         }
         else
         {
-            qWarning()<<self<<"Data type:"<<value.typeName()<<" not supported";
+            qWarning() << self << "Data type:" << value.typeName() << " not supported";
         }
     }
 
