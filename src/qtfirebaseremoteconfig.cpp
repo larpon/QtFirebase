@@ -286,7 +286,7 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
         qDebug() << self << "::fetch not started, parameters were not initialized";
         return;
     }
-    qDebug() << self <<"::fetch with expirationtime" << cacheExpirationInSeconds<<"seconds";
+    qDebug() << self <<"::fetch with expirationtime" << cacheExpirationInSeconds << "seconds";
 
     QVariantMap filteredMap;
     for(QVariantMap::const_iterator it = _parameters.begin(); it!=_parameters.end();++it)
@@ -309,35 +309,37 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
     std::unique_ptr<remote_config::ConfigKeyValueVariant[]> defaults(
                 new remote_config::ConfigKeyValueVariant[filteredMap.size()]);
 
-    uint cnt = 0;
+    __defaultsByteArrayList.clear();
+    uint index = 0;
     for(QVariantMap::const_iterator it = filteredMap.begin(); it!=filteredMap.end();++it)
     {
         const QVariant& value = it.value();
 
+        __defaultsByteArrayList.insert(index,QByteArray(it.key().toUtf8().data()));
         if(value.type() == QVariant::Bool)
         {
-            defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
+            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
                     value.toBool()};
         }
         else if(value.type() == QVariant::LongLong)
         {
-            defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
+            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
                     value.toLongLong()};
         }
         else if(value.type() == QVariant::Int)
         {
-            defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
+            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
                     value.toInt()};
         }
         else if(value.type() == QVariant::Double)
         {
-            defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
+            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
                     value.toDouble()};
         }
 
         else if(value.type() == QVariant::String)
         {
-            defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toLatin1().constData(),
+            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
                     value.toString().toUtf8().constData()};
 
             //Code for data type
@@ -346,8 +348,10 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
                                 it.key().toUtf8().constData(),
                                 firebase::Variant::FromMutableBlob(data.constData(), data.size())};*/
         }
-        cnt++;
+
+        index++;
     }
+
     // NOTE crash on iOS with Firebase 4.1.0
     remote_config::SetDefaults(defaults.get(), filteredMap.size());
 

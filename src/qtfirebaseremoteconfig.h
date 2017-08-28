@@ -97,6 +97,8 @@ private:
 
     QString _appId;
     QByteArray __appIdByteArray;
+
+    QByteArrayList __defaultsByteArrayList;
     const char *__appId;
 };
 
