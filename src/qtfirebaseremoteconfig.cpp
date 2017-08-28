@@ -283,10 +283,10 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
 {
     if(_parameters.size() == 0)
     {
-        qDebug()<<self<<"::fetch not started, parameters were not initialized";
+        qDebug() << self << "::fetch not started, parameters were not initialized";
         return;
     }
-    qDebug()<<self<<"::fetch with expirationtime"<<cacheExpirationInSeconds<<"seconds";
+    qDebug() << self <<"::fetch with expirationtime" << cacheExpirationInSeconds<<"seconds";
 
     QVariantMap filteredMap;
     for(QVariantMap::const_iterator it = _parameters.begin(); it!=_parameters.end();++it)
@@ -348,6 +348,7 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
         }
         cnt++;
     }
+    // NOTE crash on iOS with Firebase 4.1.0
     remote_config::SetDefaults(defaults.get(), filteredMap.size());
 
     /*remote_config::SetConfigSetting(remote_config::kConfigSettingDeveloperMode, "1");
