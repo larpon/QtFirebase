@@ -352,7 +352,6 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
         index++;
     }
 
-    // NOTE crash on iOS with Firebase 4.1.0
     remote_config::SetDefaults(defaults.get(), filteredMap.size());
 
     /*remote_config::SetConfigSetting(remote_config::kConfigSettingDeveloperMode, "1");
