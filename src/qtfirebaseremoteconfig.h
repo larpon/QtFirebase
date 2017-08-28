@@ -127,6 +127,8 @@ private slots:
     void beforeInit();
     void init();
     void onFutureEvent(QString eventId, firebase::FutureBase future);
+    void onFutureEventInit(firebase::FutureBase& future);
+    void onFutureEventFetch(firebase::FutureBase& future);
 
 private:
     void setReady(bool ready);

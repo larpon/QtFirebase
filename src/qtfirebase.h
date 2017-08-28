@@ -10,6 +10,7 @@
 
 #include "firebase/app.h"
 #include "firebase/future.h"
+#include "firebase/util.h"
 
 #include <QMap>
 #include <QObject>

@@ -6,6 +6,8 @@ QtFirebase::QtFirebase(QObject* parent) : QObject(parent)
 {
     _ready = false;
 
+    qDebug() << self << ":QtFirebase(QObject* parent)" ;
+
     Q_ASSERT_X(!self, "QtFirebase", "there should be only one firebase object");
     QtFirebase::self = this;
 

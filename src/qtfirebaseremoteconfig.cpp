@@ -1,6 +1,8 @@
 #include "qtfirebaseremoteconfig.h"
 #include <memory>
 
+#include "google_play_services/availability.h"
+
 namespace remote_config = ::firebase::remote_config;
 
 QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self = 0;
@@ -13,14 +15,22 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
     __appId(nullptr)
 {
     __QTFIREBASE_ID = QString().sprintf("%8p", this);
+
     if(self == 0)
     {
         self = this;
         qDebug() << self << "::QtFirebaseRemoteConfig" << "singleton";
     }
 
-    QTimer::singleShot(500, this, SLOT(beforeInit()));
-    connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
+    if (PlatformUtils::googleServiceAvailable()) {
+        qDebug() << this << " Google Service is available, now init remote_config" ;
+
+        //Call init outside of constructor, otherwise signal readyChanged not emited
+        QTimer::singleShot(500, this, SLOT(beforeInit()));
+        connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
+    } else {
+        qDebug() << this << " Google Service is NOT available, CANNOT use remote_config" ;
+    }
 }
 
 bool QtFirebaseRemoteConfig::checkInstance(const char *function)
@@ -39,7 +49,6 @@ void QtFirebaseRemoteConfig::beforeInit()
 {
     if(qFirebase->ready())
     {
-        //Call init outside of constructor, otherwise signal readyChanged not emited
         qDebug() << this << " beforeInit : QtFirebase is ready, call init." ;
         init();
     }
@@ -126,10 +135,14 @@ void QtFirebaseRemoteConfig::init()
 
     if(!_ready && !_initializing) {
         _initializing = true;
-        remote_config::Initialize(*qFirebase->firebaseApp());
-        qDebug() << self << "::init" << "native initialized";
-        _initializing = false;
-        setReady(true);
+
+        ::firebase::ModuleInitializer initializer;
+        auto future = initializer.Initialize(qFirebase->firebaseApp(), nullptr, [](::firebase::App* app, void*) {
+            qDebug() << self << "::init" << "try to initialize Remote Config";
+            return ::firebase::remote_config::Initialize(*app);
+        });
+
+        qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.init"), future);
     }
 }
 
@@ -139,9 +152,27 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
         return;
 
     qDebug() << self << "::onFutureEvent" << eventId;
-    if(eventId != __QTFIREBASE_ID + QStringLiteral(".config.fetch"))
-        return;
+    if(eventId == __QTFIREBASE_ID + QStringLiteral(".config.fetch"))
+        onFutureEventFetch(future);
+    else if( eventId == __QTFIREBASE_ID + QStringLiteral(".config.init") )
+        onFutureEventInit(future);
+}
 
+void QtFirebaseRemoteConfig::onFutureEventInit(firebase::FutureBase &future)
+{
+    if (future.error() != firebase::kFutureStatusComplete) {
+        qDebug() << this << "::onFutureEvent" << "initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
+        _initializing = false;
+        return;
+    }
+
+    qDebug() << this << "::onFutureEvent initialized ok";
+    _initializing = false;
+    setReady(true);
+}
+
+void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
+{
     if(future.status() != firebase::kFutureStatusComplete)
     {
         qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
