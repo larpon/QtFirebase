@@ -1,7 +1,4 @@
 #include "qtfirebaseremoteconfig.h"
-#include <memory>
-
-#include "google_play_services/availability.h"
 
 namespace remote_config = ::firebase::remote_config;
 
@@ -22,15 +19,21 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
         qDebug() << self << "::QtFirebaseRemoteConfig" << "singleton";
     }
 
-    if (PlatformUtils::googleServiceAvailable()) {
-        qDebug() << this << " Google Service is available, now init remote_config" ;
+    #if defined(Q_OS_ANDROID)
+    if (PlatformUtils::googleServicesAvailable()) {
+        qDebug() << this << " Google Services is available, now init remote_config" ;
 
         //Call init outside of constructor, otherwise signal readyChanged not emited
-        QTimer::singleShot(500, this, SLOT(beforeInit()));
+        QTimer::singleShot(500, this, SLOT(delayedInit()));
         connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
     } else {
-        qDebug() << this << " Google Service is NOT available, CANNOT use remote_config" ;
+        qDebug() << this << " Google Services is NOT available, CANNOT use remote_config" ;
     }
+    #else
+    //Call init outside of constructor, otherwise signal readyChanged not emited
+    QTimer::singleShot(500, this, SLOT(delayedInit()));
+    connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
+    #endif
 }
 
 bool QtFirebaseRemoteConfig::checkInstance(const char *function)
@@ -45,16 +48,16 @@ void QtFirebaseRemoteConfig::addParameterInternal(const QString &name, const QVa
     _parameters[name] = defaultValue;
 }
 
-void QtFirebaseRemoteConfig::beforeInit()
+void QtFirebaseRemoteConfig::delayedInit()
 {
     if(qFirebase->ready())
     {
-        qDebug() << this << " beforeInit : QtFirebase is ready, call init." ;
+        qDebug() << this << "::delayedInit : QtFirebase is ready, calling init" ;
         init();
     }
     else
     {
-        qDebug() << this << " beforeInit : QtFirebase not ready, connect to its readyChanged signal" ;
+        qDebug() << this << "::delayedInit : QtFirebase not ready, connecting to its readyChanged signal" ;
         connect(qFirebase,&QtFirebase::readyChanged, this, &QtFirebaseRemoteConfig::init);
         qFirebase->requestInit();
     }
@@ -280,10 +283,10 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
 {
     if(_parameters.size() == 0)
     {
-        qDebug()<<self<<"::fetch not started, parameters were not initialized";
+        qDebug() << self << "::fetch not started, parameters were not initialized";
         return;
     }
-    qDebug()<<self<<"::fetch with expirationtime"<<cacheExpirationInSeconds<<"seconds";
+    qDebug() << self <<"::fetch with expirationtime" << cacheExpirationInSeconds << "seconds";
 
     QVariantMap filteredMap;
     for(QVariantMap::const_iterator it = _parameters.begin(); it!=_parameters.end();++it)
@@ -299,42 +302,44 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
         }
         else
         {
-            qWarning()<<self<<"Data type:"<<value.typeName()<<" not supported";
+            qWarning() << self << "Data type:" << value.typeName() << " not supported";
         }
     }
 
     std::unique_ptr<remote_config::ConfigKeyValueVariant[]> defaults(
                 new remote_config::ConfigKeyValueVariant[filteredMap.size()]);
 
-    uint cnt = 0;
+    __defaultsByteArrayList.clear();
+    uint index = 0;
     for(QVariantMap::const_iterator it = filteredMap.begin(); it!=filteredMap.end();++it)
     {
         const QVariant& value = it.value();
 
+        __defaultsByteArrayList.insert(index,QByteArray(it.key().toUtf8().data()));
         if(value.type() == QVariant::Bool)
         {
-            defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
+            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
                     value.toBool()};
         }
         else if(value.type() == QVariant::LongLong)
         {
-            defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
+            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
                     value.toLongLong()};
         }
         else if(value.type() == QVariant::Int)
         {
-            defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
+            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
                     value.toInt()};
         }
         else if(value.type() == QVariant::Double)
         {
-            defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toUtf8().constData(),
+            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
                     value.toDouble()};
         }
 
         else if(value.type() == QVariant::String)
         {
-            defaults[cnt] = remote_config::ConfigKeyValueVariant{it.key().toLatin1().constData(),
+            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
                     value.toString().toUtf8().constData()};
 
             //Code for data type
@@ -343,8 +348,10 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
                                 it.key().toUtf8().constData(),
                                 firebase::Variant::FromMutableBlob(data.constData(), data.size())};*/
         }
-        cnt++;
+
+        index++;
     }
+
     remote_config::SetDefaults(defaults.get(), filteredMap.size());
 
     /*remote_config::SetConfigSetting(remote_config::kConfigSettingDeveloperMode, "1");

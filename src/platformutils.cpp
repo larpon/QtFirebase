@@ -20,7 +20,7 @@ GoogleServiceAvailability PlatformUtils::getGoogleServiceAvailability()
     return GoogleServiceUnavailableOther;
 }
 
-bool PlatformUtils::googleServiceAvailable()
+bool PlatformUtils::googleServicesAvailable()
 {
 
 #if defined(Q_OS_ANDROID)
@@ -28,7 +28,7 @@ bool PlatformUtils::googleServiceAvailable()
     QAndroidJniObject activity = QtAndroid::androidActivity();
 
     auto availablity = ::google_play_services::CheckAvailability(env, activity.object());
-    qDebug() << "PlatformUtils::googleServiceAvailable() result :" << availablity << " (0 is kAvailabilityAvailable)";
+    qDebug() << "PlatformUtils::googleServicesAvailable() result :" << availablity << " (0 is kAvailabilityAvailable)";
     return ::google_play_services::kAvailabilityAvailable == availablity;
 #endif
     return false;

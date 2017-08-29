@@ -1,7 +1,5 @@
-#ifndef QTFIREBASEREMOTECONFIG_H
-#define QTFIREBASEREMOTECONFIG_H
-
-#include <QObject>
+#ifndef QTFIREBASE_REMOTE_CONFIG_H
+#define QTFIREBASE_REMOTE_CONFIG_H
 
 #ifdef QTFIREBASE_BUILD_REMOTE_CONFIG
 
@@ -14,56 +12,9 @@
 
 #include "firebase/remote_config.h"
 
-/*Feature information available at https://firebase.google.com/docs/remote-config/
-
-  How to use in QML example
-  0. Add parameters in remote config section at google firebase web console (https://console.firebase.google.com)
-
-  RemoteConfig{
-        id: remoteConfig
-
-        //1. Initialize parameters you would like to fetch from server and their default values
-        parameters: {
-            "TestString" : "test",
-            "TestDouble" : 2.56,
-            "TestLong" : 1100,
-            "TestBool" : true
-        }
-
-        //2. Set cache expiration time in milliseconds, see step 3 for details about cache
-        cacheExpirationTime: 12*3600*1000 //12 hours in milliseconds (suggested as default in firebase)
-
-        //3. When remote config properly initialized request data from server
-        onReadyChanged: {
-            console.log("RemoteConfig ready changed:"+ready);
-            if(ready)
-            {
-                remoteConfig.fetch();
-                //If the data in the cache was fetched no longer than cacheExpirationTime ago,
-                //this method will return the cached data. If not, a fetch from the
-                //Remote Config Server will be attempted.
-                //If you need to get data urgent use fetchNow(), it is equal to fetch() call with cacheExpirationTime=0
-                //Be careful with urgent requests, too often requests will result to server throthling
-                //which means it will refuse connections for some time
-            }
-        }
-
-        //4. If data was retrieved (both from server or cache) the handler will be called
-        //you can access data by accessing the "parameters" member variable
-
-        onParametersChanged:{
-            console.log("RemoteConfig TestString:" + parameters['TestString']);
-            console.log("RemoteConfig TestDouble:" + parameters['TestDouble']);
-            console.log("RemoteConfig TestLong:" + parameters['TestLong']);
-            console.log("RemoteConfig TestBool:" + parameters['TestBool']);
-        }
-
-        //5. Handle errors
-        onError:{
-            console.log("RemoteConfig error code:" + code + " message:" + message);
-        }
-    }
- */
+#include <memory> // TODO check where this is used
+#include <QDebug>
+#include <QObject>
 
 class QtFirebaseRemoteConfig : public QObject
 {
@@ -124,7 +75,7 @@ signals:
 
 private slots:
     void addParameterInternal(const QString &name, const QVariant &defaultValue);
-    void beforeInit();
+    void delayedInit();
     void init();
     void onFutureEvent(QString eventId, firebase::FutureBase future);
     void onFutureEventInit(firebase::FutureBase& future);
@@ -146,8 +97,10 @@ private:
 
     QString _appId;
     QByteArray __appIdByteArray;
+
+    QByteArrayList __defaultsByteArrayList;
     const char *__appId;
 };
 
 #endif //QTFIREBASE_BUILD_REMOTE_CONFIG
-#endif // QTFIREBASEREMOTECONFIG_H
+#endif // QTFIREBASE_REMOTE_CONFIG_H
