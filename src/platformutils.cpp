@@ -1,12 +1,23 @@
 #include "platformutils.h"
 
-#include "google_play_services/availability.h"
-
 #include <QDebug>
 
 PlatformUtils::PlatformUtils()
 {
 
+}
+
+GoogleServiceAvailability PlatformUtils::getGoogleServiceAvailability()
+{
+#if defined(Q_OS_ANDROID)
+    QAndroidJniEnvironment env;
+    QAndroidJniObject activity = QtAndroid::androidActivity();
+
+    auto availablity = ::google_play_services::CheckAvailability(env, activity.object());
+    qDebug() << "PlatformUtils::googleServiceAvailable() result :" << availablity << " (0 is kAvailabilityAvailable)";
+    return GoogleServiceAvailability(availablity);
+#endif
+    return GoogleServiceUnavailableOther;
 }
 
 bool PlatformUtils::googleServicesAvailable()
