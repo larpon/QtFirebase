@@ -20,14 +20,14 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
     }
 
     #if defined(Q_OS_ANDROID)
-    if (PlatformUtils::googleServicesAvailable()) {
-        qDebug() << this << " Google Services is available, now init remote_config" ;
+    if (GooglePlayServices::available()) {
+        qDebug() << this << " Google Play Services is available, now init remote_config" ;
 
         //Call init outside of constructor, otherwise signal readyChanged not emited
         QTimer::singleShot(500, this, SLOT(delayedInit()));
         connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
     } else {
-        qDebug() << this << " Google Services is NOT available, CANNOT use remote_config" ;
+        qDebug() << this << " Google Play Services is NOT available, CANNOT use remote_config" ;
     }
     #else
     //Call init outside of constructor, otherwise signal readyChanged not emited

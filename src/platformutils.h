@@ -1,5 +1,5 @@
-#ifndef PLATFORMUTILS_H
-#define PLATFORMUTILS_H
+#ifndef PLATFORM_UTILS_H
+#define PLATFORM_UTILS_H
 
 #include <QDebug>
 #include <QWindow>
@@ -9,49 +9,59 @@
 #include <QAndroidJniObject>
 #include <QAndroidJniEnvironment>
 #include <QtAndroid>
-#include "jni.h"
+#include "google_play_services/availability.h"
 #endif
 
 #if defined(Q_OS_IOS)
 #include <qpa/qplatformnativeinterface.h>
 #endif
 
-#include "google_play_services/availability.h"
-
-enum GoogleServiceAvailability
+/*
+ * Google Play Services (currently only available under Android)
+ * TODO move to separate .h/.cpp and expose as QML type (+ dummies on unsupported platforms)
+ */
+#if defined(Q_OS_ANDROID)
+class GooglePlayServices
 {
-      /// Gooogle Play services are available.
-      GoogleServiceAvailable = ::google_play_services::kAvailabilityAvailable,
+public:
+    enum Availability
+    {
+          /// Google Play Services are available.
+          AvailabilityAvailable = ::google_play_services::kAvailabilityAvailable,
 
-      /// Google Play services is disabled in Settings.
-      GoogleServiceUnavailableDisabled = ::google_play_services::kAvailabilityUnavailableDisabled,
+          /// Google Play Services is disabled in Settings.
+          AvailabilityUnavailableDisabled = ::google_play_services::kAvailabilityUnavailableDisabled,
 
-      /// Google Play services is invalid.
-      GoogleServiceUnavailableInvalid = ::google_play_services::kAvailabilityUnavailableInvalid,
+          /// Google Play Services is invalid.
+          AvailabilityUnavailableInvalid = ::google_play_services::kAvailabilityUnavailableInvalid,
 
-      /// Google Play services is not installed.
-      GoogleServiceUnavailableMissing = ::google_play_services::kAvailabilityUnavailableMissing,
+          /// Google Play Services is not installed.
+          AvailabilityUnavailableMissing = ::google_play_services::kAvailabilityUnavailableMissing,
 
-      /// Google Play services does not have the correct permissions.
-      GoogleServiceUnavailablePermissions = ::google_play_services::kAvailabilityUnavailablePermissions,
+          /// Google Play Services does not have the correct permissions.
+          AvailabilityUnavailablePermissions = ::google_play_services::kAvailabilityUnavailablePermissions,
 
-      /// Google Play services need to be updated.
-      GoogleServiceUnavailableUpdateRequired = ::google_play_services::kAvailabilityUnavailableUpdateRequired,
+          /// Google Play Services need to be updated.
+          AvailabilityUnavailableUpdateRequired = ::google_play_services::kAvailabilityUnavailableUpdateRequired,
 
-      /// Google Play services is currently updating.
-      GoogleServiceUnavailableUpdating = ::google_play_services::kAvailabilityUnavailableUpdating,
+          /// Google Play Services is currently updating.
+          AvailabilityUnavailableUpdating = ::google_play_services::kAvailabilityUnavailableUpdating,
 
-      /// Some other error occurred.
-      GoogleServiceUnavailableOther = ::google_play_services::kAvailabilityUnavailableOther,
+          /// Some other error occurred.
+          AvailabilityUnavailableOther = ::google_play_services::kAvailabilityUnavailableOther,
+    };
+
+    static Availability getAvailability();
+    static bool available();
 };
+#endif
 
+/*
+ * PlatformUtils
+ */
 class PlatformUtils
 {
 public:
-    PlatformUtils();
-
-    static GoogleServiceAvailability  getGoogleServiceAvailability();
-    static bool  googleServiceAvailable();
 
     #if defined(Q_OS_IOS)
     static void* getNativeWindow();
@@ -62,4 +72,4 @@ public:
     #endif
 };
 
-#endif // PLATFORMUTILS_H
+#endif // PLATFORM_UTILS_H

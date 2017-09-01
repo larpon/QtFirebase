@@ -1,39 +1,33 @@
 #include "platformutils.h"
 
-#include <QDebug>
-
-PlatformUtils::PlatformUtils()
-{
-
-}
-
-GoogleServiceAvailability PlatformUtils::getGoogleServiceAvailability()
-{
+/*
+ * Google Play Services (only available under Android)
+ */
 #if defined(Q_OS_ANDROID)
+GooglePlayServices::Availability GooglePlayServices::getAvailability()
+{
     QAndroidJniEnvironment env;
     QAndroidJniObject activity = QtAndroid::androidActivity();
 
     auto availablity = ::google_play_services::CheckAvailability(env, activity.object());
-    qDebug() << "PlatformUtils::googleServiceAvailable() result :" << availablity << " (0 is kAvailabilityAvailable)";
-    return GoogleServiceAvailability(availablity);
-#endif
-    return GoogleServiceUnavailableOther;
+    qDebug() << "GooglePlayServices::getAvailability result :" << availablity << " (0 is kAvailabilityAvailable)";
+    return Availability(availablity);
 }
 
-bool PlatformUtils::googleServicesAvailable()
+bool GooglePlayServices::available()
 {
-
-#if defined(Q_OS_ANDROID)
     QAndroidJniEnvironment env;
     QAndroidJniObject activity = QtAndroid::androidActivity();
 
     auto availablity = ::google_play_services::CheckAvailability(env, activity.object());
-    qDebug() << "PlatformUtils::googleServicesAvailable() result :" << availablity << " (0 is kAvailabilityAvailable)";
+    qDebug() << "GooglePlayServices::available() result :" << availablity << " (0 is kAvailabilityAvailable)";
     return ::google_play_services::kAvailabilityAvailable == availablity;
-#endif
-    return false;
 }
+#endif
 
+/*
+ * PlatformUtils
+ */
 #if defined(Q_OS_ANDROID)
 jobject PlatformUtils::getNativeWindow()
 {
