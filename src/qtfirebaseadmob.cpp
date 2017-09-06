@@ -520,7 +520,7 @@ void QtFirebaseAdMobBanner::setLoaded(bool loaded)
     if(_loaded != loaded) {
         _loaded = loaded;
         qDebug() << this << "::setLoaded" << _loaded;
-        emit loadedChanged();
+        emit loadedChanged(_loaded);
     }
 }
 
@@ -803,6 +803,7 @@ void QtFirebaseAdMobBanner::load()
     }
 
     qDebug() << this << "::load() getting request data";
+    setLoaded(false);
     emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = _banner->LoadAd(request);
@@ -944,7 +945,7 @@ void QtFirebaseAdMobNativeExpressAd::setLoaded(bool loaded)
     if(_loaded != loaded) {
         _loaded = loaded;
         qDebug() << this << "::setLoaded" << _loaded;
-        emit loadedChanged();
+        emit loadedChanged(_loaded);
     }
 }
 
@@ -1227,6 +1228,7 @@ void QtFirebaseAdMobNativeExpressAd::load()
     }
 
     qDebug() << this << "::load() getting request data";
+    setLoaded(false);
     emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = _nativeAd->LoadAd(request);
@@ -1363,7 +1365,7 @@ void QtFirebaseAdMobInterstitial::setLoaded(bool loaded)
 {
     if(_loaded != loaded) {
         _loaded = loaded;
-        emit loadedChanged();
+        emit loadedChanged(_loaded);
     }
 }
 
@@ -1562,6 +1564,7 @@ void QtFirebaseAdMobInterstitial::load()
     }
 
     qDebug() << this << "::load() getting request data";
+    setLoaded(false);
     emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = _interstitial->LoadAd(request);
@@ -1644,7 +1647,7 @@ void QtFirebaseAdMobRewardedVideoAd::setLoaded(bool loaded)
 {
     if(_loaded != loaded) {
         _loaded = loaded;
-        emit loadedChanged();
+        emit loadedChanged(_loaded);
     }
 }
 
@@ -1833,6 +1836,7 @@ void QtFirebaseAdMobRewardedVideoAd::load()
     }
 
     qDebug() << this << "::load() getting request data";
+    setLoaded(false);
     emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = firebase::admob::rewarded_video::LoadAd( __adUnitIdByteArray.constData(), request);

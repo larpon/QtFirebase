@@ -200,7 +200,7 @@ public:
 
 signals:
     void readyChanged();
-    void loadedChanged();
+    void loadedChanged(bool loaded);
     void adUnitIdChanged();
 
     void visibleChanged();
@@ -287,7 +287,7 @@ public:
 
 signals:
     void readyChanged();
-    void loadedChanged();
+    void loadedChanged(bool loaded);
     void adUnitIdChanged();
 
     void visibleChanged();
@@ -346,7 +346,7 @@ public:
 
 signals:
     void readyChanged();
-    void loadedChanged();
+    void loadedChanged(bool loaded);
     void adUnitIdChanged();
     void visibleChanged();
     void error(int errorCode);
@@ -401,7 +401,7 @@ public:
 
 signals:
     void readyChanged();
-    void loadedChanged();
+    void loadedChanged(bool loaded);
     void adUnitIdChanged();
     void requestChanged();
     void loading();
