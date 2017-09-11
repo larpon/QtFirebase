@@ -9,8 +9,8 @@ QML_IMPORT_PATH += $$PWD
 
 HEADERS += \
     #$$QTFIREBASE_FAKE_PATH/qtfirebase.h \
-    $$QTFIREBASE_FAKE_PATH/src/qtfirebase.h \
-    \
+    $$QTFIREBASE_FAKE_PATH/src/qtfirebase.h
+
 
 contains(QTPLUGIN,qtfirebase) {
     HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebase_plugin.h

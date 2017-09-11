@@ -520,7 +520,7 @@ void QtFirebaseAdMobBanner::setLoaded(bool loaded)
     if(_loaded != loaded) {
         _loaded = loaded;
         qDebug() << this << "::setLoaded" << _loaded;
-        emit loadedChanged(_loaded);
+        emit loadedChanged();
     }
 }
 
@@ -945,7 +945,7 @@ void QtFirebaseAdMobNativeExpressAd::setLoaded(bool loaded)
     if(_loaded != loaded) {
         _loaded = loaded;
         qDebug() << this << "::setLoaded" << _loaded;
-        emit loadedChanged(_loaded);
+        emit loadedChanged();
     }
 }
 
@@ -1365,7 +1365,7 @@ void QtFirebaseAdMobInterstitial::setLoaded(bool loaded)
 {
     if(_loaded != loaded) {
         _loaded = loaded;
-        emit loadedChanged(_loaded);
+        emit loadedChanged();
     }
 }
 
@@ -1564,7 +1564,6 @@ void QtFirebaseAdMobInterstitial::load()
     }
 
     qDebug() << this << "::load() getting request data";
-    setLoaded(false);
     emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = _interstitial->LoadAd(request);
@@ -1647,7 +1646,7 @@ void QtFirebaseAdMobRewardedVideoAd::setLoaded(bool loaded)
 {
     if(_loaded != loaded) {
         _loaded = loaded;
-        emit loadedChanged(_loaded);
+        emit loadedChanged();
     }
 }
 
@@ -1836,7 +1835,6 @@ void QtFirebaseAdMobRewardedVideoAd::load()
     }
 
     qDebug() << this << "::load() getting request data";
-    setLoaded(false);
     emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = firebase::admob::rewarded_video::LoadAd( __adUnitIdByteArray.constData(), request);
