@@ -485,7 +485,7 @@ QtFirebaseAdMobBanner::QtFirebaseAdMobBanner(QObject *parent) : QObject(parent)
 
     connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobBanner::onFutureEvent);
 
-//    connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobBanner::onApplicationStateChanged);
+    //    connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobBanner::onApplicationStateChanged);
 }
 
 QtFirebaseAdMobBanner::~QtFirebaseAdMobBanner()
@@ -909,7 +909,7 @@ QtFirebaseAdMobNativeExpressAd::QtFirebaseAdMobNativeExpressAd(QObject *parent) 
 
     connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobNativeExpressAd::onFutureEvent);
 
-//    connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobNativeExpressAd::onApplicationStateChanged);
+    //    connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobNativeExpressAd::onApplicationStateChanged);
 
 }
 
@@ -1160,8 +1160,7 @@ void QtFirebaseAdMobNativeExpressAd::init()
         qDebug() << this << "::init initializing with AdUnitID" << __adUnitIdByteArray.constData();
         firebase::FutureBase future = _nativeAd->Initialize(static_cast<admob::AdParent>(_nativeUIElement), __adUnitIdByteArray.constData(), ad_size);
         qDebug() << this << "::init" << "native initialized";
-        qFirebase->addFuture(__QTFIREBASE_ID + ".nativeexpressad.init",future);
-
+        qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".nativeexpressad.init") , future);
     }
 }
 
@@ -1170,7 +1169,7 @@ void QtFirebaseAdMobNativeExpressAd::onFutureEvent(QString eventId, firebase::Fu
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
 
-    if(eventId == __QTFIREBASE_ID+".nativeexpressad.init") {
+    if(eventId == __QTFIREBASE_ID + QStringLiteral(".nativeexpressad.init")) {
 
         if (future.error() != admob::kAdMobErrorNone) {
             qDebug() << this << "::onFutureEvent" << "initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
@@ -1187,13 +1186,13 @@ void QtFirebaseAdMobNativeExpressAd::onFutureEvent(QString eventId, firebase::Fu
         setReady(true);
     }
 
-    if(eventId == __QTFIREBASE_ID+".nativeexpressad.loaded") {
+    if(eventId == __QTFIREBASE_ID + QStringLiteral(".nativeexpressad.loaded")) {
 
         if (future.error() != admob::kAdMobErrorNone) {
             int errorCode = future.error();
             qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << future.error_message();
             // TODO fix me
-            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode),QString(future.error_message()));
+            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode), QString::fromStdString(future.error_message()));
             return;
         }
 
@@ -1205,14 +1204,14 @@ void QtFirebaseAdMobNativeExpressAd::onFutureEvent(QString eventId, firebase::Fu
 void QtFirebaseAdMobNativeExpressAd::onApplicationStateChanged(Qt::ApplicationState state)
 {
     // NOTE makes sure the ad banner is on top of the Qt surface
-    #if defined(Q_OS_ANDROID)
+#if defined(Q_OS_ANDROID
     if(state != Qt::ApplicationActive)
         hide();
     else
         show();
-    #else
+#else
     Q_UNUSED(state);
-    #endif
+#endif
 }
 
 void QtFirebaseAdMobNativeExpressAd::load()
@@ -1232,7 +1231,7 @@ void QtFirebaseAdMobNativeExpressAd::load()
     emit loading();
     admob::AdRequest request = _request->asAdMobRequest();
     firebase::FutureBase future = _nativeAd->LoadAd(request);
-    qFirebase->addFuture(__QTFIREBASE_ID + ".nativeexpressad.loaded",future);
+    qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".nativeexpressad.loaded") , future);
 }
 
 
