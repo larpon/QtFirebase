@@ -264,7 +264,7 @@ public:
     bool loaded() { return false; }
     void setLoaded(bool loaded) { Q_UNUSED(loaded); }
 
-    QString adUnitId() { return ""; }
+    QString adUnitId() { return QString(); }
     void setAdUnitId(const QString &adUnitId) { Q_UNUSED(adUnitId); }
 
     bool visible() { return false; }

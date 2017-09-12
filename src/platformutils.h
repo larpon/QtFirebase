@@ -64,6 +64,8 @@ class PlatformUtils
 public:
 
     #if defined(Q_OS_IOS)
+    PlatformUtils();
+    ~PlatformUtils();
     static void* getNativeWindow();
     #elif defined(Q_OS_ANDROID)
     static jobject getNativeWindow();
