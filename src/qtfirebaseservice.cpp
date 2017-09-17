@@ -4,6 +4,7 @@
 #include <iostream>
 using namespace std;
 
+//For debug purposes
 bool simpleQtType(const QVariant& v)
 {
     QSet<int> simpleTypes;
@@ -12,7 +13,7 @@ bool simpleQtType(const QVariant& v)
     return simpleTypes.contains(v.type());
 }
 
-
+//For debug purposes
 bool simpleFbType(const firebase::Variant& v)
 {
     QSet<int> simpleTypes;
@@ -25,6 +26,7 @@ bool simpleFbType(const firebase::Variant& v)
     return simpleTypes.contains(v.type());
 }
 
+//For debug purposes
 void printQtVariant(const QVariant& v, const QString& tab)
 {
     const QString tabKey = "    ";
@@ -86,13 +88,13 @@ void printQtVariant(const QVariant& v, const QString& tab)
 
         }
         default:{
-            qDebug()<<"Type:"<<v.typeName()<<"not supported";
+            qDebug()<<"printQtVariant(): Type:"<<v.typeName()<<"not supported";
             break;
         }
     }
 }
 
-
+//For debug purposes
 void printFbVariant(const firebase::Variant& v, const QString& tab)
 {
     const QString tabKey = "    ";
@@ -154,7 +156,7 @@ void printFbVariant(const firebase::Variant& v, const QString& tab)
 
         }
         default:{
-            qDebug()<<"Type:"<<v.TypeName(v.type())<<"not supported";
+            qDebug()<<"printFbVariant(): Type:"<<v.TypeName(v.type())<<"not supported";
             break;
         }
     }
@@ -166,8 +168,6 @@ QtFirebaseService::QtFirebaseService(QObject* parent):
     _initializing(false)
 {
     __QTFIREBASE_ID = QString().sprintf("%8p", this);
-
-
 }
 
 bool QtFirebaseService::ready() const
@@ -200,13 +200,12 @@ QVariant QtFirebaseService::fromFirebaseVariant(const firebase::Variant &v)
                 if(key.type()==firebase::Variant::kTypeStaticString ||
                         key.type()==firebase::Variant::kTypeMutableString)
                 {
-                    qDebug()<<"Parse map: "<<key.string_value()<<fromFirebaseVariant(it->second);
                     targetMap[key.string_value()] = fromFirebaseVariant(it->second);
                 }
                 else
                 {
-                    qDebug()<<"QtFirebase does not support non string keys";
-                    qDebug()<<"Got key of type:"<<key.TypeName(v.type());
+                    qDebug()<<"QtFirebaseService::fromFirebaseVariant:"<<"QtFirebase does not support non string keys";
+                    qDebug()<<"QtFirebaseService::fromFirebaseVariant:"<<"Got key of type:"<<key.TypeName(v.type());
                     return QVariant();
                 }
             }
