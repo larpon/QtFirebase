@@ -6,10 +6,10 @@
 #include <QMutex>
 
 #ifdef QTFIREBASE_BUILD_DATABASE
-    #include "src/qtfirebase.h"
-    #if defined(qFirebaseDb)
-        #undef qFirebaseDb
-    #endif
+#include "src/qtfirebase.h"
+#if defined(qFirebaseDb)
+#undef qFirebaseDb
+#endif
 #define qFirebaseDb (static_cast<QtFirebaseDb*>(QtFirebaseDb::instance()))
 
 class QtFirebaseDbRequest;

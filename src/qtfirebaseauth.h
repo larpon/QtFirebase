@@ -5,10 +5,10 @@
 #include "firebase/auth.h"
 
 #ifdef QTFIREBASE_BUILD_AUTH
-    #include "src/qtfirebase.h"
-    #if defined(qFirebaseAuth)
-        #undef qFirebaseAuth
-    #endif
+#include "src/qtfirebase.h"
+#if defined(qFirebaseAuth)
+#undef qFirebaseAuth
+#endif
 #define qFirebaseAuth (static_cast<QtFirebaseAuth *>(QtFirebaseAuth::instance()))
 
 class QtFirebaseAuth : public QtFirebaseService
@@ -17,7 +17,7 @@ class QtFirebaseAuth : public QtFirebaseService
     Q_PROPERTY(bool running READ isRunning NOTIFY runningChanged)
     Q_PROPERTY(bool signedIn READ isSignedIn NOTIFY signedInChanged)
 public:
-    QtFirebaseAuth *instance()
+    static QtFirebaseAuth *instance()
     {
         if(self == nullptr)
         {
@@ -64,7 +64,6 @@ signals:
     void completed(bool success, int actionId);
 protected:
     explicit QtFirebaseAuth(QObject *parent = 0);
-    void timerEvent(QTimerEvent *e);
 private:
     void clearError();
     void setComplete(bool complete);

@@ -200,6 +200,7 @@ QVariant QtFirebaseService::fromFirebaseVariant(const firebase::Variant &v)
                 if(key.type()==firebase::Variant::kTypeStaticString ||
                         key.type()==firebase::Variant::kTypeMutableString)
                 {
+                    qDebug()<<"Parse map: "<<key.string_value()<<fromFirebaseVariant(it->second);
                     targetMap[key.string_value()] = fromFirebaseVariant(it->second);
                 }
                 else

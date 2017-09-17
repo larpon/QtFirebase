@@ -19,11 +19,6 @@ QtFirebaseAuth::QtFirebaseAuth(QObject *parent) : QtFirebaseService(parent),
     startInit();
 }
 
-void QtFirebaseAuth::timerEvent(QTimerEvent *e)
-{
-
-}
-
 void QtFirebaseAuth::clearError()
 {
     setError(kAuthErrorNone);
@@ -220,12 +215,12 @@ void QtFirebaseAuth::onFutureEvent(QString eventId, firebase::FutureBase future)
         }
         else if(eventId == __QTFIREBASE_ID+".auth.sendemailverify")
         {
-            qDebug()<<"Verification email sent successfully";
+            qDebug() << this << "::onFutureEvent Verification email sent successfully";
         }
         else if(eventId == __QTFIREBASE_ID+".auth.signin")
         {
 
-            qDebug()<<"Sign in successful";
+            qDebug() << this << "::onFutureEvent Sign in successful";
             auth::User* user = result<auth::User*>(future.result_void())
                                              ? *(result<auth::User*>(future.result_void()))
                                              : nullptr;
@@ -245,16 +240,16 @@ void QtFirebaseAuth::onFutureEvent(QString eventId, firebase::FutureBase future)
     {
         if(eventId == __QTFIREBASE_ID+".auth.register")
         {
-            qDebug()<<"Registering user completed with error:"<<future.error()<<future.error_message();
+            qDebug() << this << "::onFutureEvent Registering user completed with error:"<<future.error()<<future.error_message();
         }
         else if(eventId == __QTFIREBASE_ID+".auth.sendemailverify")
         {
-            qDebug()<<"Verification email send error:"<<future.error()<<future.error_message();
+            qDebug() << this << "::onFutureEvent Verification email send error:"<<future.error()<<future.error_message();
         }
         else if(eventId == __QTFIREBASE_ID+".auth.signin")
         {
             setSignIn(false);
-            qDebug()<<"Sign in error:"<<future.error()<<future.error_message();
+            qDebug() << this << "::onFutureEvent Sign in error:"<<future.error()<<future.error_message();
         }
         setError(future.error(), future.error_message());
     }

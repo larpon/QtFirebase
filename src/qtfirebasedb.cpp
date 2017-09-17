@@ -496,14 +496,9 @@ QVariant QtFirebaseDataSnapshot::value() const
 
 QByteArray QtFirebaseDataSnapshot::jsonString() const
 {
-    qDebug()<<"Called json string method";
-    std::vector<firebase::database::DataSnapshot> childs = m_snapshot.GetChildren();
-    for(int i=0;i<childs.size();i++)
-    {
-        qDebug()<<"Print child:"<<i
-               <<childs[i].key()
-               <<QtFirebaseService::fromFirebaseVariant(childs[i].value());
-    }
+    //Limitation: order queries will not work because of
+    //missing order when getting data through value object and not from snapshot hierarchy
+    //TODO: Improve JSON translation using snapshot hierarchy
     QJsonDocument doc = QJsonDocument::fromVariant(value());
     return doc.toJson();
 }

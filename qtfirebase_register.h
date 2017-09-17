@@ -51,9 +51,9 @@
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_AUTH)
 
 #if defined(QTFIREBASE_FAKE_BUILD)
-    #include "fake/src/qtfirebaseauth.h"
+#include "fake/src/qtfirebaseauth.h"
 #else
-    #include "src/qtfirebaseauth.h"
+#include "src/qtfirebaseauth.h"
 #endif
 
 # endif // QTFIREBASE_BUILD_AUTH
@@ -62,9 +62,9 @@
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
 
 #if defined(QTFIREBASE_FAKE_BUILD)
-    #include "fake/src/qtfirebasedb.h"
+#include "fake/src/qtfirebasedb.h"
 #else
-    #include "src/qtfirebasedb.h"
+#include "src/qtfirebasedb.h"
 #endif
 
 # endif // QTFIREBASE_BUILD_DATABASE
@@ -93,25 +93,22 @@ static void registerQtFirebase() {
     qmlRegisterType<QtFirebaseAdMobNativeExpressAd>("QtFirebase", 1, 0, "AdMobNativeExpressAd");
     qmlRegisterType<QtFirebaseAdMobInterstitial>("QtFirebase", 1, 0, "AdMobInterstitial");
     qmlRegisterType<QtFirebaseAdMobRewardedVideoAd>("QtFirebase", 1, 0, "AdMobRewardedVideoAd");
-
 #endif
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
     qmlRegisterType<QtFirebaseRemoteConfig>("QtFirebase", 1, 0, "RemoteConfig");
 #endif
 
-    #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_AUTH)
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_AUTH)
     qmlRegisterType<QtFirebaseAuth>("QtFirebase", 1, 0, "Auth");
-    #endif
+#endif
 
-    #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
-    //qmlRegisterType<QtFirebaseDb>("QtFirebase", 1, 0, "DataBase");
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
     qmlRegisterSingletonType<QtFirebaseDb>("QtFirebase", 1, 0, "DataBase", QtFirebaseDbProvider);
     qmlRegisterUncreatableType<QtFirebaseDbQuery>("QtFirebase", 1, 0, "DbQuery", "Get query object from DbRequest, do not create it");
     qmlRegisterType<QtFirebaseDbRequest>("QtFirebase", 1, 0, "DbRequest");
-    //qmlRegisterType<QtFirebaseDataSnapshot>("QtFirebase", 1, 0, "DataSnapshot");
     qmlRegisterUncreatableType<QtFirebaseDataSnapshot>("QtFirebase", 1, 0, "DataSnapshot", "Get snapshot object from DbRequest, do not create it");
-    #endif
+#endif
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerQtFirebase)
