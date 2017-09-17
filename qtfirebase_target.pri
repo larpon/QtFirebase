@@ -132,9 +132,7 @@ contains(DEFINES,QTFIREBASE_BUILD_ADMOB) {
 contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
     message( "QtFirebase including RemoteConfig" )
 
-    #TODO remote config on ios
     ios: {
-        message( "QtFirebase RemoteConfig not tested on ios" )
         LIBS += \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/RemoteConfig \
             -framework FirebaseRemoteConfig \
