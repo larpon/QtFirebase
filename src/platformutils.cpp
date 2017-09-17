@@ -1,23 +1,44 @@
 #include "platformutils.h"
 
-PlatformUtils::PlatformUtils()
+/*
+ * Google Play Services (only available under Android)
+ */
+#if defined(Q_OS_ANDROID)
+GooglePlayServices::Availability GooglePlayServices::getAvailability()
 {
+    QAndroidJniEnvironment env;
+    QAndroidJniObject activity = QtAndroid::androidActivity();
 
+    auto availablity = ::google_play_services::CheckAvailability(env, activity.object());
+    qDebug() << "GooglePlayServices::getAvailability result :" << availablity << " (0 is kAvailabilityAvailable)";
+    return Availability(availablity);
 }
 
-#if defined(__ANDROID__)
+bool GooglePlayServices::available()
+{
+    QAndroidJniEnvironment env;
+    QAndroidJniObject activity = QtAndroid::androidActivity();
+
+    auto availablity = ::google_play_services::CheckAvailability(env, activity.object());
+    qDebug() << "GooglePlayServices::available() result :" << availablity << " (0 is kAvailabilityAvailable)";
+    return ::google_play_services::kAvailabilityAvailable == availablity;
+}
+#endif
+
+/*
+ * PlatformUtils
+ */
+#if defined(Q_OS_ANDROID)
 jobject PlatformUtils::getNativeWindow()
 {
-    QPlatformNativeInterface *interface = QGuiApplication::platformNativeInterface();
+    QAndroidJniEnvironment env;
 
-    jobject activity = (jobject)interface->nativeResourceForIntegration("QtActivity");
+    QAndroidJniObject activity = QtAndroid::androidActivity();
 
-    // Another way?
-    //jobject activity = (jobject)QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
+    jobject globalActivity = env->NewGlobalRef(activity.object());
 
-    return activity;
+    return globalActivity;
 }
-
 #else
 void PlatformUtils::getNativeWindow()
 {

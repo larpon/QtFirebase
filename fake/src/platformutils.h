@@ -1,0 +1,4 @@
+#ifndef PLATFORMUTILS_H
+#define PLATFORMUTILS_H
+
+#endif // PLATFORMUTILS_H

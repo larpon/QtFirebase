@@ -13,6 +13,7 @@
 #include "firebase/admob.h"
 #include "firebase/admob/types.h"
 #include "firebase/admob/banner_view.h"
+#include "firebase/admob/native_express_ad_view.h"
 #include "firebase/admob/interstitial_ad.h"
 #include "firebase/admob/rewarded_video.h"
 
@@ -26,6 +27,7 @@
 /*
  * AdMob (Base singleton object)
  */
+
 class QtFirebaseAdMob : public QObject
 {
     // friend classes so they can read the __testDevices
@@ -123,6 +125,7 @@ private:
 /*
  * AdMob Request
  */
+
 class QtFirebaseAdMobRequest : public QObject
 {
     Q_OBJECT
@@ -193,6 +196,7 @@ private:
 /*
  * AdMobBanner
  */
+
 class QtFirebaseAdMobBanner : public QObject
 {
     Q_OBJECT
@@ -306,9 +310,126 @@ private:
     QTimer *_initTimer;
 
     firebase::admob::BannerView* _banner;
-
 };
 
+/*
+ * AdMobNativeExpressAd
+ */
+class QtFirebaseAdMobNativeExpressAd : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
+    Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
+
+    Q_PROPERTY(QString adUnitId READ adUnitId WRITE setAdUnitId NOTIFY adUnitIdChanged)
+
+    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
+
+    Q_PROPERTY(int x READ getX WRITE setX NOTIFY xChanged)
+    Q_PROPERTY(int y READ getY WRITE setY NOTIFY yChanged)
+    Q_PROPERTY(int width READ getWidth WRITE setWidth NOTIFY widthChanged)
+    Q_PROPERTY(int height READ getHeight WRITE setHeight NOTIFY heightChanged)
+
+    Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
+
+public:
+    enum Position
+    {
+        PositionTopCenter,
+        PositionTopLeft,
+        PositionTopRight,
+        PositionBottomCenter,
+        PositionBottomLeft,
+        PositionBottomRight
+    };
+    Q_ENUM(Position)
+
+    QtFirebaseAdMobNativeExpressAd(QObject* parent = 0);
+    ~QtFirebaseAdMobNativeExpressAd();
+
+    bool ready();
+    void setReady(bool ready);
+
+    bool loaded();
+    void setLoaded(bool loaded);
+
+    QString adUnitId();
+    void setAdUnitId(const QString &adUnitId);
+
+    bool visible();
+    void setVisible(bool visible);
+
+    int getX();
+    void setX(const int &x);
+
+    int getY();
+    void setY(const int &y);
+
+    int getWidth();
+    void setWidth(const int &width);
+
+    int getHeight();
+    void setHeight(const int &height);
+
+    QtFirebaseAdMobRequest* request() const;
+    void setRequest(QtFirebaseAdMobRequest *request);
+
+signals:
+    void readyChanged();
+    void loadedChanged();
+    void adUnitIdChanged();
+
+    void visibleChanged();
+    void xChanged();
+    void yChanged();
+    void widthChanged();
+    void heightChanged();
+    void requestChanged();
+    void loading();
+
+    void error(QtFirebaseAdMob::Error code, QString message);
+
+public slots:
+    void load();
+    void show();
+    void hide();
+    void moveTo(int x, int y);
+    void moveTo(int position);
+
+private slots:
+    void init();
+    void onFutureEvent(QString eventId, firebase::FutureBase future);
+    void onApplicationStateChanged(Qt::ApplicationState state);
+
+private:
+    QString __QTFIREBASE_ID;
+    bool _ready;
+    bool _initializing;
+    bool _loaded;
+
+    bool _isFirstInit;
+
+    bool _visible;
+
+    int _x;
+    int _y;
+    int _width;
+    int _height;
+
+    QtFirebaseAdMobRequest* _request;
+
+    QString _adUnitId;
+    QByteArray __adUnitIdByteArray;
+    //const char *__adUnitId; // TODO use __adUnitIdByteArray.constData() instead ?
+
+    void *_nativeUIElement;
+
+    QTimer *_initTimer;
+
+    firebase::admob::NativeExpressAdView* _nativeAd;
+
+};
 
 /*
  * AdMobInterstitial
@@ -429,7 +550,6 @@ private:
     QtFirebaseAdMobInterstitial* _qtFirebaseAdMobInterstitial;
 };
 
-
 /*
  * AdMobRewardedVideoAd
  *
@@ -540,5 +660,4 @@ private:
 };
 
 #endif // QTFIREBASE_BUILD_ADMOB
-
 #endif // QTFIREBASE_ADMOB_H

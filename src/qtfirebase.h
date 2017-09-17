@@ -10,6 +10,7 @@
 
 #include "firebase/app.h"
 #include "firebase/future.h"
+#include "firebase/util.h"
 
 #include <QMap>
 #include <QObject>
@@ -55,7 +56,7 @@ private:
     static QtFirebase *self;
     Q_DISABLE_COPY(QtFirebase)
 
-    bool _ready;
+    bool _ready = false;
     firebase::App* _firebaseApp;
 
     QTimer *_initTimer;

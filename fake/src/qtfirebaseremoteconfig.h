@@ -1,5 +1,5 @@
-#ifndef QTFIREBASEREMOTECONFIG_H
-#define QTFIREBASEREMOTECONFIG_H
+#ifndef QTFIREBASE_REMOTE_CONFIG_H
+#define QTFIREBASE_REMOTE_CONFIG_H
 
 #include <QObject>
 
@@ -19,6 +19,7 @@ class QtFirebaseRemoteConfig : public QObject
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
     Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
     Q_PROPERTY(long long cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
+
 public:
     enum Error
     {
@@ -28,16 +29,18 @@ public:
     };
     Q_ENUM(Error)
 
-    explicit QtFirebaseRemoteConfig(QObject *parent = 0){}
+    explicit QtFirebaseRemoteConfig(QObject *parent = 0){ Q_UNUSED(parent); }
+
     ~QtFirebaseRemoteConfig() {}
-    QtFirebaseRemoteConfig *instance() {
+
+    static QtFirebaseRemoteConfig *instance() {
             if(self == 0) {
                 self = new QtFirebaseRemoteConfig(0);
             }
             return self;
         }
-    bool checkInstance(const char *function);
 
+    bool checkInstance(const char *function);
     bool ready(){return false;}
 
     QVariantMap parameters() const{return QVariantMap();}
@@ -45,14 +48,17 @@ public:
 
     long long cacheExpirationTime() const{return 0;}
     void setCacheExpirationTime(long long timeMs){Q_UNUSED(timeMs);}
+
 public slots:
     void addParameter(const QString &name, long long defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
     void addParameter(const QString &name, double defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
     void addParameter(const QString &name, const QString& defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
     void addParameter(const QString &name, bool defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
-    QVariant getParameterValue(const QString &name) const{return QString();}
+    QVariant getParameterValue(const QString) const{ return QString(); }
+
     void fetch(){}
     void fetchNow(){}
+
 signals:
     void readyChanged();
     void error(Error code, QString message);
@@ -65,5 +71,4 @@ private:
 };
 
 #endif //QTFIREBASE_BUILD_REMOTE_CONFIG
-
-#endif // QTFIREBASEREMOTECONFIG_H
+#endif // QTFIREBASE_REMOTE_CONFIG_H

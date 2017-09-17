@@ -490,11 +490,20 @@ QString QtFirebaseDataSnapshot::key() const
 
 QVariant QtFirebaseDataSnapshot::value() const
 {
+
     return QtFirebaseService::fromFirebaseVariant(m_snapshot.value());
 }
 
 QByteArray QtFirebaseDataSnapshot::jsonString() const
 {
+    qDebug()<<"Called json string method";
+    std::vector<firebase::database::DataSnapshot> childs = m_snapshot.GetChildren();
+    for(int i=0;i<childs.size();i++)
+    {
+        qDebug()<<"Print child:"<<i
+               <<childs[i].key()
+               <<QtFirebaseService::fromFirebaseVariant(childs[i].value());
+    }
     QJsonDocument doc = QJsonDocument::fromVariant(value());
     return doc.toJson();
 }
