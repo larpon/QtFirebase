@@ -1,5 +1,5 @@
-#ifndef QTFIREBASESERVICE_H
-#define QTFIREBASESERVICE_H
+#ifndef QTFIREBASE_SERVICE_H
+#define QTFIREBASE_SERVICE_H
 #include <QObject>
 #include "qtfirebase.h"
 #include "firebase/variant.h"
@@ -37,4 +37,4 @@ protected:
     bool _initializing;
 };
 
-#endif // QTFIREBASESERVICE_H
+#endif // QTFIREBASE_SERVICE_H

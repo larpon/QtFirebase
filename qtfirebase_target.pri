@@ -225,8 +225,8 @@ contains(DEFINES,QTFIREBASE_BUILD_DATABASE) {
             -framework Database \
     }
 
-    HEADERS += $$PWD/src/qtfirebasedb.h
-    SOURCES += $$PWD/src/qtfirebasedb.cpp
+    HEADERS += $$PWD/src/qtfirebasedatabase.h
+    SOURCES += $$PWD/src/qtfirebasedatabase.cpp
 
     LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -ldatabase
 }

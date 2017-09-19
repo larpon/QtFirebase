@@ -1,5 +1,5 @@
-#ifndef QTFIREBASEAUTH_H
-#define QTFIREBASEAUTH_H
+#ifndef QTFIREBASE_AUTH_H
+#define QTFIREBASE_AUTH_H
 #include <QObject>
 
 #ifdef QTFIREBASE_BUILD_AUTH
@@ -12,8 +12,8 @@
 class QtFirebaseAuth: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool running READ isRunning NOTIFY runningChanged)
-    Q_PROPERTY(bool signedIn READ isSignedIn NOTIFY signedInChanged)
+    Q_PROPERTY(bool running READ running NOTIFY runningChanged)
+    Q_PROPERTY(bool signedIn READ signedIn NOTIFY signedInChanged)
 public:
     static QtFirebaseAuth *instance()
     {
@@ -23,17 +23,19 @@ public:
         }
         return self;
     }
-    enum Error{
-        kAuthErrorNone,
-        kAuthErrorUnimplemented,
-        kAuthErrorFailure
+    enum Error
+    {
+        AuthErrorNone,
+        AuthErrorUnimplemented,
+        AuthErrorFailure
     };
     Q_ENUM(Error)
 
-    enum Action{
-        ActRegister,
-        ActSignIn,
-        ActSignOut
+    enum Action
+    {
+        AuthActionRegister,
+        AuthActionSignIn,
+        AuthActionSignOut
     };
     Q_ENUM(Action)
 
@@ -44,17 +46,17 @@ public slots:
     void signOut(){}
 
     //Status
-    bool isSignedIn() const{return false;}
-    bool isRunning() const{return false;}
+    bool signedIn() const{return false;}
+    bool running() const{return false;}
     int errorId() const{return kAuthErrorNone;}
     QString errorMsg() const{return QString();}
 
     //Data
-    QString getEmail() const{return QString();}
-    QString getDisplayName() const{return QString();}
+    QString email() const{return QString();}
+    QString displayName() const{return QString();}
     bool emailVerified() const{return false;}
-    QString getPhotoUrl() const{return QString();}
-    QString getUid() const{return QString();}
+    QString photoUrl() const{return QString();}
+    QString uid() const{return QString();}
 signals:
     void signedInChanged();
     void runningChanged();
@@ -68,4 +70,4 @@ protected:
 
 #endif //QTFIREBASE_BUILD_AUTH
 
-#endif // QTFIREBASEAUTH_H
+#endif // QTFIREBASE_AUTH_H

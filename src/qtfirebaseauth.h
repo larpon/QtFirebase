@@ -1,5 +1,5 @@
-#ifndef QTFIREBASEAUTH_H
-#define QTFIREBASEAUTH_H
+#ifndef QTFIREBASE_AUTH_H
+#define QTFIREBASE_AUTH_H
 
 #include "qtfirebaseservice.h"
 #include "firebase/auth.h"
@@ -14,8 +14,8 @@
 class QtFirebaseAuth : public QtFirebaseService
 {
     Q_OBJECT
-    Q_PROPERTY(bool running READ isRunning NOTIFY runningChanged)
-    Q_PROPERTY(bool signedIn READ isSignedIn NOTIFY signedInChanged)
+    Q_PROPERTY(bool running READ running NOTIFY runningChanged)
+    Q_PROPERTY(bool signedIn READ signedIn NOTIFY signedInChanged)
 public:
     static QtFirebaseAuth *instance()
     {
@@ -26,17 +26,19 @@ public:
         }
         return self;
     }
-    enum Error{
-        kAuthErrorNone = firebase::auth::kAuthErrorNone,
-        kAuthErrorUnimplemented = firebase::auth::kAuthErrorUnimplemented,
-        kAuthErrorFailure = firebase::auth::kAuthErrorFailure
+    enum Error
+    {
+        AuthErrorNone = firebase::auth::kAuthErrorNone,
+        AuthErrorUnimplemented = firebase::auth::kAuthErrorUnimplemented,
+        AuthErrorFailure = firebase::auth::kAuthErrorFailure
     };
     Q_ENUM(Error)
 
-    enum Action{
-        ActRegister,
-        ActSignIn,
-        ActSignOut
+    enum Action
+    {
+        AuthActionRegister,
+        AuthActionSignIn,
+        AuthActionSignOut
     };
     Q_ENUM(Action)
 
@@ -47,17 +49,17 @@ public slots:
     void signOut();
 
     //Status
-    bool isSignedIn() const;
-    bool isRunning() const;
+    bool signedIn() const;
+    bool running() const;
     int errorId() const;
     QString errorMsg() const;
 
     //Data
-    QString getEmail() const;
-    QString getDisplayName() const;
+    QString email() const;
+    QString displayName() const;
     bool emailVerified() const;
-    QString getPhotoUrl() const;
-    QString getUid() const;
+    QString photoUrl() const;
+    QString uid() const;
 signals:
     void signedInChanged();
     void runningChanged();
@@ -86,4 +88,4 @@ private:
 
 #endif //QTFIREBASE_BUILD_AUTH
 
-#endif // QTFIREBASEAUTH_H
+#endif // QTFIREBASE_AUTH_H

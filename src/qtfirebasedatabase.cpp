@@ -1,17 +1,17 @@
-#include "qtfirebasedb.h"
+#include "qtfirebasedatabase.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 namespace db = ::firebase::database;
 
-QtFirebaseDb* QtFirebaseDb::self = 0;
+QtFirebaseDatabase* QtFirebaseDatabase::self = 0;
 
-QtFirebaseDb::QtFirebaseDb(QObject *parent) : QtFirebaseService(parent),
+QtFirebaseDatabase::QtFirebaseDatabase(QObject *parent) : QtFirebaseService(parent),
     m_db(nullptr)
 {
     startInit();
 }
 
-void QtFirebaseDb::init()
+void QtFirebaseDatabase::init()
 {
     if(!qFirebase->ready()) {
         qDebug() << self << "::init" << "base not ready";
@@ -27,7 +27,7 @@ void QtFirebaseDb::init()
     }
 }
 
-void QtFirebaseDb::onFutureEvent(QString eventId, firebase::FutureBase future)
+void QtFirebaseDatabase::onFutureEvent(QString eventId, firebase::FutureBase future)
 {
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
@@ -35,10 +35,10 @@ void QtFirebaseDb::onFutureEvent(QString eventId, firebase::FutureBase future)
     qDebug()<<self<<"::onFutureEvent"<<eventId;
 
     QMutexLocker locker(&m_futureMutex);
-    QMap<QString, QtFirebaseDbRequest*>::iterator it = m_requests.find(eventId);
+    QMap<QString, QtFirebaseDatabaseRequest*>::iterator it = m_requests.find(eventId);
     if(it!=m_requests.end() && it.value()!=nullptr)
     {
-        QtFirebaseDbRequest* request = it.value();
+        QtFirebaseDatabaseRequest* request = it.value();
         m_requests.erase(it);
         QString id = eventId.right(eventId.size()-prefix().size());
         request->onFutureEvent(id, future);
@@ -49,23 +49,23 @@ void QtFirebaseDb::onFutureEvent(QString eventId, firebase::FutureBase future)
     }
 }
 
-QtFirebaseDbRequest *QtFirebaseDb::getRequest(const QString &futureKey) const
+QtFirebaseDatabaseRequest *QtFirebaseDatabase::request(const QString &futureKey) const
 {
     auto it = m_requests.find(futureKey);
     return it!=m_requests.end() ? *it : nullptr;
 }
 
-void QtFirebaseDb::addFuture(QString requestId, QtFirebaseDbRequest *request, firebase::FutureBase future)
+void QtFirebaseDatabase::addFuture(QString requestId, QtFirebaseDatabaseRequest *request, firebase::FutureBase future)
 {
     QString futureKey = prefix() + requestId;
     qFirebase->addFuture(futureKey, future);
     m_requests[futureKey] = request;
 }
 
-void QtFirebaseDb::unregisterRequest(QtFirebaseDbRequest *request)
+void QtFirebaseDatabase::unregisterRequest(QtFirebaseDatabaseRequest *request)
 {
     QMutexLocker locker(&m_futureMutex);
-    for(QMap<QString, QtFirebaseDbRequest*>::iterator it = m_requests.begin();it!=m_requests.end();++it)
+    for(QMap<QString, QtFirebaseDatabaseRequest*>::iterator it = m_requests.begin();it!=m_requests.end();++it)
     {
         if(it.value() == request)
         {
@@ -75,146 +75,146 @@ void QtFirebaseDb::unregisterRequest(QtFirebaseDbRequest *request)
     }
 }
 
-QString QtFirebaseDb::prefix() const
+QString QtFirebaseDatabase::prefix() const
 {
-    return __QTFIREBASE_ID + ".db.";
+    return __QTFIREBASE_ID + QStringLiteral(".db.");
 }
 
-//====================QtFirebaseDbQuery=====================/
+//====================QtFirebaseDatabaseQuery=====================/
 
-QtFirebaseDbQuery::QtFirebaseDbQuery():
+QtFirebaseDatabaseQuery::QtFirebaseDatabaseQuery():
     m_valid(false)
 {
 
 }
 
-QtFirebaseDbQuery *QtFirebaseDbQuery::orderByKey()
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseQuery::orderByKey()
 {
     m_query = m_query.OrderByKey();
     return this;
 }
 
-QtFirebaseDbQuery *QtFirebaseDbQuery::orderByValue()
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseQuery::orderByValue()
 {
     m_query = m_query.OrderByValue();
     return this;
 }
 
-QtFirebaseDbQuery *QtFirebaseDbQuery::orderByChild(const QString &path)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseQuery::orderByChild(const QString &path)
 {
     m_query = m_query.OrderByChild(path.toUtf8().constData());
     return this;
 }
 
-QtFirebaseDbQuery *QtFirebaseDbQuery::orderByPriority()
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseQuery::orderByPriority()
 {
     m_query = m_query.OrderByPriority();
     return this;
 }
 
-QtFirebaseDbQuery *QtFirebaseDbQuery::startAt(QVariant order_value)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseQuery::startAt(QVariant order_value)
 {
     m_query = m_query.StartAt(QtFirebaseService::fromQtVariant(order_value));
     return this;
 }
 
-QtFirebaseDbQuery *QtFirebaseDbQuery::startAt(QVariant order_value, const QString &child_key)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseQuery::startAt(QVariant order_value, const QString &child_key)
 {
     m_query = m_query.StartAt(QtFirebaseService::fromQtVariant(order_value), child_key.toUtf8().constData());
     return this;
 }
 
-QtFirebaseDbQuery *QtFirebaseDbQuery::endAt(QVariant order_value)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseQuery::endAt(QVariant order_value)
 {
     m_query = m_query.EndAt(QtFirebaseService::fromQtVariant(order_value));
     return this;
 }
 
-QtFirebaseDbQuery *QtFirebaseDbQuery::endAt(QVariant order_value, const QString &child_key)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseQuery::endAt(QVariant order_value, const QString &child_key)
 {
     m_query = m_query.EndAt(QtFirebaseService::fromQtVariant(order_value), child_key.toUtf8().constData());
     return this;
 }
 
-QtFirebaseDbQuery *QtFirebaseDbQuery::equalTo(QVariant order_value)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseQuery::equalTo(QVariant order_value)
 {
     m_query = m_query.EqualTo(QtFirebaseService::fromQtVariant(order_value));
     return this;
 }
 
-QtFirebaseDbQuery *QtFirebaseDbQuery::equalTo(QVariant order_value, const QString &child_key)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseQuery::equalTo(QVariant order_value, const QString &child_key)
 {
     m_query = m_query.EqualTo(QtFirebaseService::fromQtVariant(order_value), child_key.toUtf8().constData());
     return this;
 }
 
-QtFirebaseDbQuery *QtFirebaseDbQuery::limitToFirst(size_t limit)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseQuery::limitToFirst(size_t limit)
 {
     m_query = m_query.LimitToFirst(limit);
     return this;
 }
 
-QtFirebaseDbQuery *QtFirebaseDbQuery::limitToLast(size_t limit)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseQuery::limitToLast(size_t limit)
 {
     m_query = m_query.LimitToLast(limit);
     return this;
 }
 
-void QtFirebaseDbQuery::getValue()
+void QtFirebaseDatabaseQuery::exec()
 {
-    emit queryRun();
+    emit run();
 }
 
-void QtFirebaseDbQuery::clear()
+void QtFirebaseDatabaseQuery::clear()
 {
     m_valid = false;
 }
 
-bool QtFirebaseDbQuery::isValid()
+bool QtFirebaseDatabaseQuery::valid() const
 {
     return m_valid;
 }
 
-QtFirebaseDbQuery* QtFirebaseDbQuery::setQuery(const firebase::database::Query &query)
+QtFirebaseDatabaseQuery* QtFirebaseDatabaseQuery::setQuery(const firebase::database::Query &query)
 {
     m_valid = true;
     m_query = query;
     return this;
 }
 
-firebase::database::Query &QtFirebaseDbQuery::query()
+firebase::database::Query &QtFirebaseDatabaseQuery::query()
 {
     return m_query;
 }
 
-//================QtFirebaseDbRequest===================
+//================QtFirebaseDatabaseRequest===================
 
-namespace DbActions{
-    const QString Set = "set";
-    const QString Get = "get";
-    const QString Update = "update";
-    const QString Remove = "remove";
+namespace DatabaseActions {
+    const QString Set = QStringLiteral("set");
+    const QString Get = QStringLiteral("get");
+    const QString Update = QStringLiteral("update");
+    const QString Remove = QStringLiteral("remove");
 }
 
-QtFirebaseDbRequest::QtFirebaseDbRequest():
+QtFirebaseDatabaseRequest::QtFirebaseDatabaseRequest():
     m_inComplexRequest(false)
     ,m_snapshot(nullptr)
     ,m_complete(true)
 {
     clearError();
-    connect(&m_query, SIGNAL(queryRun()),this,SLOT(onQueryRun()));
+    connect(&m_query, SIGNAL(run()),this,SLOT(onRun()));
 }
 
-QtFirebaseDbRequest::~QtFirebaseDbRequest()
+QtFirebaseDatabaseRequest::~QtFirebaseDatabaseRequest()
 {
-    qFirebaseDb->unregisterRequest(this);
+    qFirebaseDatabase->unregisterRequest(this);
     if(m_snapshot!=nullptr)
         delete m_snapshot;
 }
 
-QtFirebaseDbRequest* QtFirebaseDbRequest::child(const QString &path)
+QtFirebaseDatabaseRequest* QtFirebaseDatabaseRequest::child(const QString &path)
 {
-    if(!isRunning())
+    if(!running())
     {
         if(!m_inComplexRequest)
         {
@@ -224,39 +224,39 @@ QtFirebaseDbRequest* QtFirebaseDbRequest::child(const QString &path)
         m_pushChildKey.clear();
         if(path.isEmpty())
         {
-            m_dbRef = qFirebaseDb->m_db->GetReference().GetRoot();
+            m_dbRef = qFirebaseDatabase->m_db->GetReference().GetRoot();
         }
         else
         {
-            m_dbRef = qFirebaseDb->m_db->GetReference().GetRoot().Child(path.toUtf8().constData());
+            m_dbRef = qFirebaseDatabase->m_db->GetReference().GetRoot().Child(path.toUtf8().constData());
         }
     }
     return this;
 }
 
-QtFirebaseDbRequest *QtFirebaseDbRequest::pushChild()
+QtFirebaseDatabaseRequest *QtFirebaseDatabaseRequest::pushChild()
 {
-    if(m_inComplexRequest && !isRunning())
+    if(m_inComplexRequest && !running())
     {
         m_pushChildKey = m_dbRef.PushChild().key();
     }
     return this;
 }
 
-void QtFirebaseDbRequest::remove()
+void QtFirebaseDatabaseRequest::remove()
 {
-    if(m_inComplexRequest && !isRunning())
+    if(m_inComplexRequest && !running())
     {
         m_inComplexRequest = false;
         setComplete(false);
         firebase::Future<void> future = m_dbRef.RemoveValue();
-        qFirebaseDb->addFuture(DbActions::Remove, this, future);
+        qFirebaseDatabase->addFuture(DatabaseActions::Remove, this, future);
     }
 }
 
-void QtFirebaseDbRequest::setValue(const QVariant &value)
+void QtFirebaseDatabaseRequest::setValue(const QVariant &value)
 {
-    if(m_inComplexRequest && !isRunning())
+    if(m_inComplexRequest && !running())
     {
         m_inComplexRequest = false;
         setComplete(false);
@@ -265,79 +265,79 @@ void QtFirebaseDbRequest::setValue(const QVariant &value)
             m_dbRef = m_dbRef.Child(m_pushChildKey.toUtf8().constData());
         }
         firebase::Future<void> future = m_dbRef.SetValue(QtFirebaseService::fromQtVariant(value));
-        qFirebaseDb->addFuture(DbActions::Set, this, future);
+        qFirebaseDatabase->addFuture(DatabaseActions::Set, this, future);
     }
 }
 
-void QtFirebaseDbRequest::getValue()
+void QtFirebaseDatabaseRequest::exec()
 {
-    if(m_inComplexRequest && !isRunning())
+    if(m_inComplexRequest && !running())
     {
         m_inComplexRequest = false;
         setComplete(false);
-        if(m_query.isValid())
+        if(m_query.valid())
         {
             firebase::Future<firebase::database::DataSnapshot> future = m_query.query().GetValue();
-            qFirebaseDb->addFuture(DbActions::Get, this, future);
+            qFirebaseDatabase->addFuture(DatabaseActions::Get, this, future);
             m_query.clear();
         }
         else
         {
             firebase::Future<firebase::database::DataSnapshot> future = m_dbRef.GetValue();
-            qFirebaseDb->addFuture(DbActions::Get, this, future);
+            qFirebaseDatabase->addFuture(DatabaseActions::Get, this, future);
         }
     }
 }
 
-void QtFirebaseDbRequest::updateTree(const QVariant &tree)
+void QtFirebaseDatabaseRequest::updateTree(const QVariant &tree)
 {
     clearError();
     setComplete(false);
     QJsonDocument doc = QJsonDocument::fromJson(tree.toString().toUtf8());
     QVariant v(doc.object().toVariantMap());
     firebase::Variant vfb = QtFirebaseService::fromQtVariant(v);
-    firebase::Future<void> future = qFirebaseDb->m_db->GetReference().UpdateChildren(vfb);
-    qFirebaseDb->addFuture(DbActions::Update, this, future);
+    firebase::Future<void> future = qFirebaseDatabase->m_db->GetReference().UpdateChildren(vfb);
+    qFirebaseDatabase->addFuture(DatabaseActions::Update, this, future);
 }
 
-int QtFirebaseDbRequest::errorId() const
+int QtFirebaseDatabaseRequest::errorId() const
 {
     return m_errId;
 }
 
-bool QtFirebaseDbRequest::hasError() const
+bool QtFirebaseDatabaseRequest::hasError() const
 {
-    return m_errId != QtFirebaseDb::kErrorNone;
+    return m_errId != QtFirebaseDatabase::ErrorNone;
 }
 
-QString QtFirebaseDbRequest::errorMsg() const
+QString QtFirebaseDatabaseRequest::errorMsg() const
 {
     return m_errMsg;
 }
 
-QString QtFirebaseDbRequest::childKey() const
+QString QtFirebaseDatabaseRequest::childKey() const
 {
     return m_pushChildKey;
 }
 
-QtFirebaseDataSnapshot *QtFirebaseDbRequest::getSnapshot()
+QtFirebaseDataSnapshot *QtFirebaseDatabaseRequest::snapshot()
 {
     return m_snapshot;
 }
 
-void QtFirebaseDbRequest::onFutureEvent(QString eventId, firebase::FutureBase future)
+void QtFirebaseDatabaseRequest::onFutureEvent(QString eventId, firebase::FutureBase future)
 {
     if(future.status() != firebase::kFutureStatusComplete)
     {
         qDebug() << this << "::onFutureEvent " << "ERROR: Action failed with status: " << future.status();
-        setError(QtFirebaseDb::kErrorUnknownError);
+        setError(QtFirebaseDatabase::ErrorUnknownError);
     }
     else if (future.error() != firebase::database::kErrorNone)
     {
         qDebug()<<this<<"::onFutureEvent Error occured in result:"<<future.error() << future.error_message();
         setError(future.error(), future.error_message());
     }
-    else if(eventId == DbActions::Get)
+    else if(eventId == DatabaseActions::Get)
     {
         const firebase::database::DataSnapshot* snapshot = ::result<firebase::database::DataSnapshot>(future.result_void());
         if(m_snapshot)
@@ -351,7 +351,7 @@ void QtFirebaseDbRequest::onFutureEvent(QString eventId, firebase::FutureBase fu
     setComplete(true);
 }
 
-void QtFirebaseDbRequest::setComplete(bool value)
+void QtFirebaseDatabaseRequest::setComplete(bool value)
 {
     if(m_complete!=value)
     {
@@ -359,115 +359,115 @@ void QtFirebaseDbRequest::setComplete(bool value)
         emit runningChanged();
         if(m_complete)
         {
-            emit completed(m_errId == QtFirebaseDb::kErrorNone);
+            emit completed(m_errId == QtFirebaseDatabase::ErrorNone);
         }
     }
 }
 
-void QtFirebaseDbRequest::setError(int errId, const QString &msg)
+void QtFirebaseDatabaseRequest::setError(int errId, const QString &msg)
 {
     m_errId = errId;
     m_errMsg = msg;
 }
 
-void QtFirebaseDbRequest::clearError()
+void QtFirebaseDatabaseRequest::clearError()
 {
-    setError(QtFirebaseDb::kErrorNone);
+    setError(QtFirebaseDatabase::ErrorNone);
 }
 
-QtFirebaseDbQuery *QtFirebaseDbRequest::orderByKey()
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseRequest::orderByKey()
 {
-    return m_query.isValid() ?
+    return m_query.valid() ?
         m_query.orderByKey() :
         m_query.setQuery(m_dbRef.OrderByKey());
 }
 
-QtFirebaseDbQuery *QtFirebaseDbRequest::orderByValue()
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseRequest::orderByValue()
 {
-    return m_query.isValid() ?
+    return m_query.valid() ?
         m_query.orderByValue() :
         m_query.setQuery(m_dbRef.OrderByValue());
 }
 
-QtFirebaseDbQuery *QtFirebaseDbRequest::orderByChild(const QString &path)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseRequest::orderByChild(const QString &path)
 {
-    return m_query.isValid() ?
+    return m_query.valid() ?
         m_query.orderByChild(path):
         m_query.setQuery(m_dbRef.OrderByChild(path.toUtf8().constData()));
 }
 
-QtFirebaseDbQuery *QtFirebaseDbRequest::orderByPriority()
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseRequest::orderByPriority()
 {
-    return m_query.isValid() ?
+    return m_query.valid() ?
         m_query.orderByPriority() :
         m_query.setQuery(m_dbRef.OrderByPriority());
 }
 
-QtFirebaseDbQuery *QtFirebaseDbRequest::startAt(QVariant order_value)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseRequest::startAt(QVariant order_value)
 {
-    return m_query.isValid() ?
+    return m_query.valid() ?
         m_query.startAt(order_value) :
         m_query.setQuery(m_dbRef.StartAt(QtFirebaseService::fromQtVariant(order_value)));
 
 }
 
-QtFirebaseDbQuery *QtFirebaseDbRequest::startAt(QVariant order_value, const QString &child_key)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseRequest::startAt(QVariant order_value, const QString &child_key)
 {
-    return m_query.isValid() ?
+    return m_query.valid() ?
         m_query.startAt(order_value, child_key) :
         m_query.setQuery(m_dbRef.StartAt(QtFirebaseService::fromQtVariant(order_value), child_key.toUtf8().constData()));
 }
 
-QtFirebaseDbQuery *QtFirebaseDbRequest::endAt(QVariant order_value)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseRequest::endAt(QVariant order_value)
 {
-    return m_query.isValid() ?
+    return m_query.valid() ?
         m_query.endAt(order_value) :
         m_query.setQuery(m_dbRef.EndAt(QtFirebaseService::fromQtVariant(order_value)));
 }
 
-QtFirebaseDbQuery *QtFirebaseDbRequest::endAt(QVariant order_value, const QString &child_key)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseRequest::endAt(QVariant order_value, const QString &child_key)
 {
-    return m_query.isValid() ?
+    return m_query.valid() ?
         m_query.endAt(order_value, child_key) :
         m_query.setQuery(m_dbRef.EndAt(QtFirebaseService::fromQtVariant(order_value), child_key.toUtf8().constData()));
 }
 
-QtFirebaseDbQuery *QtFirebaseDbRequest::equalTo(QVariant order_value)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseRequest::equalTo(QVariant order_value)
 {
-    return m_query.isValid() ?
+    return m_query.valid() ?
         m_query.equalTo(order_value) :
         m_query.setQuery(m_dbRef.EqualTo(QtFirebaseService::fromQtVariant(order_value)));
 }
 
-QtFirebaseDbQuery *QtFirebaseDbRequest::equalTo(QVariant order_value, const QString &child_key)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseRequest::equalTo(QVariant order_value, const QString &child_key)
 {
-    return m_query.isValid() ?
+    return m_query.valid() ?
         m_query.equalTo(order_value, child_key) :
         m_query.setQuery(m_dbRef.EqualTo(QtFirebaseService::fromQtVariant(order_value), child_key.toUtf8().constData()));
 }
 
-QtFirebaseDbQuery *QtFirebaseDbRequest::limitToFirst(size_t limit)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseRequest::limitToFirst(size_t limit)
 {
-    return m_query.isValid() ?
+    return m_query.valid() ?
         m_query.limitToFirst(limit) :
         m_query.setQuery(m_dbRef.LimitToFirst(limit));
 }
 
-QtFirebaseDbQuery *QtFirebaseDbRequest::limitToLast(size_t limit)
+QtFirebaseDatabaseQuery *QtFirebaseDatabaseRequest::limitToLast(size_t limit)
 {
-    return m_query.isValid() ?
+    return m_query.valid() ?
         m_query.limitToLast(limit) :
                 m_query.setQuery(m_dbRef.LimitToLast(limit));
 }
 
-bool QtFirebaseDbRequest::isRunning() const
+bool QtFirebaseDatabaseRequest::running() const
 {
     return !m_complete;
 }
 
-void QtFirebaseDbRequest::onQueryRun()
+void QtFirebaseDatabaseRequest::onRun()
 {
-    getValue();
+    exec();
 }
 
 //================QtFirebaseDataSnapshot===================
@@ -508,7 +508,7 @@ bool QtFirebaseDataSnapshot::hasChildren() const
     return m_snapshot.has_children();
 }
 
-bool QtFirebaseDataSnapshot::isValid() const
+bool QtFirebaseDataSnapshot::valid() const
 {
     return m_snapshot.is_valid();
 }
