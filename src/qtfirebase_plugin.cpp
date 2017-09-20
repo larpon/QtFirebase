@@ -22,12 +22,12 @@
 # endif // QTFIREBASE_BUILD_AUTH
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
-#include "src/qtfirebasedb.h"
+#include "src/qtfirebasedatabase.h"
 # endif // QTFIREBASE_BUILD_DATABASE
 
 #include <qqml.h>
 
-static QObject *QtFirebaseDbProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+static QObject *QtFirebaseDatabaseProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)
@@ -65,9 +65,9 @@ void QtFirebasePlugin::registerTypes(const char *uri)
 #endif
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
-    qmlRegisterSingletonType<QtFirebaseDb>(uri, 1, 0, "DataBase", QtFirebaseDbProvider);
-    qmlRegisterUncreatableType<QtFirebaseDbQuery>(uri, 1, 0, "DbQuery", "Get query object from DbRequest, do not create it");
-    qmlRegisterType<QtFirebaseDbRequest>(uri, 1, 0, "DbRequest");
+    qmlRegisterSingletonType<QtFirebaseDatabase>(uri, 1, 0, "Database", QtFirebaseDatabaseProvider);
+    qmlRegisterUncreatableType<QtFirebaseDatabaseQuery>(uri, 1, 0, "DatabaseQuery", "Get query object from DbRequest, do not create it");
+    qmlRegisterType<QtFirebaseDatabaseRequest>(uri, 1, 0, "DatabaseRequest");
     qmlRegisterUncreatableType<QtFirebaseDataSnapshot>(uri, 1, 0, "DataSnapshot", "Get snapshot object from DbRequest, do not create it");
 #endif
 }
