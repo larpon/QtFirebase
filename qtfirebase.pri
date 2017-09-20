@@ -23,6 +23,15 @@ contains(QTFIREBASE_CONFIG,"remote_config") {
     DEFINES += QTFIREBASE_BUILD_REMOTE_CONFIG
 }
 
+contains(QTFIREBASE_CONFIG,"auth") {
+    DEFINES += QTFIREBASE_BUILD_AUTH
+}
+
+contains(QTFIREBASE_CONFIG,"database") {
+    DEFINES += QTFIREBASE_BUILD_DATABASE
+}
+
+
 DISTFILES += \
     $$PWD/LICENSE \
     $$PWD/README.md

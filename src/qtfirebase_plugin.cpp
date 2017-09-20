@@ -13,12 +13,27 @@
 #include "src/qtfirebaseadmob.h"
 # endif // QTFIREBASE_BUILD_ADMOB
 
-
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
 #include "src/qtfirebaseremoteconfig.h"
 # endif // QTFIREBASE_BUILD_REMOTE_CONFIG
 
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_AUTH)
+#include "src/qtfirebaseauth.h"
+# endif // QTFIREBASE_BUILD_AUTH
+
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
+#include "src/qtfirebasedb.h"
+# endif // QTFIREBASE_BUILD_DATABASE
+
 #include <qqml.h>
+
+static QObject *QtFirebaseDbProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+    return qFirebaseDb;
+}
+
 
 void QtFirebasePlugin::registerTypes(const char *uri)
 {
@@ -43,6 +58,17 @@ void QtFirebasePlugin::registerTypes(const char *uri)
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
     qmlRegisterType<QtFirebaseRemoteConfig>(uri, 1, 0, "RemoteConfig");
+#endif
+
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_AUTH)
+    qmlRegisterType<QtFirebaseAuth>(uri, 1, 0, "Auth");
+#endif
+
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
+    qmlRegisterSingletonType<QtFirebaseDb>(uri, 1, 0, "DataBase", QtFirebaseDbProvider);
+    qmlRegisterUncreatableType<QtFirebaseDbQuery>(uri, 1, 0, "DbQuery", "Get query object from DbRequest, do not create it");
+    qmlRegisterType<QtFirebaseDbRequest>(uri, 1, 0, "DbRequest");
+    qmlRegisterUncreatableType<QtFirebaseDataSnapshot>(uri, 1, 0, "DataSnapshot", "Get snapshot object from DbRequest, do not create it");
 #endif
 }
 

@@ -7,7 +7,10 @@ INCLUDEPATH += $$QTFIREBASE_FAKE_PATH
 
 QML_IMPORT_PATH += $$PWD
 
-HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebase.h
+HEADERS += \
+    $$QTFIREBASE_FAKE_PATH/src/qtfirebase.h \
+    $$QTFIREBASE_FAKE_PATH/src/qtfirebaseservice.h \
+    \
 
 contains(QTPLUGIN,qtfirebase) {
     HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebase_plugin.h
@@ -32,6 +35,16 @@ contains(DEFINES,QTFIREBASE_BUILD_ADMOB) {
 # Remote Config
 contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
     HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebaseremoteconfig.h
+}
+
+# Auth
+contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
+    HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebaseauth.h
+}
+
+# Database
+contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
+    HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebasedatabase.h
 }
 
 SOURCES += $$PWD/fake/src/qtfirebase.cpp

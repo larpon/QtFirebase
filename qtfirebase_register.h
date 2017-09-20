@@ -47,6 +47,35 @@
 
 # endif // QTFIREBASE_BUILD_REMOTE_CONFIG
 
+
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_AUTH)
+
+#if defined(QTFIREBASE_FAKE_BUILD)
+#include "fake/src/qtfirebaseauth.h"
+#else
+#include "src/qtfirebaseauth.h"
+#endif
+
+# endif // QTFIREBASE_BUILD_AUTH
+
+
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
+
+#if defined(QTFIREBASE_FAKE_BUILD)
+#include "fake/src/qtfirebasedatabase.h"
+#else
+#include "src/qtfirebasedatabase.h"
+#endif
+
+# endif // QTFIREBASE_BUILD_DATABASE
+
+static QObject *QtFirebaseDatabaseProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+    return qFirebaseDatabase;
+}
+
 static void registerQtFirebase() {
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_ANALYTICS)
@@ -64,11 +93,21 @@ static void registerQtFirebase() {
     qmlRegisterType<QtFirebaseAdMobNativeExpressAd>("QtFirebase", 1, 0, "AdMobNativeExpressAd");
     qmlRegisterType<QtFirebaseAdMobInterstitial>("QtFirebase", 1, 0, "AdMobInterstitial");
     qmlRegisterType<QtFirebaseAdMobRewardedVideoAd>("QtFirebase", 1, 0, "AdMobRewardedVideoAd");
-
 #endif
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
     qmlRegisterType<QtFirebaseRemoteConfig>("QtFirebase", 1, 0, "RemoteConfig");
+#endif
+
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_AUTH)
+    qmlRegisterType<QtFirebaseAuth>("QtFirebase", 1, 0, "Auth");
+#endif
+
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
+    qmlRegisterSingletonType<QtFirebaseDatabase>("QtFirebase", 1, 0, "Database", QtFirebaseDatabaseProvider);
+    qmlRegisterUncreatableType<QtFirebaseDatabaseQuery>("QtFirebase", 1, 0, "DatabaseQuery", "Get query object from DatabaseRequest, do not create it");
+    qmlRegisterType<QtFirebaseDatabaseRequest>("QtFirebase", 1, 0, "DatabaseRequest");
+    qmlRegisterUncreatableType<QtFirebaseDataSnapshot>("QtFirebase", 1, 0, "DataSnapshot", "Get snapshot object from DatabaseRequest, do not create it");
 #endif
 }
 
