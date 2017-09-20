@@ -206,8 +206,10 @@ contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
     ios: {
         message( "QtFirebase Auth not tested on ios" )
         LIBS += \
-            -F$$QTFIREBASE_FRAMEWORKS_ROOT/Auth/Frameworks \
-            -framework Auth \
+            -F$$QTFIREBASE_FRAMEWORKS_ROOT/Auth \
+            -framework GTMSessionFetcher \
+            -framework FirebaseAuth \
+        \
     }
 
     HEADERS += $$PWD/src/qtfirebaseauth.h
@@ -226,8 +228,10 @@ contains(DEFINES,QTFIREBASE_BUILD_DATABASE) {
     ios: {
         message( "QtFirebase Database not tested on ios" )
         LIBS += \
-            -F$$QTFIREBASE_FRAMEWORKS_ROOT/Database/Frameworks \
-            -framework Database \
+            -F$$QTFIREBASE_FRAMEWORKS_ROOT/Database \
+            -framework FirebaseDatabase \
+            -framework leveldb-library \
+        \
     }
 
     HEADERS += $$PWD/src/qtfirebasedatabase.h
