@@ -207,8 +207,8 @@ contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
         message( "QtFirebase Auth not tested on ios" )
         LIBS += \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Auth \
-            -framework GTMSessionFetcher \
             -framework FirebaseAuth \
+            -framework GTMSessionFetcher \
         \
     }
 
