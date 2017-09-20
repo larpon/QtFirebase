@@ -8,8 +8,8 @@ QtFirebaseAuth::QtFirebaseAuth(QObject *parent) : QtFirebaseService(parent),
     m_auth(nullptr)
     ,m_complete(false)
     ,m_signedIn(false)
-    ,m_errId(AuthErrorNone)
-    ,m_action(AuthActionSignIn)
+    ,m_errId(ErrorNone)
+    ,m_action(ActionSignIn)
 {
     if(self == 0)
     {
@@ -21,7 +21,7 @@ QtFirebaseAuth::QtFirebaseAuth(QObject *parent) : QtFirebaseService(parent),
 
 void QtFirebaseAuth::clearError()
 {
-    setError(AuthErrorNone);
+    setError(ErrorNone);
 }
 
 void QtFirebaseAuth::setError(int errId, const QString &errMsg)
@@ -37,7 +37,7 @@ void QtFirebaseAuth::registerUser(const QString &email, const QString &pass)
 
     clearError();
     setComplete(false);
-    m_action = AuthActionRegister;
+    m_action = ActionRegister;
     firebase::Future<auth::User*> future =
            m_auth->CreateUserWithEmailAndPassword(email.toUtf8().constData(), pass.toUtf8().constData());
     qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".auth.register"), future);
@@ -53,7 +53,7 @@ void QtFirebaseAuth::signIn(const QString &email, const QString &pass)
     if(running())
         return;
 
-    m_action = AuthActionSignIn;
+    m_action = ActionSignIn;
     clearError();
     setComplete(false);
 
@@ -74,7 +74,7 @@ bool QtFirebaseAuth::running() const
 
 void QtFirebaseAuth::signOut()
 {
-    m_action = AuthActionSignOut;
+    m_action = ActionSignOut;
     m_auth->SignOut();
     clearError();
     setComplete(false);
@@ -144,7 +144,7 @@ void QtFirebaseAuth::setComplete(bool complete)
         m_complete = complete;
         emit runningChanged();
         if(m_complete)
-            emit completed(m_errId == AuthErrorNone, m_action);
+            emit completed(m_errId == ErrorNone, m_action);
     }
 }
 
@@ -190,7 +190,7 @@ void QtFirebaseAuth::onFutureEvent(QString eventId, firebase::FutureBase future)
     if(future.status() != firebase::kFutureStatusComplete)
     {
         qDebug() << this << "::onFutureEvent register user failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
-        setError(AuthErrorFailure, "Unknown error");
+        setError(ErrorFailure, "Unknown error");
     }
     else if(future.error()==auth::kAuthErrorNone)
     {
@@ -199,7 +199,7 @@ void QtFirebaseAuth::onFutureEvent(QString eventId, firebase::FutureBase future)
         {
             if(future.result_void() == nullptr)
             {
-                setError(AuthErrorFailure, "Registered user is null");
+                setError(ErrorFailure, "Registered user is null");
                 qDebug()<<"Registered user is null";
             }
             else

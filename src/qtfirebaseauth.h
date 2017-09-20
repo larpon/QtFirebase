@@ -28,17 +28,17 @@ public:
     }
     enum Error
     {
-        AuthErrorNone = firebase::auth::kAuthErrorNone,
-        AuthErrorUnimplemented = firebase::auth::kAuthErrorUnimplemented,
-        AuthErrorFailure = firebase::auth::kAuthErrorFailure
+        ErrorNone = firebase::auth::kAuthErrorNone,
+        ErrorUnimplemented = firebase::auth::kAuthErrorUnimplemented,
+        ErrorFailure = firebase::auth::kAuthErrorFailure
     };
     Q_ENUM(Error)
 
     enum Action
     {
-        AuthActionRegister,
-        AuthActionSignIn,
-        AuthActionSignOut
+        ActionRegister,
+        ActionSignIn,
+        ActionSignOut
     };
     Q_ENUM(Action)
 
@@ -60,12 +60,15 @@ public slots:
     bool emailVerified() const;
     QString photoUrl() const;
     QString uid() const;
+
 signals:
     void signedInChanged();
     void runningChanged();
     void completed(bool success, int actionId);
+
 protected:
     explicit QtFirebaseAuth(QObject *parent = 0);
+
 private:
     void clearError();
     void setComplete(bool complete);

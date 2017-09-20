@@ -21,7 +21,7 @@ public:
     static QtFirebaseDatabase* instance() {
         if(self == 0) {
             self = new QtFirebaseDatabase(0);
-            qDebug() << self << "::QtFirebaseDatabase" << "singleton";
+            qDebug() << self << "::instance" << "singleton";
         }
         return self;
     }

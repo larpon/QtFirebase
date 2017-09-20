@@ -40,7 +40,7 @@ QtFirebaseMessaging::QtFirebaseMessaging(QObject* parent)
 
 QtFirebaseMessaging::~QtFirebaseMessaging()
 {
-    // todo terminate something?
+    messaging::Terminate();
 }
 
 void QtFirebaseMessaging::classBegin()
