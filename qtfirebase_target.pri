@@ -202,9 +202,7 @@ contains(DEFINES,QTFIREBASE_BUILD_ANALYTICS) {
 contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
     message( "QtFirebase including Auth" )
 
-    #TODO auth on ios
     ios: {
-        message( "QtFirebase Auth not tested on ios" )
         LIBS += \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Auth \
             -framework FirebaseAuth \
@@ -224,9 +222,7 @@ contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
 contains(DEFINES,QTFIREBASE_BUILD_DATABASE) {
     message( "QtFirebase including Database" )
 
-    #TODO database on ios
     ios: {
-        message( "QtFirebase Database not tested on ios" )
         LIBS += \
             -licucore \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Database \
