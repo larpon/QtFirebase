@@ -5,13 +5,14 @@
 
 #ifdef QTFIREBASE_BUILD_DATABASE
 #include "src/qtfirebase.h"
+#include "src/qtfirebaseservice.h"
 #if defined(qFirebaseDatabase)
 #undef qFirebaseDatabase
 #endif
 #define qFirebaseDatabase (static_cast<QtFirebaseDatabase*>(QtFirebaseDatabase::instance()))
 
 class QtFirebaseDatabaseRequest;
-class QtFirebaseDatabase: public QObject
+class QtFirebaseDatabase : public QtFirebaseService
 {
     Q_OBJECT
     typedef QSharedPointer<QtFirebaseDatabase> Ptr;
@@ -42,6 +43,13 @@ public:
         ErrorTransactionAbortedByUser
     };
     Q_ENUM(Error)
+
+    void setReady(bool value) { Q_UNUSED(value); }
+    bool initializing() const { return false; }
+    void setInitializing(bool value) { Q_UNUSED(value); }
+    void init() { }
+    void onFutureEvent(QString eventId, int future) { Q_UNUSED(eventId); Q_UNUSED(future); }
+
 private:
     explicit QtFirebaseDatabase(QObject *parent = 0){Q_UNUSED(parent);}
     static QtFirebaseDatabase* self;

@@ -18,11 +18,13 @@ INCLUDEPATH += \
 HEADERS += \
     $$PWD/src/platformutils.h \
     $$PWD/src/qtfirebase.h \
-    $$PWD/src/qtfirebaseservice.h
+    $$PWD/src/qtfirebaseservice.h \
+    \
 
 SOURCES += \
     $$PWD/src/qtfirebase.cpp \
-    $$PWD/src/qtfirebaseservice.cpp
+    $$PWD/src/qtfirebaseservice.cpp \
+    \
 
 contains(QTPLUGIN,qtfirebase) {
     HEADERS += $$PWD/src/qtfirebase_plugin.h
@@ -31,11 +33,13 @@ contains(QTPLUGIN,qtfirebase) {
 
 !ios: {
     SOURCES += \
-        $$PWD/src/platformutils.cpp
+        $$PWD/src/platformutils.cpp \
+    \
 }
 
 RESOURCES += \
-    $$PWD/qtfirebase.qrc
+    $$PWD/qtfirebase.qrc \
+    \
 
 android: {
 
@@ -128,7 +132,7 @@ contains(DEFINES,QTFIREBASE_BUILD_ADMOB) {
     LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -ladmob
 }
 
-# RemoteConfig
+# Remote Config
 contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
     message( "QtFirebase including RemoteConfig" )
 
@@ -209,6 +213,7 @@ contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
     HEADERS += $$PWD/src/qtfirebaseauth.h
     SOURCES += $$PWD/src/qtfirebaseauth.cpp
 
+    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/libauth.a
     LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lauth
 }
 
@@ -228,6 +233,7 @@ contains(DEFINES,QTFIREBASE_BUILD_DATABASE) {
     HEADERS += $$PWD/src/qtfirebasedatabase.h
     SOURCES += $$PWD/src/qtfirebasedatabase.cpp
 
+    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/libdatabase.a
     LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -ldatabase
 }
 

@@ -48,7 +48,7 @@ public slots:
     //Status
     bool signedIn() const{return false;}
     bool running() const{return false;}
-    int errorId() const{return kAuthErrorNone;}
+    int errorId() const{return AuthErrorNone;}
     QString errorMsg() const{return QString();}
 
     //Data

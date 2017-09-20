@@ -89,8 +89,9 @@ public slots:
     //QJsonDocument doc = QJsonDocument::fromVariant(request->getSnapshot().value());
     //
 
-    /*QtFirebaseDataSnapshot* child(const QString& path);
-    /*size_t childrenCount() const;
+    /*
+    QtFirebaseDataSnapshot* child(const QString& path);
+    size_t childrenCount() const;
     QtFirebaseDataSnapshot getChild(int i);
     QVariant priority() const;
     bool hasChild(const QString& path) const;
