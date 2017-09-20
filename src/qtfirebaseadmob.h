@@ -45,15 +45,16 @@ class QtFirebaseAdMob : public QObject
 public:
     enum Error
     {
-        ErrorUnknown,
-        ErrorAlreadyInitialized,
-        ErrorInternalError,
-        ErrorInvalidRequest,
-        ErrorLoadInProgress,
-        ErrorNetworkError,
-        ErrorNoFill,
-        ErrorNoWindowToken,
-        ErrorUninitialized
+        ErrorUnknown = firebase::admob::kAdMobErrorNone-1,
+        ErrorNone = firebase::admob::kAdMobErrorNone,
+        ErrorAlreadyInitialized = firebase::admob::kAdMobErrorAlreadyInitialized,
+        ErrorInternalError = firebase::admob::kAdMobErrorInternalError,
+        ErrorInvalidRequest = firebase::admob::kAdMobErrorInvalidRequest,
+        ErrorLoadInProgress = firebase::admob::kAdMobErrorLoadInProgress,
+        ErrorNetworkError = firebase::admob::kAdMobErrorNetworkError,
+        ErrorNoFill = firebase::admob::kAdMobErrorNoFill,
+        ErrorNoWindowToken = firebase::admob::kAdMobErrorNoWindowToken,
+        ErrorUninitialized = firebase::admob::kAdMobErrorUninitialized
     };
     Q_ENUM(Error)
 
@@ -84,8 +85,6 @@ public:
         return self;
     }
     bool checkInstance(const char *function);
-
-    QtFirebaseAdMob::Error convertAdMobErrorCode(int admobErrorCode);
 
     bool ready();
     void setReady(bool ready);
@@ -270,7 +269,7 @@ signals:
     void requestChanged();
     void loading();
 
-    void error(QtFirebaseAdMob::Error code, QString message);
+    void error(int code, QString message);
 
 public slots:
     void load();
@@ -388,7 +387,7 @@ signals:
     void requestChanged();
     void loading();
 
-    void error(QtFirebaseAdMob::Error code, QString message);
+    void error(int code, QString message);
 
 public slots:
     void load();
@@ -482,7 +481,7 @@ signals:
     void adUnitIdChanged();
     void requestChanged();
     void loading();
-    void error(QtFirebaseAdMob::Error code, QString message);
+    void error(int code, QString message);
     void closed();
     void visibleChanged();
     void presentationStateChanged(int state);

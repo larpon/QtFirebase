@@ -47,38 +47,6 @@ bool QtFirebaseAdMob::checkInstance(const char *function)
     return b;
 }
 
-QtFirebaseAdMob::Error QtFirebaseAdMob::convertAdMobErrorCode(int admobErrorCode)
-{
-    if(admobErrorCode == admob::kAdMobErrorAlreadyInitialized) {
-        qDebug() << "Already Initialized";
-        return ErrorAlreadyInitialized;
-    } else if(admobErrorCode == admob::kAdMobErrorInternalError) {
-        qDebug() << "Internal Error";
-        return ErrorInternalError;
-    } else if(admobErrorCode == admob::kAdMobErrorInvalidRequest) {
-        qDebug() << "Invalid Request";
-        return ErrorInvalidRequest;
-    } else if(admobErrorCode == admob::kAdMobErrorLoadInProgress) {
-        qDebug() << "Load In Progress";
-        return ErrorLoadInProgress;
-    } else if(admobErrorCode == admob::kAdMobErrorNetworkError) {
-        qDebug() << "Network Error";
-        return ErrorNetworkError;
-    } else if(admobErrorCode == admob::kAdMobErrorNoFill) {
-        qDebug() << "No Fill";
-        return ErrorNoFill;
-    } else if(admobErrorCode == admob::kAdMobErrorNoWindowToken) {
-        qDebug() << "No Window Token";
-        return ErrorNoWindowToken;
-    } else if(admobErrorCode == admob::kAdMobErrorUninitialized) {
-        qDebug() << "Uninitialized";
-        return ErrorUninitialized;
-    } else {
-        qDebug() << "Unknown Error";
-        return ErrorUnknown;
-    }
-}
-
 bool QtFirebaseAdMob::ready()
 {
     return _ready;
@@ -767,7 +735,7 @@ void QtFirebaseAdMobBanner::onFutureEvent(QString eventId, firebase::FutureBase 
             int errorCode = future.error();
             qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << future.error_message();
             // TODO fix me
-            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode),QString(QString::fromUtf8(future.error_message())));
+            emit error(errorCode,QString(QString::fromUtf8(future.error_message())));
             return;
         }
 
@@ -1192,7 +1160,7 @@ void QtFirebaseAdMobNativeExpressAd::onFutureEvent(QString eventId, firebase::Fu
             int errorCode = future.error();
             qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << future.error_message();
             // TODO fix me
-            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode), QString::fromStdString(future.error_message()));
+            emit error(errorCode, QString::fromUtf8(future.error_message()));
             return;
         }
 
@@ -1504,7 +1472,7 @@ void QtFirebaseAdMobInterstitial::onFutureEvent(QString eventId, firebase::Futur
             int errorCode = future.error();
             qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << future.error_message();
             // TODO fix me
-            emit error(qFirebaseAdMob->convertAdMobErrorCode(errorCode),QString(QString::fromUtf8(future.error_message())));
+            emit error(errorCode,QString(QString::fromUtf8(future.error_message())));
             return;
         }
 
@@ -1771,9 +1739,8 @@ void QtFirebaseAdMobRewardedVideoAd::onFutureEvent(QString eventId, firebase::Fu
         if (future.error() != admob::kAdMobErrorNone)
         {
             QString errorMessage = QString::fromUtf8(future.error_message());
-            QtFirebaseAdMob::Error qtFirebaseErrorCode = qFirebaseAdMob->convertAdMobErrorCode(errorCode);
             qWarning() << this << "::onFutureEvent" << "load failed" << "ERROR" << "code:" << errorCode << "message:" << errorMessage;
-            emit error(static_cast<int>(qtFirebaseErrorCode), errorMessage);
+            emit error(errorCode, errorMessage);
         }
         else
         {
