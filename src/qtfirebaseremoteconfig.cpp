@@ -260,15 +260,15 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
     {
         if(info.last_fetch_failure_reason == remote_config::kFetchFailureReasonInvalid)
         {
-            emit error(kFetchFailureReasonInvalid, QStringLiteral("The fetch has not yet failed."));
+            emit error(FetchFailureReasonInvalid, QStringLiteral("The fetch has not yet failed."));
         }
         else if(info.last_fetch_failure_reason == remote_config::kFetchFailureReasonThrottled)
         {
-            emit error(kFetchFailureReasonThrottled, QStringLiteral("Throttled by the server. You are sending too many fetch requests in too short a time."));
+            emit error(FetchFailureReasonThrottled, QStringLiteral("Throttled by the server. You are sending too many fetch requests in too short a time."));
         }
         else
         {
-            emit error(kFetchFailureReasonError, QStringLiteral("Failure reason is unknown"));
+            emit error(FetchFailureReasonError, QStringLiteral("Failure reason is unknown"));
         }
     }
     future.Release();
@@ -306,6 +306,7 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
         }
     }
 
+    // From <memory> include
     std::unique_ptr<remote_config::ConfigKeyValueVariant[]> defaults(
                 new remote_config::ConfigKeyValueVariant[filteredMap.size()]);
 

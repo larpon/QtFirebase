@@ -21,13 +21,13 @@ class QtFirebaseRemoteConfig : public QObject
     Q_PROPERTY(long long cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
 
 public:
-    enum Error
+    enum FetchFailure
     {
-        kFetchFailureReasonInvalid,
-        kFetchFailureReasonThrottled,
-        kFetchFailureReasonError,
+        FetchFailureReasonInvalid,
+        FetchFailureReasonThrottled,
+        FetchFailureReasonError,
     };
-    Q_ENUM(Error)
+    Q_ENUM(FetchFailure)
 
     explicit QtFirebaseRemoteConfig(QObject *parent = 0){ Q_UNUSED(parent); }
 
@@ -61,7 +61,7 @@ public slots:
 
 signals:
     void readyChanged();
-    void error(Error code, QString message);
+    void error(int code, QString message);
     void parametersChanged();
     void cacheExpirationTimeChanged();
 

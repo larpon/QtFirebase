@@ -12,7 +12,7 @@
 
 #include "firebase/remote_config.h"
 
-#include <memory> // TODO check where this is used
+#include <memory> //For std::unique_ptr
 #include <QDebug>
 #include <QObject>
 
@@ -26,13 +26,13 @@ class QtFirebaseRemoteConfig : public QObject
 public:
     explicit QtFirebaseRemoteConfig(QObject *parent = 0);
 
-    enum Error
+    enum FetchFailure
     {
-        kFetchFailureReasonInvalid = firebase::remote_config::kFetchFailureReasonInvalid,
-        kFetchFailureReasonThrottled = firebase::remote_config::kFetchFailureReasonThrottled,
-        kFetchFailureReasonError = firebase::remote_config::kFetchFailureReasonError,
+        FetchFailureReasonInvalid = firebase::remote_config::kFetchFailureReasonInvalid,
+        FetchFailureReasonThrottled = firebase::remote_config::kFetchFailureReasonThrottled,
+        FetchFailureReasonError = firebase::remote_config::kFetchFailureReasonError,
     };
-    Q_ENUM(Error)
+    Q_ENUM(FetchFailure)
 
     static QtFirebaseRemoteConfig *instance() {
         if(self == 0) {
@@ -69,7 +69,7 @@ public slots:
 
 signals:
     void readyChanged();
-    void error(Error code, QString message);
+    void error(int code, QString message);
     void parametersChanged();
     void cacheExpirationTimeChanged();
 
