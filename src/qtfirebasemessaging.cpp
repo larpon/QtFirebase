@@ -40,7 +40,9 @@ QtFirebaseMessaging::QtFirebaseMessaging(QObject* parent)
 
 QtFirebaseMessaging::~QtFirebaseMessaging()
 {
-    messaging::Terminate();
+    if(_ready) {
+        messaging::Terminate();
+    }
 }
 
 void QtFirebaseMessaging::classBegin()

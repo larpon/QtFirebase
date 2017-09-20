@@ -25,6 +25,7 @@ class QtFirebaseRemoteConfig : public QObject
 
 public:
     explicit QtFirebaseRemoteConfig(QObject *parent = 0);
+    ~QtFirebaseRemoteConfig();
 
     enum FetchFailure
     {

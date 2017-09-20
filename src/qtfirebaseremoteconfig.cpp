@@ -8,7 +8,7 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
     QObject(parent),
     _ready(false),
     _initializing(false),
-    _cacheExpirationTime(firebase::remote_config::kDefaultCacheExpiration*1000),//milliseconds
+    _cacheExpirationTime(firebase::remote_config::kDefaultCacheExpiration*1000), // milliseconds
     __appId(nullptr)
 {
     __QTFIREBASE_ID = QString().sprintf("%8p", this);
@@ -35,6 +35,12 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
     connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
     #endif
 }
+
+QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig() {
+    if(_ready)
+        remote_config::Terminate();
+}
+
 
 bool QtFirebaseRemoteConfig::checkInstance(const char *function)
 {
