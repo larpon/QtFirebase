@@ -228,6 +228,7 @@ contains(DEFINES,QTFIREBASE_BUILD_DATABASE) {
     ios: {
         message( "QtFirebase Database not tested on ios" )
         LIBS += \
+            -licucore \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Database \
             -framework FirebaseDatabase \
             -framework leveldb-library \
