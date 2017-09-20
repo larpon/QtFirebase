@@ -212,7 +212,7 @@ signals:
 
     void loading();
 
-    void error(int errorCode);
+    void error(int code);
 
 public slots:
     void load() {}
@@ -299,7 +299,7 @@ signals:
 
     void loading();
 
-    void error(int errorCode);
+    void error(int code);
 
 public slots:
     void load() {}
@@ -349,7 +349,7 @@ signals:
     void loadedChanged();
     void adUnitIdChanged();
     void visibleChanged();
-    void error(int errorCode);
+    void error(int code);
     void closed();
     void loading();
     void requestChanged();
