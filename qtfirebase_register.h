@@ -67,14 +67,14 @@
 #include "src/qtfirebasedatabase.h"
 #endif
 
-# endif // QTFIREBASE_BUILD_DATABASE
-
 static QObject *QtFirebaseDatabaseProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)
     return qFirebaseDatabase;
 }
+
+#endif // QTFIREBASE_BUILD_DATABASE
 
 static void registerQtFirebase() {
 
