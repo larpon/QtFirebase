@@ -12,7 +12,7 @@
 #define qFirebaseDatabase (static_cast<QtFirebaseDatabase*>(QtFirebaseDatabase::instance()))
 
 class QtFirebaseDatabaseRequest;
-class QtFirebaseDatabase : public QtFirebaseService
+class QtFirebaseDatabase : public QObject
 {
     Q_OBJECT
     typedef QSharedPointer<QtFirebaseDatabase> Ptr;

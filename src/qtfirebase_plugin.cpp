@@ -27,12 +27,14 @@
 
 #include <qqml.h>
 
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
 static QObject *QtFirebaseDatabaseProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)
     return qFirebaseDb;
 }
+#endif
 
 
 void QtFirebasePlugin::registerTypes(const char *uri)
