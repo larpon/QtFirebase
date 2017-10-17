@@ -16,15 +16,16 @@ The following [features](https://firebase.google.com/docs/cpp/setup) have a work
 
 Feature | Library | C++ | QML | Credits
 ------- | ------- | --- | --- | -------
-Base                      |libapp.a             |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
-AdMob                     |libadmob.a           |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
-Analytics                 |libanalytics.a       |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
-Authentication	          |libauth.a            |Partial |Partial |[Isy](https://github.com/isipisi281)
-Realtime Database	        |libdatabase.a        |Partial |Partial |[greenfield932](https://github.com/greenfield932)
-~~Invites and Dynamic Links~~	|~~libinvites.a~~       | | |
-Cloud Messaging	          |libmessaging.a     |✓|✓|[Isy](https://github.com/isipisi281)
-Remote Config             |libremote_config.a |✓|✓|[greenfield932](https://github.com/greenfield932)
-~~Cloud Storage~~	        |~~libstorage.a~~   |in progress |:wrench: |[Furkanzmc](https://github.com/Furkanzmc)
+Base                      |libapp.a               |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
+AdMob                     |libadmob.a             |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
+Analytics                 |libanalytics.a         |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
+Authentication	          |libauth.a              |Partial |Partial |[Isy](https://github.com/isipisi281)
+Realtime Database	        |libdatabase.a          |Partial |Partial |[greenfield932](https://github.com/greenfield932)
+~~Invites~~               |~~libinvites.a~~       | | |
+~~Dynamic Links~~       	|~~libdynamic_links.a~~ | | |
+Cloud Messaging	          |libmessaging.a         |✓|✓|[Isy](https://github.com/isipisi281)
+Remote Config             |libremote_config.a     |✓|✓|[greenfield932](https://github.com/greenfield932)
+~~Cloud Storage~~	        |~~libstorage.a~~       |in progress |:wrench: |[Furkanzmc](https://github.com/Furkanzmc)
 
 ## Contributors
 Without these good people this project would not exist.
