@@ -19,19 +19,19 @@ Feature | Library | C++ | QML | Credits
 Base                      |libapp.a             |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
 AdMob                     |libadmob.a           |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
 Analytics                 |libanalytics.a       |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
-~~Authentication~~	          |~~libauth.a~~          |in progress |:wrench: |[Isy](https://github.com/isipisi281)
-~~Realtime Database~~	        |~~libdatabase.a~~      |in progress |:wrench: |[greenfield932](https://github.com/greenfield932)
+Authentication	          |libauth.a            |Partial |Partial |[Isy](https://github.com/isipisi281)
+Realtime Database	        |libdatabase.a        |Partial |Partial |[greenfield932](https://github.com/greenfield932)
 ~~Invites and Dynamic Links~~	|~~libinvites.a~~       | | |
 Cloud Messaging	          |libmessaging.a     |✓|✓|[Isy](https://github.com/isipisi281)
-Remote Config             |libremote_config.a   |✓|✓|[greenfield932](https://github.com/greenfield932)
-~~Storage~~	                  |~~libstorage.a~~       | | |
+Remote Config             |libremote_config.a |✓|✓|[greenfield932](https://github.com/greenfield932)
+~~Cloud Storage~~	        |~~libstorage.a~~   |in progress |:wrench: |[Furkanzmc](https://github.com/Furkanzmc)
 
 ## Contributors
 Without these good people this project would not exist.
 
 [Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder),
 [greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
-[Isy](https://github.com/isipisi281) (Cloud Messaging, Misc.),
+[Isy](https://github.com/isipisi281) (Cloud Messaging, Auth, Misc.),
 [Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.),
 [li3p](https://github.com/li3p) (Bugs, Misc.),
 [morebest](https://github.com/morebest) (Bugs, Misc.) 
@@ -54,7 +54,7 @@ Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be832
 We recommend you build against the latest version of the Firebase C++ SDK.
 
 ## Stability
-The Firebase C++ SDK has a lot of stability issues - which QtFirebase does its best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
+The Firebase C++ SDK has (or has had) a lot of stability issues - which QtFirebase does its best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
 Please use the latest SDK version to get the latest fixes.
 
 # Setup
@@ -67,7 +67,7 @@ Please look at the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExamp
 In [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) you will find details on what to add to your project files (gradle.build, Info.plist, etc.).
 
 # Documentation
-Under heavy construction.
+Please use the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) until now.
 
 # Support
 Possible ways of getting support:
@@ -86,4 +86,4 @@ The following is a list of software that uses QtFirebase
 * [Dead Ascend](http://blackgrain.dk/games/deadascend/) (Open Source, Adventure game, [Android](https://play.google.com/store/apps/details?id=com.blackgrain.android.deadascend.ad), [iOS](https://itunes.apple.com/us/app/dead-ascend/id1197443665?ls=1&mt=8))
 * [Spin The Wall](https://play.google.com/store/apps/details?id=com.iceball.spinthewall)
 * [CrackWord](https://play.google.com/store/apps/details?id=com.reddeer.crackword)
-* \<your awesome project\>
+* \<your awesome project here\>
