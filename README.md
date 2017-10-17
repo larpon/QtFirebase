@@ -68,7 +68,7 @@ Please look at the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExamp
 In [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) you will find details on what to add to your project files (gradle.build, Info.plist, etc.).
 
 # Documentation
-Please use the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) until now.
+Please see comments and usecases in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) project
 
 # Support
 Possible ways of getting support:
