@@ -111,8 +111,11 @@ signals:
 private:
     QVariantMap _data;
     QString _token;
-    bool _connected = false;
-    bool _notify = false;
+    bool _messageReceivedConnected = false;
+    bool _tokenReceivedConnected = false;
+
+    bool _notifyMessageReceived = false;
+    bool _notifyTokenReceived = false;
 };
 
 #endif // QTFIREBASE_BUILD_MESSAGING

@@ -40,9 +40,7 @@ QtFirebaseMessaging::QtFirebaseMessaging(QObject* parent)
 
 QtFirebaseMessaging::~QtFirebaseMessaging()
 {
-    if(_ready) {
-        messaging::Terminate();
-    }
+    // todo terminate something?
 }
 
 void QtFirebaseMessaging::classBegin()
@@ -221,11 +219,20 @@ void MessageListener::OnTokenReceived(const char *token)
 void MessageListener::connectNotify(const QMetaMethod &signal)
 {
     if (signal == QMetaMethod::fromSignal(&MessageListener::onMessageReceived)) {
-        _connected = true;
+        _messageReceivedConnected = true;
 
-        if(_notify) {
+        if(_notifyMessageReceived) {
             emit onMessageReceived();
-            _notify = false;
+            _notifyMessageReceived = false;
+        }
+    }
+
+    if (signal == QMetaMethod::fromSignal(&MessageListener::onTokenReceived)) {
+        _tokenReceivedConnected = true;
+
+        if(_notifyTokenReceived) {
+            emit onTokenReceived();
+            _notifyTokenReceived = false;
         }
     }
 }
@@ -238,12 +245,12 @@ QVariantMap MessageListener::data()
 void MessageListener::setData(QVariantMap data)
 {
     if (_data != data) {
-        _notify = true;
+        _notifyMessageReceived = true;
         _data = data;
 
-        if(_connected) {
+        if(_messageReceivedConnected) {
             emit onMessageReceived();
-            _notify = false;
+            _notifyMessageReceived = false;
         }
     }
 }
@@ -256,7 +263,12 @@ QString MessageListener::token()
 void MessageListener::setToken(QString token)
 {
     if (_token != token) {
+        _notifyTokenReceived = true;
         _token = token;
-        emit onTokenReceived();
+
+        if(_tokenReceivedConnected) {
+            emit onTokenReceived();
+            _notifyTokenReceived = false;
+        }
     }
 }
