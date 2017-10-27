@@ -43,6 +43,36 @@ void QtFirebaseAuth::registerUser(const QString &email, const QString &pass)
     qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".auth.register"), future);
 }
 
+void QtFirebaseAuth::deleteUser()
+{
+    if(running())
+        return;
+    if (!signedIn())
+        return;
+
+
+    m_action = ActionDeleteUser;
+    clearError();
+    setComplete(false);
+
+    firebase::Future<void> future = m_auth->current_user()->Delete();
+    qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".auth.deleteUser"), future);
+}
+
+void QtFirebaseAuth::sendPasswordResetEmail(const QString &email)
+{
+    if(running())
+        return;
+
+    clearError();
+    setComplete(false);
+    firebase::Future<void> future =
+           m_auth->SendPasswordResetEmail(email.toUtf8().constData());
+    qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".auth.resetEmail"), future);
+}
+
+
+
 bool QtFirebaseAuth::signedIn() const
 {
     return m_signedIn;
@@ -217,6 +247,16 @@ void QtFirebaseAuth::onFutureEvent(QString eventId, firebase::FutureBase future)
         {
             qDebug() << this << "::onFutureEvent Verification email sent successfully";
         }
+        else if(eventId == __QTFIREBASE_ID + QStringLiteral(".auth.deleteUser"))
+        {
+            qDebug() << this << "::onFutureEvent Delete user successfully";
+            setSignIn(false);
+        }
+
+        else if(eventId == __QTFIREBASE_ID + QStringLiteral(".auth.resetEmail"))
+        {
+            qDebug() << this << "::onFutureEvent reset email sent successfully";
+        }
         else if(eventId == __QTFIREBASE_ID + QStringLiteral(".auth.signin"))
         {
 
@@ -250,6 +290,14 @@ void QtFirebaseAuth::onFutureEvent(QString eventId, firebase::FutureBase future)
         {
             setSignIn(false);
             qDebug() << this << "::onFutureEvent Sign in error:"<<future.error()<<future.error_message();
+        }
+        else if(eventId == __QTFIREBASE_ID + QStringLiteral(".auth.resetEmail"))
+        {
+            qDebug() << this << "::onFutureEvent reset email error"<<future.error()<<future.error_message();
+        }
+        else if(eventId == __QTFIREBASE_ID + QStringLiteral(".auth.deleteUser"))
+        {
+            qDebug() << this << "::onFutureEvent Delete user error"<<future.error()<<future.error_message();
         }
         setError(future.error(), future.error_message());
     }

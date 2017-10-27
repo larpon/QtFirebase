@@ -38,15 +38,20 @@ public:
     {
         ActionRegister,
         ActionSignIn,
-        ActionSignOut
+        ActionSignOut,
+        ActionDeleteUser
     };
     Q_ENUM(Action)
+
+
 
 public slots:
     //Control
     void registerUser(const QString& email, const QString& pass);
     void signIn(const QString& email, const QString& pass);
     void signOut();
+    void sendPasswordResetEmail(const QString& email);
+    void deleteUser();
 
     //Status
     bool signedIn() const;
