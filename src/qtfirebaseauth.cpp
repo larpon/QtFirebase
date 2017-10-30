@@ -255,6 +255,7 @@ void QtFirebaseAuth::onFutureEvent(QString eventId, firebase::FutureBase future)
 
         else if(eventId == __QTFIREBASE_ID + QStringLiteral(".auth.resetEmail"))
         {
+            emit passwordResetEmailSent();
             qDebug() << this << "::onFutureEvent reset email sent successfully";
         }
         else if(eventId == __QTFIREBASE_ID + QStringLiteral(".auth.signin"))

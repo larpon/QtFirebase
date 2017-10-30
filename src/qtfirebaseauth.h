@@ -70,6 +70,7 @@ signals:
     void signedInChanged();
     void runningChanged();
     void completed(bool success, int actionId);
+    void passwordResetEmailSent();
 
 protected:
     explicit QtFirebaseAuth(QObject *parent = 0);
