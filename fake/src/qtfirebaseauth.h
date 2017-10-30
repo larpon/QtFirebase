@@ -39,11 +39,14 @@ public:
     };
     Q_ENUM(Action)
 
+
 public slots:
     //Control
     void registerUser(const QString& email, const QString& pass){Q_UNUSED(email); Q_UNUSED(pass);}
     void signIn(const QString& email, const QString& pass){Q_UNUSED(email); Q_UNUSED(pass);}
     void signOut(){}
+    void sendPasswordResetEmail(const QString& email){Q_UNUSED(email);}
+    void deleteUser(){}
 
     //Status
     bool signedIn() const{return false;}
@@ -61,6 +64,8 @@ signals:
     void signedInChanged();
     void runningChanged();
     void completed(bool success, int actionId);
+    void passwordResetEmailSent();
+
 protected:
     static QtFirebaseAuth *self;
     explicit QtFirebaseAuth(QObject *parent = 0){Q_UNUSED(parent);}
