@@ -28,14 +28,15 @@ Remote Config             |libremote_config.a     |✓|✓|[greenfield932](https
 ~~Cloud Storage~~	        |~~libstorage.a~~       |in progress |:wrench: |[Furkanzmc](https://github.com/Furkanzmc)
 
 ## Contributors
-Without these good people this project would not exist.
+Without [contributions](https://github.com/Larpon/QtFirebase/pulls?q=is%3Apr+is%3Aclosed) from these good people this project would not exist.
 
-[Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder),
+[Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder, Base, AdMob, Analytics),
 [greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
 [Isy](https://github.com/isipisi281) (Cloud Messaging, Auth, Misc.),
 [Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.),
 [li3p](https://github.com/li3p) (Bugs, Misc.),
-[morebest](https://github.com/morebest) (Bugs, Misc.) 
+[morebest](https://github.com/morebest) (Bugs, Misc.)
+[guillaume charbonnier](https://github.com/gcharbonnier) (Auth)
 
 ## Tested Firebase C++ SDK versions
 **Base, AdMob, Analytics**
@@ -44,12 +45,14 @@ Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be832
 * v2.1.1
 * v2.1.2
 
-**RemoteConfig**
+**Base, AdMob, Analytics, RemoteConfig**
 * v3.1.0
 * v4.0.1
 
-**Cloud Messaging**
+**Base, AdMob, Analytics, RemoteConfig, Cloud Messaging**
 * v4.0.3
+
+**Base, AdMob, Analytics, RemoteConfig, Cloud Messaging, Authentication, Realtime Database**
 * v4.1.0
 
 We recommend you build against the latest version of the Firebase C++ SDK.
@@ -57,6 +60,8 @@ We recommend you build against the latest version of the Firebase C++ SDK.
 ## Stability
 The Firebase C++ SDK has (or has had) a lot of stability issues - which QtFirebase does its best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
 Please use the latest SDK version to get the latest fixes.
+
+When you encounter bugs; Please see if they are known issues [here](https://github.com/firebase/quickstart-cpp/issues) or [here](https://github.com/Larpon/QtFirebase/issues) - before reporting
 
 # Setup
 For a working and up-to-date example please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README.
