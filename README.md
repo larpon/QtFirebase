@@ -76,7 +76,7 @@ In [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) you wil
 Please see comments and usecases in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) project
 
 # Support
-Possible ways of getting support:
+Possible ways of getting support
 * Open an [issue](https://github.com/Larpon/QtFirebase/issues)
 
 Possible ways of giving support
@@ -85,6 +85,10 @@ Possible ways of giving support
 * Share online
 * [Buy QtFirebase &#10084;'s](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4DHVNRBQRRU96)
   You'll get a personal email full of hearts from [Black Grain](http://blackgrain.dk/games/)!
+
+Possible ways of being really awesome
+* Open source your own Qt/QML projects
+* Be nice (it's really that simple)
 
 # In the wild
 The following is a list of software that uses QtFirebase
