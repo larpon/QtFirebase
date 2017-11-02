@@ -126,7 +126,7 @@ QString QtFirebaseAuth::email() const
 {
     if(signedIn())
     {
-        return m_auth->current_user()->email().c_str();
+        return QString::fromUtf8(m_auth->current_user()->email().c_str());
     }
     return QString();
 }
@@ -135,7 +135,7 @@ QString QtFirebaseAuth::displayName() const
 {
     if(signedIn())
     {
-        return m_auth->current_user()->display_name().c_str();
+        return QString::fromUtf8(m_auth->current_user()->display_name().c_str());
     }
     return QString();
 }
@@ -153,7 +153,7 @@ QString QtFirebaseAuth::photoUrl() const
 {
     if(signedIn())
     {
-        return m_auth->current_user()->photo_url().c_str();
+        return QString::fromUtf8(m_auth->current_user()->photo_url().c_str());
     }
     return QString();
 }
@@ -162,7 +162,7 @@ QString QtFirebaseAuth::uid() const
 {
     if(signedIn())
     {
-        return m_auth->current_user()->uid().c_str();
+        return QString::fromUtf8(m_auth->current_user()->uid().c_str());
     }
     return QString();
 }
@@ -215,12 +215,12 @@ void QtFirebaseAuth::onFutureEvent(QString eventId, firebase::FutureBase future)
     if(!eventId.startsWith(__QTFIREBASE_ID + QStringLiteral(".auth")))
         return;
 
-    qDebug()<<self<<"::onFutureEvent"<<eventId;
+    qDebug() << self << "::onFutureEvent" << eventId;
 
     if(future.status() != firebase::kFutureStatusComplete)
     {
         qDebug() << this << "::onFutureEvent register user failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
-        setError(ErrorFailure, "Unknown error");
+        setError(ErrorFailure, QStringLiteral("Unknown error"));
     }
     else if(future.error()==auth::kAuthErrorNone)
     {
@@ -229,8 +229,8 @@ void QtFirebaseAuth::onFutureEvent(QString eventId, firebase::FutureBase future)
         {
             if(future.result_void() == nullptr)
             {
-                setError(ErrorFailure, "Registered user is null");
-                qDebug()<<"Registered user is null";
+                setError(ErrorFailure, QStringLiteral("Registered user is null"));
+                qDebug() << "Registered user is null";
             }
             else
             {
@@ -268,12 +268,12 @@ void QtFirebaseAuth::onFutureEvent(QString eventId, firebase::FutureBase future)
             if(user!=nullptr)
             {
                 setSignIn(true);
-                /*qDebug()<<"Email:"<<user->email().c_str();
-                qDebug()<<"Display name:"<<user->display_name().c_str();
-                qDebug()<<"Photo url:"<<user->photo_url().c_str();
-                qDebug()<<"provider_id:"<<user->provider_id().c_str();
-                qDebug()<<"is_anonymous:"<<user->is_anonymous();
-                qDebug()<<"is_email_verified:"<<user->is_email_verified();*/
+                /*qDebug() << "Email:" << user->email().c_str();
+                qDebug() << "Display name:" << user->display_name().c_str();
+                qDebug() << "Photo url:" << user->photo_url().c_str();
+                qDebug() << "provider_id:" << user->provider_id().c_str();
+                qDebug() << "is_anonymous:" << user->is_anonymous();
+                qDebug() << "is_email_verified:" << user->is_email_verified();*/
             }
         }
     }
@@ -281,26 +281,26 @@ void QtFirebaseAuth::onFutureEvent(QString eventId, firebase::FutureBase future)
     {
         if(eventId == __QTFIREBASE_ID + QStringLiteral(".auth.register"))
         {
-            qDebug() << this << "::onFutureEvent Registering user completed with error:"<<future.error()<<future.error_message();
+            qDebug() << this << "::onFutureEvent Registering user completed with error:" << future.error() << future.error_message();
         }
         else if(eventId == __QTFIREBASE_ID + QStringLiteral(".auth.sendemailverify"))
         {
-            qDebug() << this << "::onFutureEvent Verification email send error:"<<future.error()<<future.error_message();
+            qDebug() << this << "::onFutureEvent Verification email send error:" << future.error() << future.error_message();
         }
         else if(eventId == __QTFIREBASE_ID + QStringLiteral(".auth.signin"))
         {
             setSignIn(false);
-            qDebug() << this << "::onFutureEvent Sign in error:"<<future.error()<<future.error_message();
+            qDebug() << this << "::onFutureEvent Sign in error:" << future.error() << future.error_message();
         }
         else if(eventId == __QTFIREBASE_ID + QStringLiteral(".auth.resetEmail"))
         {
-            qDebug() << this << "::onFutureEvent reset email error"<<future.error()<<future.error_message();
+            qDebug() << this << "::onFutureEvent reset email error" << future.error() << future.error_message();
         }
         else if(eventId == __QTFIREBASE_ID + QStringLiteral(".auth.deleteUser"))
         {
-            qDebug() << this << "::onFutureEvent Delete user error"<<future.error()<<future.error_message();
+            qDebug() << this << "::onFutureEvent Delete user error" << future.error() << future.error_message();
         }
-        setError(future.error(), future.error_message());
+        setError(future.error(), QString::fromUtf8(future.error_message()));
     }
     setComplete(true);
 }

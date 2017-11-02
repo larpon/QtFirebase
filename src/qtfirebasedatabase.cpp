@@ -32,7 +32,7 @@ void QtFirebaseDatabase::onFutureEvent(QString eventId, firebase::FutureBase fut
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
 
-    qDebug()<<self<<"::onFutureEvent"<<eventId;
+    qDebug() << self << "::onFutureEvent" << eventId;
 
     QMutexLocker locker(&m_futureMutex);
     QMap<QString, QtFirebaseDatabaseRequest*>::iterator it = m_requests.find(eventId);
@@ -334,7 +334,7 @@ void QtFirebaseDatabaseRequest::onFutureEvent(QString eventId, firebase::FutureB
     }
     else if (future.error() != firebase::database::kErrorNone)
     {
-        qDebug()<<this<<"::onFutureEvent Error occured in result:"<<future.error() << future.error_message();
+        qDebug() << this << "::onFutureEvent Error occured in result:" << future.error() << future.error_message();
         setError(future.error(), future.error_message());
     }
     else if(eventId == DatabaseActions::Get)
