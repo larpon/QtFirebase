@@ -35,8 +35,12 @@ QtFirebaseAdMob::QtFirebaseAdMob(QObject* parent) : QObject(parent)
 
 QtFirebaseAdMob::~QtFirebaseAdMob()
 {
-    // TODO this is crashing the shutdown?
-    //admob::Terminate();
+    if(_ready) {
+        qDebug() << self << "::~QtFirebaseAdMob" << "shutting down";
+        //admob::Terminate(); // TODO causes crash see https://github.com/firebase/quickstart-cpp/issues/19
+        _ready = false;
+        self = 0;
+    }
 }
 
 bool QtFirebaseAdMob::checkInstance(const char *function)

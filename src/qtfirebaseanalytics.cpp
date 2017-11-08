@@ -26,7 +26,12 @@ QtFirebaseAnalytics::QtFirebaseAnalytics(QObject* parent) : QObject(parent)
 
 QtFirebaseAnalytics::~QtFirebaseAnalytics()
 {
-    //analytics::Terminate();
+    if(_ready) {
+        qDebug() << self << "::~QtFirebaseAnalytics" << "shutting down";
+        analytics::Terminate();
+        _ready = false;
+        self = 0;
+    }
 }
 
 bool QtFirebaseAnalytics::checkInstance(const char *function)
