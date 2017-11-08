@@ -136,9 +136,9 @@ void QtFirebaseRemoteConfig::addParameter(const QString &name, bool defaultValue
 
 void QtFirebaseRemoteConfig::init()
 {
-    qDebug() << self << "::init" << "called";
+    qDebug() << this << "::init" << "called";
     if(!qFirebase->ready()) {
-        qDebug() << self << "::init" << "base not ready";
+        qDebug() << this << "::init" << "base not ready";
         return;
     }
 
@@ -147,7 +147,9 @@ void QtFirebaseRemoteConfig::init()
 
         ::firebase::ModuleInitializer initializer;
         auto future = initializer.Initialize(qFirebase->firebaseApp(), nullptr, [](::firebase::App* app, void*) {
-            qDebug() << self << "::init" << "try to initialize Remote Config";
+            // NOTE only write debug output here when developing
+            // Causes crash on re-initialization (probably the "self" reference. And "this" can't be used in a lambda)
+            //qDebug() << self << "::init" << "try to initialize Remote Config";
             return ::firebase::remote_config::Initialize(*app);
         });
 
@@ -160,7 +162,7 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
 
-    qDebug() << self << "::onFutureEvent" << eventId;
+    qDebug() << this << "::onFutureEvent" << eventId;
     if(eventId == __QTFIREBASE_ID + QStringLiteral(".config.fetch"))
         onFutureEventFetch(future);
     else if( eventId == __QTFIREBASE_ID + QStringLiteral(".config.init") )
@@ -193,11 +195,11 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
 
     bool fetchActivated = remote_config::ActivateFetched();
     //On first run even if we have activateResult failed we still can get cached values
-    qDebug() << self << QString(QStringLiteral("ActivateFetched %1")).arg(fetchActivated ? QStringLiteral("succeeded") : QStringLiteral("failed"));
+    qDebug() << this << QString(QStringLiteral("ActivateFetched %1")).arg(fetchActivated ? QStringLiteral("succeeded") : QStringLiteral("failed"));
 
     const remote_config::ConfigInfo& info = remote_config::GetInfo();
 
-    qDebug() << self << QString(QStringLiteral("Info last_fetch_time_ms=%1 fetch_status=%2 failure_reason=%3"))
+    qDebug() << this << QString(QStringLiteral("Info last_fetch_time_ms=%1 fetch_status=%2 failure_reason=%3"))
                 .arg(QString::number(info.fetch_time))
                 .arg(info.last_fetch_status)
                 .arg(info.last_fetch_failure_reason);
@@ -289,10 +291,10 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
 {
     if(_parameters.size() == 0)
     {
-        qDebug() << self << "::fetch not started, parameters were not initialized";
+        qDebug() << this << "::fetch not started, parameters were not initialized";
         return;
     }
-    qDebug() << self <<"::fetch with expirationtime" << cacheExpirationInSeconds << "seconds";
+    qDebug() << this <<"::fetch with expirationtime" << cacheExpirationInSeconds << "seconds";
 
     QVariantMap filteredMap;
     for(QVariantMap::const_iterator it = _parameters.begin(); it!=_parameters.end();++it)
@@ -308,7 +310,7 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
         }
         else
         {
-            qWarning() << self << "Data type:" << value.typeName() << " not supported";
+            qWarning() << this << "Data type:" << value.typeName() << " not supported";
         }
     }
 
@@ -367,7 +369,7 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
         qDebug()<<"Failed to enable developer mode";
     }*/
 
-    qDebug() << self << "::fetch" << "run fetching...";
+    qDebug() << this << "::fetch" << "run fetching...";
     auto future = remote_config::Fetch(cacheExpirationInSeconds);
     qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.fetch"), future);
 }
