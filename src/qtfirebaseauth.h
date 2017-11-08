@@ -26,6 +26,9 @@ public:
         }
         return self;
     }
+
+    ~QtFirebaseAuth();
+
     enum Error
     {
         ErrorNone = firebase::auth::kAuthErrorNone,
