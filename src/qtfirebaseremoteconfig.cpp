@@ -366,7 +366,7 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
     /*remote_config::SetConfigSetting(remote_config::kConfigSettingDeveloperMode, "1");
     if ((*remote_config::GetConfigSetting(remote_config::kConfigSettingDeveloperMode)
                 .c_str()) != '1') {
-        qDebug()<<"Failed to enable developer mode";
+        qDebug() << "Failed to enable developer mode";
     }*/
 
     qDebug() << this << "::fetch" << "run fetching...";

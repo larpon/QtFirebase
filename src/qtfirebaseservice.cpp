@@ -29,66 +29,66 @@ bool simpleFbType(const firebase::Variant& v)
 //For debug purposes
 void printQtVariant(const QVariant& v, const QString& tab)
 {
-    const QString tabKey = "    ";
+    const QString tabKey = QStringLiteral("    ");
 
     switch(v.type())
     {
         case QVariant::Bool:{
-            qDebug()<<tab.toUtf8().constData()<<v.toBool();
+            qDebug() << tab.toUtf8().constData() << v.toBool();
             break;
         }
         case QVariant::Int:{
-            qDebug()<<tab.toUtf8().constData()<<v.toInt();
+            qDebug() << tab.toUtf8().constData() << v.toInt();
             break;
         }
         case QVariant::UInt:{
-            qDebug()<<tab.toUtf8().constData()<<v.toUInt();
+            qDebug() << tab.toUtf8().constData() << v.toUInt();
             break;
         }
         case QVariant::LongLong:{
-            qDebug()<<tab.toUtf8().constData()<<v.toLongLong();
+            qDebug() << tab.toUtf8().constData() << v.toLongLong();
             break;
         }
         case QVariant::ULongLong:{
-            qDebug()<<tab.toUtf8().constData()<<v.toULongLong();
+            qDebug() << tab.toUtf8().constData() << v.toULongLong();
             break;
         }
         case QVariant::Double:{
-            qDebug()<<tab.toUtf8().constData()<<v.toDouble();
+            qDebug() << tab.toUtf8().constData() << v.toDouble();
             break;
         }
         case QVariant::String:{
-            qDebug()<<tab.toUtf8().constData()<<v.toString().toUtf8().constData();
+            qDebug() << tab.toUtf8().constData() << v.toString().toUtf8().constData();
             break;
         }
         case QVariant::ByteArray:{
-            qDebug()<<v.toByteArray().constData();
+            qDebug() << v.toByteArray().constData();
             break;
         }
         case QVariant::Map:{
             QVariantMap map = v.toMap();
-            qDebug()<<tab.toUtf8().constData()<<"{";
+            qDebug() << tab.toUtf8().constData() << "{";
             for(QVariantMap::const_iterator it = map.begin();it!=map.end();++it)
             {
-                qDebug()<<tab.toUtf8().constData()<<it.key().toUtf8().constData()<<":";
+                qDebug() << tab.toUtf8().constData() << it.key().toUtf8().constData() << ":";
                 printQtVariant(it.value(), tab+tabKey);
             }
-            qDebug()<<tab.toUtf8().constData()<<"}";
+            qDebug() << tab.toUtf8().constData() << "}";
             break;
         }
         case QVariant::List:{
             QVariantList lst = v.toList();
-            qDebug()<<tab.toUtf8().constData()<<"[";
+            qDebug() << tab.toUtf8().constData() << "[";
             for(QVariantList::const_iterator it = lst.begin();it!=lst.end();++it)
             {
                 printQtVariant(*it, tab+tabKey);
             }
-            qDebug()<<tab.toUtf8().constData()<<"]";
+            qDebug() << tab.toUtf8().constData() << "]";
             break;
 
         }
         default:{
-            qDebug()<<"printQtVariant(): Type:"<<v.typeName()<<"not supported";
+            qDebug() << "printQtVariant(): Type:" << v.typeName() << "not supported";
             break;
         }
     }
@@ -97,66 +97,66 @@ void printQtVariant(const QVariant& v, const QString& tab)
 //For debug purposes
 void printFbVariant(const firebase::Variant& v, const QString& tab)
 {
-    const QString tabKey = "    ";
+    const QString tabKey = QStringLiteral("    ");
 
     switch(v.type())
     {
         case firebase::Variant::kTypeBool:{
-            qDebug()<<tab.toUtf8().constData()<<v.bool_value();
+            qDebug() << tab.toUtf8().constData() << v.bool_value();
             break;
         }
         case firebase::Variant::kTypeInt64:{
-            qDebug()<<tab.toUtf8().constData()<<v.int64_value();
+            qDebug() << tab.toUtf8().constData() << v.int64_value();
             break;
         }
 
         case firebase::Variant::kTypeDouble:{
-            qDebug()<<tab.toUtf8().constData()<<v.double_value();
+            qDebug() << tab.toUtf8().constData() << v.double_value();
             break;
         }
         case firebase::Variant::kTypeStaticString:{
-            qDebug()<<tab.toUtf8().constData()<<v.string_value();
+            qDebug() << tab.toUtf8().constData() << v.string_value();
             break;
         }
         case firebase::Variant::kTypeMutableString:{
-            qDebug()<<tab.toUtf8().constData()<<v.mutable_string().c_str();
+            qDebug() << tab.toUtf8().constData() << v.mutable_string().c_str();
             break;
         }
         case firebase::Variant::kTypeMap:{
             const std::map<firebase::Variant, firebase::Variant>& map = v.map();
-            qDebug()<<tab.toUtf8().constData()<<"{";
+            qDebug() << tab.toUtf8().constData() << "{";
             for(std::map<firebase::Variant, firebase::Variant>::const_iterator it = map.begin();it!=map.end();++it)
             {
                 firebase::Variant key = it->first;
                 if(key.type() == firebase::Variant::kTypeMutableString ||
                         key.type() == firebase::Variant::kTypeStaticString)
                 {
-                    qDebug()<<tab.toUtf8().constData()<<it->first.string_value()<<":";
+                    qDebug() << tab.toUtf8().constData() << it->first.string_value() << ":";
                     printFbVariant(it->second, tab+tabKey);
                 }
                 else
                 {
-                    qDebug()<<"Input key:"<<key.TypeName(v.type());
-                    qDebug()<<"QtFirebase does not support non string keys";
+                    qDebug() << "Input key:" << key.TypeName(v.type());
+                    qDebug() << "QtFirebase does not support non string keys";
                     return;
                 }
             }
-            qDebug()<<tab.toUtf8().constData()<<"}";
+            qDebug() << tab.toUtf8().constData() << "}";
             break;
         }
         case firebase::Variant::kTypeVector:{
             std::vector<firebase::Variant> lst = v.vector();
-            qDebug()<<tab.toUtf8().constData()<<"[";
+            qDebug() << tab.toUtf8().constData() << "[";
             for(std::vector<firebase::Variant>::const_iterator it = lst.begin();it!=lst.end();++it)
             {
                 printFbVariant(*it, tab+tabKey);
             }
-            qDebug()<<tab.toUtf8().constData()<<"]";
+            qDebug() << tab.toUtf8().constData() << "]";
             break;
 
         }
         default:{
-            qDebug()<<"printFbVariant(): Type:"<<v.TypeName(v.type())<<"not supported";
+            qDebug() << "printFbVariant(): Type:" << v.TypeName(v.type()) << "not supported";
             break;
         }
     }
@@ -188,9 +188,9 @@ QVariant QtFirebaseService::fromFirebaseVariant(const firebase::Variant &v)
         case firebase::Variant::kTypeBool:
             return QVariant(v.bool_value());
         case firebase::Variant::kTypeStaticString:
-            return QVariant(v.string_value());
+            return QVariant(QString::fromUtf8(v.string_value()));
         case firebase::Variant::kTypeMutableString:
-            return QVariant(v.mutable_string().c_str());
+            return QVariant(QString::fromUtf8(v.mutable_string().c_str()));
         case firebase::Variant::kTypeMap:{
             std::map<firebase::Variant, firebase::Variant> srcMap = v.map();
             QVariantMap targetMap;
@@ -200,12 +200,12 @@ QVariant QtFirebaseService::fromFirebaseVariant(const firebase::Variant &v)
                 if(key.type()==firebase::Variant::kTypeStaticString ||
                         key.type()==firebase::Variant::kTypeMutableString)
                 {
-                    targetMap[key.string_value()] = fromFirebaseVariant(it->second);
+                    targetMap[QString::fromUtf8(key.string_value())] = fromFirebaseVariant(it->second);
                 }
                 else
                 {
-                    qDebug()<<"QtFirebaseService::fromFirebaseVariant:"<<"QtFirebase does not support non string keys";
-                    qDebug()<<"QtFirebaseService::fromFirebaseVariant:"<<"Got key of type:"<<key.TypeName(v.type());
+                    qDebug() << "QtFirebaseService::fromFirebaseVariant:" << "QtFirebase does not support non string keys";
+                    qDebug() << "QtFirebaseService::fromFirebaseVariant:" << "Got key of type:" << key.TypeName(v.type());
                     return QVariant();
                 }
             }
@@ -221,7 +221,7 @@ QVariant QtFirebaseService::fromFirebaseVariant(const firebase::Variant &v)
             return QVariant(targetLst);
         }
         default:{
-            qDebug()<<"QtFirebaseService::fromFirebaseVariant type:"<<v.TypeName(v.type())<<" not supported";
+            qDebug() << "QtFirebaseService::fromFirebaseVariant type:" << v.TypeName(v.type()) << " not supported";
         }
     }
     return QVariant();
@@ -276,7 +276,7 @@ firebase::Variant QtFirebaseService::fromQtVariant(const QVariant &v)
             return firebase::Variant(targetLst);
         }
         default:{
-            qDebug()<<"QtFirebaseService::fromQtVariant type:"<<v.typeName()<<"not supported";
+            qDebug() << "QtFirebaseService::fromQtVariant type:" << v.typeName() << "not supported";
         }
     }
 
