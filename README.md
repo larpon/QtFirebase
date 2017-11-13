@@ -7,9 +7,12 @@ QtFirebase aims to bring all the features of the Firebase C++ SDK to Qt 5 - both
 
 Please bear in mind that the Firebase C++ SDK currently only supports the mobile platforms Android and iOS.
 
-You can still build QtFirebase on other platforms as the project provides "empty shells" or placeholder components - they just return default/empty values when used. Because of this you won't see e.g. ads from AdMob in your desktop builds.
+You can still build QtFirebase on other platforms as the project provides stub implementations or placeholder components - they just return default/empty values when used. Because of this you won't see e.g. ads from AdMob in your desktop builds.
 
 This is due to Google's own limitations in the Firebase C++ SDK implementation.
+
+The Firebase C++ SDK claim to already provide [stub implementations](https://groups.google.com/d/msg/firebase-talk/PUVJYuR-v2U/711ECRzlBgAJ) for easier building on unsupported platforms - QtFirebase have chosen **not** to link to unnecessary closed source code - thus we do not link against the stub implementations from Google.
+
 
 # Features / Status
 The following [features](https://firebase.google.com/docs/cpp/setup) have a working Qt 5 C++ and QML counterpart
