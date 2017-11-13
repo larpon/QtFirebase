@@ -1,6 +1,12 @@
 # Add the path to your firebase c++ lib on QTFIREBASE_SDK_PATH to your pro / pri file
 # example: QTFIREBASE_SDK_PATH = /home/user/Projects/libraries/firebase/firebase_cpp_sdk/
 
+exists(.git) {
+    QTFIREBASE_VERSION = 1.3
+    include(qtfirebase_version.pri)
+    message("QtFirebase $$QTFIREBASE_VERSION git $$QTFIREBASE_GIT_VERSION/$$QTFIREBASE_GIT_BRANCH_NAME")
+}
+
 !contains(QTFIREBASE_CONFIG,"noautoregister") {
     DEFINES += QTFIREBASE_AUTO_REGISTER
     HEADERS += $$PWD/qtfirebase_register.h
@@ -41,11 +47,4 @@ android|ios {
     include(qtfirebase_target.pri)
 } else {
     include(qtfirebase_dummy.pri)
-}
-
-exists(.git) {
-    unix {
-        GIT_BRANCH_NAME = $$system(git rev-parse --abbrev-ref HEAD)
-        message("QtFirebase branch $$GIT_BRANCH_NAME")
-    }
 }
