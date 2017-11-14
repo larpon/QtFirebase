@@ -2,7 +2,7 @@
 # example: QTFIREBASE_SDK_PATH = /home/user/Projects/libraries/firebase/firebase_cpp_sdk/
 
 exists(.git) {
-    QTFIREBASE_VERSION = 1.3
+    QTFIREBASE_VERSION = 1.3.1
     include(qtfirebase_version.pri)
     message("QtFirebase $$QTFIREBASE_VERSION git $$QTFIREBASE_GIT_VERSION/$$QTFIREBASE_GIT_BRANCH_NAME")
 }
