@@ -26,7 +26,12 @@ QtFirebaseAnalytics::QtFirebaseAnalytics(QObject* parent) : QObject(parent)
 
 QtFirebaseAnalytics::~QtFirebaseAnalytics()
 {
-    //analytics::Terminate();
+    if(_ready) {
+        qDebug() << self << "::~QtFirebaseAnalytics" << "shutting down";
+        analytics::Terminate();
+        _ready = false;
+        self = 0;
+    }
 }
 
 bool QtFirebaseAnalytics::checkInstance(const char *function)
@@ -35,7 +40,6 @@ bool QtFirebaseAnalytics::checkInstance(const char *function)
     if (!b)
         qWarning("QtFirebaseAnalytics::%s: Please instantiate the QtFirebaseAnalytics object first", function);
     return b;
-
 }
 
 void QtFirebaseAnalytics::setUserProperty(const QString &propertyName, const QString &propertyValue)
@@ -47,6 +51,17 @@ void QtFirebaseAnalytics::setUserProperty(const QString &propertyName, const QSt
 
     qDebug() << this << "::setUserProperty" << propertyName << ":" << propertyValue;
     analytics::SetUserProperty(propertyName.toLatin1().constData(), propertyValue.toLatin1().constData());
+}
+
+void QtFirebaseAnalytics::setCurrentScreen(const QString &screenName, const QString &screenClass)
+{
+    if(!_ready) {
+        qDebug() << this << "::setCurrentScreen native part not ready";
+        return;
+    }
+
+    qDebug() << this << "::setCurrentScreen" << screenName << ":" << screenClass ;
+    analytics::SetCurrentScreen(screenName.toLatin1().constData(), screenName.toLatin1().constData());
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name)
@@ -114,13 +129,13 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap bundle
         QString eventKey = i.key();
         QVariant variant = i.value();
 
-        if(variant.type() == QMetaType::Int) {
+        if(variant.type() == QVariant::Type(QMetaType::Int)) {
             parameters[index] = analytics::Parameter(keys.at(index).constData(), variant.toInt());
             qDebug() << this << "::logEvent" << "bundle parameter" << eventKey << ":" << variant.toInt();
-        } else if(variant.type() == QMetaType::Double) {
+        } else if(variant.type() == QVariant::Type(QMetaType::Double)) {
             parameters[index] = analytics::Parameter(keys.at(index).constData(),variant.toDouble());
             qDebug() << this << "::logEvent" << "bundle parameter" << eventKey << ":" << variant.toDouble();
-        } else if(variant.type() == QMetaType::QString) {
+        } else if(variant.type() == QVariant::Type(QMetaType::QString)) {
             strings.append(variant.toString().toLatin1());
             parameters[index] = analytics::Parameter(keys.at(index).constData(), strings.at(strings.size()-1).constData());
             qDebug() << this << "::logEvent" << "bundle parameter" << eventKey << ":" << strings.at(strings.size()-1);
@@ -289,7 +304,6 @@ void QtFirebaseAnalytics::setMinimumSessionDuration(unsigned int minimumSessionD
         emit minimumSessionDurationChanged();
     }
 }
-
 
 void QtFirebaseAnalytics::init()
 {

@@ -6,6 +6,8 @@ QtFirebase::QtFirebase(QObject* parent) : QObject(parent)
 {
     _ready = false;
 
+    qDebug() << self << ":QtFirebase(QObject* parent)" ;
+
     Q_ASSERT_X(!self, "QtFirebase", "there should be only one firebase object");
     QtFirebase::self = this;
 
@@ -100,7 +102,7 @@ void QtFirebase::requestInit()
 
     if(!_ready) {
 
-        #if defined(__ANDROID__)
+        #if defined(Q_OS_ANDROID)
 
         jobject activity = PlatformUtils::getNativeWindow();
 
@@ -109,7 +111,7 @@ void QtFirebase::requestInit()
         // Create the Firebase app.
         _firebaseApp = firebase::App::Create(firebase::AppOptions(), env, activity);
 
-        #else // __ANDROID__
+        #else // Q_OS_ANDROID
 
         // Create the Firebase app.
         _firebaseApp = firebase::App::Create(firebase::AppOptions());

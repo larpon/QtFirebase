@@ -3,31 +3,45 @@
 # QtFirebase
 An effort to bring the Firebase C++ API to Qt 5
 
-QtFirebase aim to bring all the features of the Firebase C++ SDK to Qt 5 - both as C++ wrappers and as QML components.
+QtFirebase aims to bring all the features of the Firebase C++ SDK to Qt 5 - both as C++ wrappers and as QML components.
 
-Please bear in mind that the Firebase C++ SDK currently only support the mobile platforms Android and iOS.
+Please bear in mind that the Firebase C++ SDK currently only supports the mobile platforms Android and iOS.
 
-You can still build QtFirebase on other platforms as the project provide "empty shells" or placeholder components - they just return default/empty values when used. Because of this you won't see e.g. ads from AdMob in your desktop builds.
+You can still build QtFirebase on other platforms as the project provides stub implementations or placeholder components - they just return default/empty values when used. Because of this you won't see e.g. ads from AdMob in your desktop builds.
 
 This is due to Google's own limitations in the Firebase C++ SDK implementation.
+
+The Firebase C++ SDK claim to already provide [stub implementations](https://groups.google.com/d/msg/firebase-talk/PUVJYuR-v2U/711ECRzlBgAJ) for easier building on unsupported platforms - QtFirebase have chosen **not** to link to unnecessary closed source code - thus we do not link against the stub implementations from Google.
+
 
 # Features / Status
 The following [features](https://firebase.google.com/docs/cpp/setup) have a working Qt 5 C++ and QML counterpart
 
-Feature | Library | C++ | QML
-------- | ------- | --- | ---
-Base                      |libapp.a             |✓|✓
-AdMob                     |libadmob.a           |✓|✓
-Analytics                 |libanalytics.a       |✓|✓
-~~Authentication~~	          |~~libauth.a~~          | |
-~~Realtime Database~~	        |~~libdatabase.a~~      | |
-~~Invites and Dynamic Links~~	|~~libinvites.a~~       | |
-~~Cloud Messaging~~	          |~~libmessaging.a~~     | |
-Remote Config             |libremote_config.a   |✓|✓
-~~Storage~~	                  |~~libstorage.a~~       | |
+Feature | Library | C++ | QML | Credits
+------- | ------- | --- | --- | -------
+Base                      |libapp.a               |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
+AdMob                     |libadmob.a             |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
+Analytics                 |libanalytics.a         |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
+Authentication	          |libauth.a              |Partial |Partial |[Isy](https://github.com/isipisi281)
+Realtime Database	        |libdatabase.a          |Partial |Partial |[greenfield932](https://github.com/greenfield932)
+~~Invites~~               |~~libinvites.a~~       | | |
+~~Dynamic Links~~       	|~~libdynamic_links.a~~ | | |
+Cloud Messaging	          |libmessaging.a         |✓|✓|[Isy](https://github.com/isipisi281)
+Remote Config             |libremote_config.a     |✓|✓|[greenfield932](https://github.com/greenfield932)
+~~Cloud Storage~~	        |~~libstorage.a~~       |in progress |:wrench: |[Furkanzmc](https://github.com/Furkanzmc)
 
-Tested with Firebase C++ SDK versions:
+## Contributors
+Without [contributions](https://github.com/Larpon/QtFirebase/pulls?q=is%3Apr+is%3Aclosed) from these good people this project would not exist.
 
+[Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder, Base, AdMob, Analytics),
+[greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
+[Isy](https://github.com/isipisi281) (Cloud Messaging, Auth, Misc.),
+[Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.),
+[li3p](https://github.com/li3p) (Bugs, Misc.),
+[morebest](https://github.com/morebest) (Bugs, Misc.)
+[guillaume charbonnier](https://github.com/gcharbonnier) (Auth)
+
+## Tested Firebase C++ SDK versions
 **Base, AdMob, Analytics**
 Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be8328a063956c2d2139fa9ab7152d955cc2)
 * v2.1.0
@@ -36,43 +50,33 @@ Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be832
 
 **Base, AdMob, Analytics, RemoteConfig**
 * v3.1.0
+* v4.0.1
+
+**Base, AdMob, Analytics, RemoteConfig, Cloud Messaging**
+* v4.0.3
+
+**Base, AdMob, Analytics, RemoteConfig, Cloud Messaging, Authentication, Realtime Database**
+* v4.1.0
 
 We recommend you build against the latest version of the Firebase C++ SDK.
 
 ## Stability
-The Firebase C++ SDK has a lot of stability issues - which QtFirebase does it's best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
+The Firebase C++ SDK has (or has had) a lot of stability issues - which QtFirebase does its best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
 Please use the latest SDK version to get the latest fixes.
+
+When you encounter bugs; Please see if they are known issues [here](https://github.com/firebase/quickstart-cpp/issues) or [here](https://github.com/Larpon/QtFirebase/issues) - before reporting
 
 # Setup
 For a working and up-to-date example please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README.
 
-The following outlines what need to be done before you can build and use QtFirebase.
-
-* Download and extract [Google's Firebase C++ SDK](https://firebase.google.com/docs/cpp/setup).
-
-## Android
-Make sure you have `Google Services` installed and updated on the *target* device. Firebase won't work without it.
-
-  * Enable gradle in your QtCreator build options
-  * Add some lines to `gradle.build`
-  * Add some lines to `gradle.properties`
-  * Add some lines to `local.properties`
-  * Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/)
-
-## iOS
-
-  * [Install CocoaPods](http://stackoverflow.com/questions/20755044/how-to-install-cocoa-pods) if you haven't already
-  * Run `pod install` in the `src/ios/CocoaPods` directory
-  * Add some entries in Info.plist
-  * Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/)
-
+Please see [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) for instructions on how to set up QtFirebase in your Qt Creator project.
 
 # Examples
 Please look at the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) repository.
-You will find details here on what to add to your different project files (gradle.build, Info.plist etc.)
+In [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) you will find details on what to add to your project files (gradle.build, Info.plist, etc.).
 
 # Documentation
-Under heavy construction.
+Please see comments and usecases in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) project
 
 # Support
 Possible ways of getting support
@@ -80,15 +84,20 @@ Possible ways of getting support
 
 Possible ways of giving support
 * Comment helpfully on issues
-* Fork, Change, Make Pull Request
+* Fork, Change, Make a Pull Request
 * Share online
 * [Buy QtFirebase &#10084;'s](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4DHVNRBQRRU96)
   You'll get a personal email full of hearts from [Black Grain](http://blackgrain.dk/games/)!
+
+Possible ways of being really awesome
+* Open source your own Qt/QML projects
+* Be nice (it's really that simple)
 
 # In the wild
 The following is a list of software that uses QtFirebase
 * [Hammer Bees](http://blackgrain.dk/games/hammerbees/) (Casual game, [Android](https://play.google.com/store/apps/details?id=com.bitkompot.android.hammerbees.ad), [iOS](https://itunes.apple.com/us/app/hammer-bees-free/id1164069527?ls=1&mt=8))
 * [Dead Ascend](http://blackgrain.dk/games/deadascend/) (Open Source, Adventure game, [Android](https://play.google.com/store/apps/details?id=com.blackgrain.android.deadascend.ad), [iOS](https://itunes.apple.com/us/app/dead-ascend/id1197443665?ls=1&mt=8))
+* [Spin The Wall](https://play.google.com/store/apps/details?id=com.iceball.spinthewall)
+* [CrackWord](https://play.google.com/store/apps/details?id=com.reddeer.crackword)
 * Scoreboard Basketball (Scoreboard for basketball, [Android](https://play.google.com/store/apps/details?id=com.alexodus.scorebkfree), [iOS](https://itunes.apple.com/us/app/my-scoreboard-basketball/id1235460810?mt=8))
-
-* \<your awesome project\>
+* \<your awesome project here\>
