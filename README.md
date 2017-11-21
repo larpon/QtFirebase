@@ -89,4 +89,6 @@ Possible ways of giving support
 The following is a list of software that uses QtFirebase
 * [Hammer Bees](http://blackgrain.dk/games/hammerbees/) (Casual game, [Android](https://play.google.com/store/apps/details?id=com.bitkompot.android.hammerbees.ad), [iOS](https://itunes.apple.com/us/app/hammer-bees-free/id1164069527?ls=1&mt=8))
 * [Dead Ascend](http://blackgrain.dk/games/deadascend/) (Open Source, Adventure game, [Android](https://play.google.com/store/apps/details?id=com.blackgrain.android.deadascend.ad), [iOS](https://itunes.apple.com/us/app/dead-ascend/id1197443665?ls=1&mt=8))
+* Scoreboard Basketball (Scoreboard for basketball, [Android](https://play.google.com/store/apps/details?id=com.alexodus.scorebkfree), [iOS](https://itunes.apple.com/us/app/my-scoreboard-basketball/id1235460810?mt=8))
+
 * \<your awesome project\>
