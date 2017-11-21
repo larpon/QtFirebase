@@ -99,4 +99,5 @@ The following is a list of software that uses QtFirebase
 * [Dead Ascend](http://blackgrain.dk/games/deadascend/) (Open Source, Adventure game, [Android](https://play.google.com/store/apps/details?id=com.blackgrain.android.deadascend.ad), [iOS](https://itunes.apple.com/us/app/dead-ascend/id1197443665?ls=1&mt=8))
 * [Spin The Wall](https://play.google.com/store/apps/details?id=com.iceball.spinthewall)
 * [CrackWord](https://play.google.com/store/apps/details?id=com.reddeer.crackword)
+* Scoreboard Basketball (Scoreboard for basketball, [Android](https://play.google.com/store/apps/details?id=com.alexodus.scorebkfree), [iOS](https://itunes.apple.com/us/app/my-scoreboard-basketball/id1235460810?mt=8))
 * \<your awesome project here\>
