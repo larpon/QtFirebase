@@ -139,6 +139,7 @@ contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
     ios: {
         LIBS += \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/RemoteConfig \
+            -framework FirebaseABTesting \ # Required for Firebase iOS >= 4.5.0
             -framework FirebaseRemoteConfig \
             -framework Protobuf \
             \
@@ -207,6 +208,7 @@ contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Auth \
             -framework FirebaseAuth \
             -framework GTMSessionFetcher \
+            -framework SafariServices \ # Required for Firebase iOS >= 4.4.0
         \
     }
 
