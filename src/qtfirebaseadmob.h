@@ -102,7 +102,7 @@ signals:
 
 private slots:
     void init();
-    void onFutureEvent(QString eventId, firebase::FutureBase future);
+    void onFutureEvent(const QString &eventId, const firebase::FutureBase &future);
 
 private:
     static QtFirebaseAdMob *self;
@@ -242,16 +242,16 @@ public:
     void setVisible(bool visible);
 
     int getX();
-    void setX(const int &x);
+    void setX(int x);
 
     int getY();
-    void setY(const int &y);
+    void setY(int y);
 
     int getWidth();
-    void setWidth(const int &width);
+    void setWidth(int width);
 
     int getHeight();
-    void setHeight(const int &height);
+    void setHeight(int height);
 
     QtFirebaseAdMobRequest* request() const;
     void setRequest(QtFirebaseAdMobRequest *request);
@@ -360,16 +360,16 @@ public:
     void setVisible(bool visible);
 
     int getX();
-    void setX(const int &x);
+    void setX(int x);
 
     int getY();
-    void setY(const int &y);
+    void setY(int y);
 
     int getWidth();
-    void setWidth(const int &width);
+    void setWidth(int width);
 
     int getHeight();
-    void setHeight(const int &height);
+    void setHeight(int height);
 
     QtFirebaseAdMobRequest* request() const;
     void setRequest(QtFirebaseAdMobRequest *request);

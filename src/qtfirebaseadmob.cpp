@@ -159,7 +159,7 @@ void QtFirebaseAdMob::init()
     }
 }
 
-void QtFirebaseAdMob::onFutureEvent(QString eventId, firebase::FutureBase future)
+void QtFirebaseAdMob::onFutureEvent(const QString &eventId, const firebase::FutureBase &future)
 {
     Q_UNUSED(eventId);
     Q_UNUSED(future);
@@ -556,7 +556,7 @@ int QtFirebaseAdMobBanner::getX()
     return _x;
 }
 
-void QtFirebaseAdMobBanner::setX(const int &x)
+void QtFirebaseAdMobBanner::setX(int x)
 {
     if(!_ready) {
         qDebug() << this << "::setX native part not ready - so not moving";
@@ -590,7 +590,7 @@ int QtFirebaseAdMobBanner::getY()
     return _y;
 }
 
-void QtFirebaseAdMobBanner::setY(const int &y)
+void QtFirebaseAdMobBanner::setY(int y)
 {
     if(!_ready) {
         qDebug() << this << "::setY native part not ready - so not moving";
@@ -624,7 +624,7 @@ int QtFirebaseAdMobBanner::getWidth()
     return _width;
 }
 
-void QtFirebaseAdMobBanner::setWidth(const int &width)
+void QtFirebaseAdMobBanner::setWidth(int width)
 {
     if(_width != width) {
         _width = width;
@@ -637,7 +637,7 @@ int QtFirebaseAdMobBanner::getHeight()
     return _height;
 }
 
-void QtFirebaseAdMobBanner::setHeight(const int &height)
+void QtFirebaseAdMobBanner::setHeight(int height)
 {
     if(_height != height) {
         _height = height;
@@ -981,7 +981,7 @@ int QtFirebaseAdMobNativeExpressAd::getX()
     return _x;
 }
 
-void QtFirebaseAdMobNativeExpressAd::setX(const int &x)
+void QtFirebaseAdMobNativeExpressAd::setX(int x)
 {
     if(!_ready) {
         qDebug() << this << "::setX native part not ready - so not moving";
@@ -1015,7 +1015,7 @@ int QtFirebaseAdMobNativeExpressAd::getY()
     return _y;
 }
 
-void QtFirebaseAdMobNativeExpressAd::setY(const int &y)
+void QtFirebaseAdMobNativeExpressAd::setY(int y)
 {
     if(!_ready) {
         qDebug() << this << "::setY native part not ready - so not moving";
@@ -1049,7 +1049,7 @@ int QtFirebaseAdMobNativeExpressAd::getWidth()
     return _width;
 }
 
-void QtFirebaseAdMobNativeExpressAd::setWidth(const int &width)
+void QtFirebaseAdMobNativeExpressAd::setWidth(int width)
 {
     if(_width != width) {
         _width = width;
@@ -1062,7 +1062,7 @@ int QtFirebaseAdMobNativeExpressAd::getHeight()
     return _height;
 }
 
-void QtFirebaseAdMobNativeExpressAd::setHeight(const int &height)
+void QtFirebaseAdMobNativeExpressAd::setHeight(int height)
 {
     if(_height != height) {
         _height = height;
