@@ -1,5 +1,8 @@
 #include "qtfirebase.h"
 
+#include <QMutableMapIterator>
+#include <QThread>
+
 QtFirebase *QtFirebase::self = 0;
 
 QtFirebase::QtFirebase(QObject* parent) : QObject(parent)
@@ -44,9 +47,9 @@ bool QtFirebase::ready() const
     return _ready;
 }
 
-int count = 0;
 void QtFirebase::waitForFutureCompletion(firebase::FutureBase future)
 {
+    static int count = 0;
     qDebug() << self << "::waitForFutureCompletion" << "waiting for future" << &future << "completion. Initial status" << future.status();
     while(future.status() == firebase::kFutureStatusPending) {
         QGuiApplication::processEvents();
@@ -60,6 +63,7 @@ void QtFirebase::waitForFutureCompletion(firebase::FutureBase future)
             count = 0;
             break;
         }
+        QThread::msleep(10);
     }
     count = 0;
 
@@ -84,6 +88,12 @@ firebase::App* QtFirebase::firebaseApp() const
 void QtFirebase::addFuture(const QString &eventId, const firebase::FutureBase &future)
 {
     qDebug() << self << "::addFuture" << "adding" << eventId;
+
+    if (_futureMap.contains(eventId))
+    {
+        qWarning() << "_futureMap already contains '" << eventId << "'.";
+    }
+
     _futureMap.insert(eventId,future);
 
     //if(!_futureWatchTimer->isActive()) {
@@ -132,14 +142,17 @@ void QtFirebase::requestInit()
 void QtFirebase::processEvents()
 {
     qDebug() << self << "::processEvents" << "processing events";
-    QMapIterator<QString, firebase::FutureBase> i(_futureMap);
+    QMutableMapIterator<QString, firebase::FutureBase> i(_futureMap);
     while (i.hasNext()) {
         i.next();
         if(i.value().status() != firebase::kFutureStatusPending) {
             qDebug() << self << "::processEvents" << "future event" << i.key();
-            if(_futureMap.remove(i.key()) >= 1)
-                qDebug() << self << "::processEvents" << "removed future event" << i.key();
-            emit futureEvent(i.key(),i.value());
+            //if(_futureMap.remove(i.key()) >= 1) //QMap holds only one key. Use QMultiMap for multiple keys.
+            const auto key = i.key();
+            const auto value = i.value();
+            i.remove();
+            qDebug() << self << "::processEvents" << "removed future event" << key;
+            emit futureEvent(key, value);
             // To easen events up:
             //break;
         }

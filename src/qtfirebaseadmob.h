@@ -102,7 +102,6 @@ signals:
 
 private slots:
     void init();
-    void onFutureEvent(const QString &eventId, firebase::FutureBase future);
 
 private:
     static QtFirebaseAdMob *self;
@@ -211,7 +210,8 @@ class QtFirebaseAdMobBase : public QObject
 protected:
     QtFirebaseAdMobBase(QObject* parent = 0);
 
-    virtual void initInternal() = 0;
+    virtual firebase::FutureBase initInternal() = 0;
+    virtual firebase::FutureBase loadInternal() = 0;
 
 public:
     bool ready() const;
@@ -239,12 +239,11 @@ signals:
     void visibleChanged();
 
 public slots:
-    virtual void load() = 0;
+    virtual void load();
     virtual void show() = 0;
 
 protected slots:
     void init();
-    virtual void onFutureEvent(const QString &eventId, firebase::FutureBase future) = 0;
 
 protected:
     QString __QTFIREBASE_ID;
@@ -294,10 +293,10 @@ public:
 
 
     virtual int getX() const;
-    virtual void setX(int x) = 0;
+    virtual void setX(int x);
 
     virtual int getY() const;
-    virtual void setY(int y) = 0;
+    virtual void setY(int y);
 
     virtual int getWidth() const;
     virtual void setWidth(int width);
@@ -305,16 +304,31 @@ public:
     virtual int getHeight() const;
     virtual void setHeight(int height);
 
+    virtual void setVisible(bool visible) override;
+
 public slots:
-    virtual void hide() = 0;
-    virtual void moveTo(int x, int y) = 0;
-    virtual void moveTo(int position) = 0;
+    virtual void show() override;
+    virtual void hide();
+    virtual void moveTo(int x, int y);
+    virtual void moveTo(Position position);
+
+protected slots:
+    virtual void onApplicationStateChanged(Qt::ApplicationState state);
 
 signals:
     void xChanged();
     void yChanged();
     void widthChanged();
     void heightChanged();
+
+protected:
+    virtual firebase::FutureBase moveToInternal(int x, int y) = 0;
+    virtual firebase::FutureBase moveToInternal(Position position) = 0;
+
+    virtual firebase::FutureBase setXInternal(int x) = 0;
+    virtual firebase::FutureBase setYInternal(int y) = 0;
+
+    virtual firebase::FutureBase setVisibleInternal(bool visible) = 0;
 
 protected:
     int _x;
@@ -336,23 +350,17 @@ public:
     QtFirebaseAdMobBanner(QObject* parent = 0);
     ~QtFirebaseAdMobBanner();
 
-    void setVisible(bool visible) override;
-    void setX(int x) override;
-    void setY(int y) override;
-
-public slots:
-    void load() override;
-    void show() override;
-    void hide() override;
-    void moveTo(int x, int y) override;
-    void moveTo(int position) override;
-
-private slots:
-    void onFutureEvent(const QString &eventId, firebase::FutureBase future) override;
-    void onApplicationStateChanged(Qt::ApplicationState state);
-
 private:
-    void initInternal() override;
+    firebase::FutureBase initInternal() override;
+    firebase::FutureBase loadInternal() override;
+
+    firebase::FutureBase moveToInternal(int x, int y) override;
+    firebase::FutureBase moveToInternal(Position position) override;
+
+    firebase::FutureBase setXInternal(int x) override;
+    firebase::FutureBase setYInternal(int y) override;
+
+    firebase::FutureBase setVisibleInternal(bool visible) override;
 
 private:
     firebase::admob::BannerView* _banner;
@@ -370,23 +378,17 @@ public:
     QtFirebaseAdMobNativeExpressAd(QObject* parent = 0);
     ~QtFirebaseAdMobNativeExpressAd();
 
-    void setVisible(bool visible) override;
-    void setX(int x) override;
-    void setY(int y) override;
-
-public slots:
-    void load() override;
-    void show() override;
-    void hide() override;
-    void moveTo(int x, int y) override;
-    void moveTo(int position) override;
-
-private slots:
-    void onFutureEvent(const QString &eventId, firebase::FutureBase future) override;
-    void onApplicationStateChanged(Qt::ApplicationState state);
-
 private:
-    void initInternal() override;
+    firebase::FutureBase initInternal() override;
+    firebase::FutureBase loadInternal() override;
+
+    firebase::FutureBase moveToInternal(int x, int y) override;
+    firebase::FutureBase moveToInternal(Position position) override;
+
+    firebase::FutureBase setXInternal(int x) override;
+    firebase::FutureBase setYInternal(int y) override;
+
+    firebase::FutureBase setVisibleInternal(bool visible) override;
 
 private:
     firebase::admob::NativeExpressAdView* _nativeAd;
@@ -421,15 +423,14 @@ signals:
     void presentationStateChanged(int state);
 
 public slots:
-    void load() override;
     void show() override;
 
 private slots:
-    void onFutureEvent(const QString &eventId, firebase::FutureBase future) override;
     void onPresentationStateChanged(int state);
 
 private:
-    void initInternal() override;
+    firebase::FutureBase initInternal() override;
+    firebase::FutureBase loadInternal() override;
 
 private:
     firebase::admob::InterstitialAd* _interstitial;
@@ -521,15 +522,14 @@ signals:
     void rewarded(const QString &type, float value);
 
 public slots:
-    void load() override;
     void show() override;
 
 private slots:
-    void onFutureEvent(const QString &eventId, firebase::FutureBase future) override;
     void onPresentationStateChanged(int state);
 
 private:
-    void initInternal() override;
+    firebase::FutureBase initInternal() override;
+    firebase::FutureBase loadInternal() override;
 
     void OnRewarded(firebase::admob::rewarded_video::RewardItem reward) override;
     void OnPresentationStateChanged(firebase::admob::rewarded_video::PresentationState state) override;
