@@ -399,18 +399,9 @@ private:
 
 class QtFirebaseAdMobInterstitialAdListener;
 
-class QtFirebaseAdMobInterstitial : public QObject
+class QtFirebaseAdMobInterstitial : public QtFirebaseAdMobBase
 {
     Q_OBJECT
-
-    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
-    Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
-
-    Q_PROPERTY(QString adUnitId READ adUnitId WRITE setAdUnitId NOTIFY adUnitIdChanged)
-
-    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
-
-    Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 public:
     enum PresentationState
@@ -423,63 +414,27 @@ public:
     QtFirebaseAdMobInterstitial(QObject* parent = 0);
     ~QtFirebaseAdMobInterstitial();
 
-    bool ready();
-    void setReady(bool ready);
-
-    bool loaded();
-    void setLoaded(bool loaded);
-
-    QString adUnitId();
-    void setAdUnitId(const QString &adUnitId);
-
-    bool visible() const;
-    void setVisible(bool visible);
-
-    QtFirebaseAdMobRequest* request() const;
-    void setRequest(QtFirebaseAdMobRequest *request);
+    void setVisible(bool visible) override;
 
 signals:
-    void readyChanged();
-    void loadedChanged();
-    void adUnitIdChanged();
-    void requestChanged();
-    void loading();
-    void error(int code, QString message);
     void closed();
-    void visibleChanged();
     void presentationStateChanged(int state);
 
 public slots:
-    void load();
-    void show();
+    void load() override;
+    void show() override;
 
 private slots:
-    void init();
-    void onFutureEvent(const QString &eventId, firebase::FutureBase future);
+    void onFutureEvent(const QString &eventId, firebase::FutureBase future) override;
     void onPresentationStateChanged(int state);
 
 private:
-    QString __QTFIREBASE_ID;
-    bool _ready;
-    bool _initializing;
-    bool _loaded;
+    void initInternal() override;
 
-    bool _isFirstInit;
-
-    QString _adUnitId;
-    QByteArray __adUnitIdByteArray;
-    //const char *__adUnitId; // TODO use __adUnitIdByteArray.constData() instead ?
-
-    bool _visible;
-
-    QtFirebaseAdMobRequest* _request;
-
-    void *_nativeUIElement;
-
-    QTimer *_initTimer;
-
+private:
     firebase::admob::InterstitialAd* _interstitial;
     QtFirebaseAdMobInterstitialAdListener* _interstitialAdListener;
+
 };
 
 // A listener class to an InterstitialAd.
@@ -543,15 +498,9 @@ private:
  *  }
  */
 
-class QtFirebaseAdMobRewardedVideoAd : public QObject, public firebase::admob::rewarded_video::Listener
+class QtFirebaseAdMobRewardedVideoAd : public QtFirebaseAdMobBase, public firebase::admob::rewarded_video::Listener
 {
     Q_OBJECT
-
-    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
-    Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
-    Q_PROPERTY(QString adUnitId READ adUnitId WRITE setAdUnitId NOTIFY adUnitIdChanged)
-    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
-    Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 public:
     enum PresentationState
@@ -564,61 +513,27 @@ public:
     QtFirebaseAdMobRewardedVideoAd(QObject* parent = 0);
     ~QtFirebaseAdMobRewardedVideoAd();
 
-    bool ready() const;
-    void setReady(bool ready);
-
-    bool loaded() const;
-    void setLoaded(bool loaded);
-
-    QString adUnitId() const;
-    void setAdUnitId(const QString &adUnitId);
-
-    bool visible() const;
-    void setVisible(bool visible);
-
-    QtFirebaseAdMobRequest* request() const;
-    void setRequest(QtFirebaseAdMobRequest *request);
+    void setVisible(bool visible) override;
 
 signals:
-    void readyChanged();
-    void loadedChanged();
-    void adUnitIdChanged();
-    void requestChanged();
-    void loading();
-    void error(int code, QString message);
     void closed();
-    void visibleChanged();
     void presentationStateChanged(int state);
-    void rewarded(QString type, float value);
+    void rewarded(const QString &type, float value);
 
 public slots:
-    void load();
-    void show();
+    void load() override;
+    void show() override;
 
 private slots:
-    void init();
-    void onFutureEvent(const QString &eventId, firebase::FutureBase future);
+    void onFutureEvent(const QString &eventId, firebase::FutureBase future) override;
     void onPresentationStateChanged(int state);
 
 private:
+    void initInternal() override;
 
     void OnRewarded(firebase::admob::rewarded_video::RewardItem reward) override;
     void OnPresentationStateChanged(firebase::admob::rewarded_video::PresentationState state) override;
 
-    QString __QTFIREBASE_ID;
-    bool _ready;
-    bool _initializing;
-    bool _loaded;
-    bool _isFirstInit;
-    bool _visible;
-
-    QString _adUnitId;
-    QByteArray __adUnitIdByteArray;
-    QtFirebaseAdMobRequest* _request;
-
-    void *_nativeUIElement;
-
-    QTimer _initTimer;
 };
 
 #endif // QTFIREBASE_BUILD_ADMOB

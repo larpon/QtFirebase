@@ -442,7 +442,7 @@ QtFirebaseAdMobBase::QtFirebaseAdMobBase(QObject *parent) : QObject(parent) {
 
     _visible = false;
     _request = 0;
-    //connect(this,&QtFirebaseAdMobBanner::visibleChanged, this, &QtFirebaseAdMobBanner::onVisibleChanged);
+    //connect(this,&QtFirebaseAdMobBase::visibleChanged, this, &QtFirebaseAdMobBase::onVisibleChanged);
 
     _initTimer = new QTimer(this);
     connect(_initTimer, &QTimer::timeout, this, &QtFirebaseAdMobBase::init);
@@ -450,7 +450,6 @@ QtFirebaseAdMobBase::QtFirebaseAdMobBase(QObject *parent) : QObject(parent) {
 
     connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobBase::onFutureEvent);
 
-    //connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobBanner::onApplicationStateChanged);
 }
 
 bool QtFirebaseAdMobBase::ready() const {
@@ -548,6 +547,7 @@ QtFirebaseAdMobBannerBase::QtFirebaseAdMobBannerBase(QObject *parent)
     _y = 0;
     _width = 0;
     _height = 0;
+    //connect(qGuiApp,&QtFirebaseAdMobBannerBase::applicationStateChanged, this, &QtFirebaseAdMobBannerBase::onApplicationStateChanged);
 }
 
 int QtFirebaseAdMobBannerBase::getX() const {
@@ -1132,25 +1132,8 @@ void QtFirebaseAdMobNativeExpressAd::moveTo(int position)
  *
  */
 
-QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent) : QObject(parent)
+QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent) : QtFirebaseAdMobBase(parent)
 {
-    __QTFIREBASE_ID = QString().sprintf("%8p", this);
-    _ready = false;
-    _loaded = false;
-    _initializing = false;
-    _nativeUIElement = 0;
-    _isFirstInit = true;
-    _visible = false;
-    _request = 0;
-
-    connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobInterstitial::onFutureEvent);
-
-    connect(this,&QtFirebaseAdMobInterstitial::presentationStateChanged, this, &QtFirebaseAdMobInterstitial::onPresentationStateChanged);
-
-    _initTimer = new QTimer(this);
-    _initTimer->setSingleShot(false);
-    connect(_initTimer, &QTimer::timeout, this, &QtFirebaseAdMobInterstitial::init);
-    _initTimer->start(500);
 }
 
 QtFirebaseAdMobInterstitial::~QtFirebaseAdMobInterstitial()
@@ -1162,51 +1145,6 @@ QtFirebaseAdMobInterstitial::~QtFirebaseAdMobInterstitial()
 
     _initTimer->stop();
     delete _initTimer;
-}
-
-bool QtFirebaseAdMobInterstitial::ready()
-{
-    return _ready;
-}
-
-void QtFirebaseAdMobInterstitial::setReady(bool ready)
-{
-    if (_ready != ready) {
-        _ready = ready;
-        emit readyChanged();
-    }
-}
-
-bool QtFirebaseAdMobInterstitial::loaded()
-{
-    return _loaded;
-}
-
-void QtFirebaseAdMobInterstitial::setLoaded(bool loaded)
-{
-    if(_loaded != loaded) {
-        _loaded = loaded;
-        emit loadedChanged();
-    }
-}
-
-QString QtFirebaseAdMobInterstitial::adUnitId()
-{
-    return _adUnitId;
-}
-
-void QtFirebaseAdMobInterstitial::setAdUnitId(const QString &adUnitId)
-{
-    if(_adUnitId != adUnitId) {
-        _adUnitId = adUnitId;
-        __adUnitIdByteArray = _adUnitId.toLatin1();
-        emit adUnitIdChanged();
-    }
-}
-
-bool QtFirebaseAdMobInterstitial::visible() const
-{
-    return _visible;
 }
 
 void QtFirebaseAdMobInterstitial::setVisible(bool visible)
@@ -1229,52 +1167,8 @@ void QtFirebaseAdMobInterstitial::setVisible(bool visible)
     }
 }
 
-QtFirebaseAdMobRequest *QtFirebaseAdMobInterstitial::request() const
+void QtFirebaseAdMobInterstitial::initInternal()
 {
-    return _request;
-}
-
-void QtFirebaseAdMobInterstitial::setRequest(QtFirebaseAdMobRequest *request)
-{
-    if(_request != request) {
-        _request = request;
-        emit requestChanged();
-    }
-}
-
-void QtFirebaseAdMobInterstitial::init()
-{
-    if(!qFirebase->ready()) {
-        qDebug() << this << "::init" << "base not ready";
-        return;
-    }
-
-    if(!qFirebaseAdMob->ready()) {
-        qDebug() << this << "::init" << "AdMob base not ready";
-        return;
-    }
-
-    if(_adUnitId.isEmpty()) {
-        qDebug() << this << "::init" << "adUnitId must be set in order to initialize the interstitial";
-        return;
-    }
-
-    if(_isFirstInit && !PlatformUtils::getNativeWindow()) {
-        qDebug() << this << "::init" << "no native ui element. Waiting for it...";
-        return;
-    }
-
-    // TODO test if this actually nessecary anymore
-    if(!_nativeUIElement && !PlatformUtils::getNativeWindow()) {
-        qDebug() << this << "::init" << "no native ui element";
-        return;
-    }
-
-    if(!_nativeUIElement && PlatformUtils::getNativeWindow()) {
-        qDebug() << this << "::init" << "setting native ui element";
-        _nativeUIElement = PlatformUtils::getNativeWindow();
-    }
-
     if(!_ready && !_initializing) {
         _initializing = true;
 
@@ -1417,23 +1311,8 @@ void QtFirebaseAdMobInterstitial::show()
  */
 
 QtFirebaseAdMobRewardedVideoAd::QtFirebaseAdMobRewardedVideoAd(QObject* parent):
-    QObject(parent),
-    _ready(false),
-    _initializing(false),
-    _loaded(false),
-    _isFirstInit(true),
-    _visible(false),
-    _request(nullptr),
-    _nativeUIElement(nullptr)
+    QtFirebaseAdMobBase(parent)
 {
-    __QTFIREBASE_ID = QString().sprintf("%8p", this);
-
-    connect(qFirebase, &QtFirebase::futureEvent, this, &QtFirebaseAdMobRewardedVideoAd::onFutureEvent);
-    connect(this,&QtFirebaseAdMobRewardedVideoAd::presentationStateChanged, this, &QtFirebaseAdMobRewardedVideoAd::onPresentationStateChanged);
-
-    _initTimer.setSingleShot(false);
-    connect(&_initTimer, &QTimer::timeout, this, &QtFirebaseAdMobRewardedVideoAd::init);
-    _initTimer.start(500);
 }
 
 QtFirebaseAdMobRewardedVideoAd::~QtFirebaseAdMobRewardedVideoAd()
@@ -1442,52 +1321,7 @@ QtFirebaseAdMobRewardedVideoAd::~QtFirebaseAdMobRewardedVideoAd()
         firebase::admob::rewarded_video::Destroy();
         qDebug() << this << "::~QtFirebaseAdMobRewardedVideoAd" << "Destroyed";
     }
-    _initTimer.stop();
-}
-
-bool QtFirebaseAdMobRewardedVideoAd::ready() const
-{
-    return _ready;
-}
-
-void QtFirebaseAdMobRewardedVideoAd::setReady(bool ready)
-{
-    if (_ready != ready) {
-        _ready = ready;
-        emit readyChanged();
-    }
-}
-
-bool QtFirebaseAdMobRewardedVideoAd::loaded() const
-{
-    return _loaded;
-}
-
-void QtFirebaseAdMobRewardedVideoAd::setLoaded(bool loaded)
-{
-    if(_loaded != loaded) {
-        _loaded = loaded;
-        emit loadedChanged();
-    }
-}
-
-QString QtFirebaseAdMobRewardedVideoAd::adUnitId() const
-{
-    return _adUnitId;
-}
-
-void QtFirebaseAdMobRewardedVideoAd::setAdUnitId(const QString &adUnitId)
-{
-    if(_adUnitId != adUnitId) {
-        _adUnitId = adUnitId;
-        __adUnitIdByteArray = _adUnitId.toLatin1();
-        emit adUnitIdChanged();
-    }
-}
-
-bool QtFirebaseAdMobRewardedVideoAd::visible() const
-{
-    return _visible;
+    _initTimer->stop();
 }
 
 void QtFirebaseAdMobRewardedVideoAd::setVisible(bool visible)
@@ -1510,52 +1344,8 @@ void QtFirebaseAdMobRewardedVideoAd::setVisible(bool visible)
     }
 }
 
-QtFirebaseAdMobRequest *QtFirebaseAdMobRewardedVideoAd::request() const
+void QtFirebaseAdMobRewardedVideoAd::initInternal()
 {
-    return _request;
-}
-
-void QtFirebaseAdMobRewardedVideoAd::setRequest(QtFirebaseAdMobRequest *request)
-{
-    if(_request != request) {
-        _request = request;
-        emit requestChanged();
-    }
-}
-
-void QtFirebaseAdMobRewardedVideoAd::init()
-{
-    if(!qFirebase->ready()) {
-        qDebug() << this << "::init" << "base not ready";
-        return;
-    }
-
-    if(!qFirebaseAdMob->ready()) {
-        qDebug() << this << "::init" << "AdMob base not ready";
-        return;
-    }
-
-    if(_adUnitId.isEmpty()) {
-        qDebug() << this << "::init" << "adUnitId must be set in order to initialize the interstitial";
-        return;
-    }
-
-    if(_isFirstInit && !PlatformUtils::getNativeWindow()) {
-        qDebug() << this << "::init" << "no native ui element. Waiting for it...";
-        return;
-    }
-
-    // TODO test if this actually nessecary anymore
-    if(!_nativeUIElement && !PlatformUtils::getNativeWindow()) {
-        qDebug() << this << "::init" << "no native ui element";
-        return;
-    }
-
-    if(!_nativeUIElement && PlatformUtils::getNativeWindow()) {
-        qDebug() << this << "::init" << "setting native ui element";
-        _nativeUIElement = PlatformUtils::getNativeWindow();
-    }
-
     if(!_ready && !_initializing) {
         _initializing = true;
         firebase::FutureBase future = firebase::admob::rewarded_video::Initialize();
@@ -1579,7 +1369,7 @@ void QtFirebaseAdMobRewardedVideoAd::onFutureEvent(const QString &eventId, fireb
         }
         else
         {
-            _initTimer.stop();
+            _initTimer->stop();
             qDebug() << this << "::onFutureEvent initialized";
             _initializing = false;
             _isFirstInit = false;
