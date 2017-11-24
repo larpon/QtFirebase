@@ -43,7 +43,7 @@ QtFirebaseAdMob::~QtFirebaseAdMob()
     }
 }
 
-bool QtFirebaseAdMob::checkInstance(const char *function)
+bool QtFirebaseAdMob::checkInstance(const char *function) const
 {
     bool b = (QtFirebaseAdMob::self != 0);
     if (!b)
@@ -51,7 +51,7 @@ bool QtFirebaseAdMob::checkInstance(const char *function)
     return b;
 }
 
-bool QtFirebaseAdMob::ready()
+bool QtFirebaseAdMob::ready() const
 {
     return _ready;
 }
@@ -64,7 +64,7 @@ void QtFirebaseAdMob::setReady(bool ready)
     }
 }
 
-QString QtFirebaseAdMob::appId()
+QString QtFirebaseAdMob::appId() const
 {
     return _appId;
 }
@@ -81,12 +81,12 @@ void QtFirebaseAdMob::setAppId(const QString &adMobAppId)
     }
 }
 
-QVariantList QtFirebaseAdMob::testDevices()
+QVariantList QtFirebaseAdMob::testDevices() const
 {
     return _testDevices;
 }
 
-void QtFirebaseAdMob::setTestDevices(QVariantList testDevices)
+void QtFirebaseAdMob::setTestDevices(const QVariantList &testDevices)
 {
     if(_testDevices != testDevices) {
         _testDevices = testDevices;
@@ -159,7 +159,7 @@ void QtFirebaseAdMob::init()
     }
 }
 
-void QtFirebaseAdMob::onFutureEvent(const QString &eventId, const firebase::FutureBase &future)
+void QtFirebaseAdMob::onFutureEvent(const QString &eventId, firebase::FutureBase future)
 {
     Q_UNUSED(eventId);
     Q_UNUSED(future);
@@ -303,7 +303,7 @@ void QtFirebaseAdMobRequest::setExtras(const QVariantList &extras)
     }
 }
 
-QVariantList QtFirebaseAdMobRequest::testDevices()
+QVariantList QtFirebaseAdMobRequest::testDevices() const
 {
     return _testDevices;
 }
@@ -427,13 +427,12 @@ admob::AdRequest QtFirebaseAdMobRequest::asAdMobRequest()
     return _admobRequest;
 }
 
+
 /*
- * AdMobBanner
- *
+ * QtFirebaseAdMobBase
  */
 
-QtFirebaseAdMobBanner::QtFirebaseAdMobBanner(QObject *parent) : QObject(parent)
-{
+QtFirebaseAdMobBase::QtFirebaseAdMobBase(QObject *parent) : QObject(parent) {
     __QTFIREBASE_ID = QString().sprintf("%8p", this);
     _ready = false;
     _loaded = false;
@@ -442,22 +441,154 @@ QtFirebaseAdMobBanner::QtFirebaseAdMobBanner(QObject *parent) : QObject(parent)
     _isFirstInit = true;
 
     _visible = false;
-
-    _x = 0;
-    _y = 0;
-    _width = 0;
-    _height = 0;
-
     _request = 0;
     //connect(this,&QtFirebaseAdMobBanner::visibleChanged, this, &QtFirebaseAdMobBanner::onVisibleChanged);
 
     _initTimer = new QTimer(this);
-    connect(_initTimer, &QTimer::timeout, this, &QtFirebaseAdMobBanner::init);
+    connect(_initTimer, &QTimer::timeout, this, &QtFirebaseAdMobBase::init);
     _initTimer->start(500);
 
-    connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobBanner::onFutureEvent);
+    connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobBase::onFutureEvent);
 
-    //    connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobBanner::onApplicationStateChanged);
+    //connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobBanner::onApplicationStateChanged);
+}
+
+bool QtFirebaseAdMobBase::ready() const {
+    return _ready;
+}
+
+void QtFirebaseAdMobBase::setReady(bool ready) {
+    if (_ready != ready) {
+        _ready = ready;
+        emit readyChanged();
+    }
+}
+
+bool QtFirebaseAdMobBase::loaded() const {
+    return _loaded;
+}
+
+void QtFirebaseAdMobBase::setLoaded(bool loaded) {
+    if(_loaded != loaded) {
+        _loaded = loaded;
+        emit loadedChanged();
+    }
+}
+
+QString QtFirebaseAdMobBase::adUnitId() const {
+    return _adUnitId;
+}
+
+void QtFirebaseAdMobBase::setAdUnitId(const QString &adUnitId) {
+    if(_adUnitId != adUnitId) {
+        _adUnitId = adUnitId;
+        __adUnitIdByteArray = _adUnitId.toLatin1();
+        emit adUnitIdChanged();
+    }
+}
+
+bool QtFirebaseAdMobBase::visible() const {
+    return _visible;
+}
+
+QtFirebaseAdMobRequest *QtFirebaseAdMobBase::request() const {
+    return _request;
+}
+
+void QtFirebaseAdMobBase::setRequest(QtFirebaseAdMobRequest *request) {
+    if(_request != request) {
+        _request = request;
+        emit requestChanged();
+    }
+}
+
+void QtFirebaseAdMobBase::init() {
+    if(!qFirebase->ready()) {
+        qDebug() << this << "::init" << "base not ready";
+        return;
+    }
+
+    if(!qFirebaseAdMob->ready()) {
+        qDebug() << this << "::init" << "AdMob base not ready";
+        return;
+    }
+
+    if(_adUnitId.isEmpty()) {
+        qDebug() << this << "::init" << "adUnitId must be set in order to initialize the interstitial";
+        return;
+    }
+
+    if(_isFirstInit && !PlatformUtils::getNativeWindow()) {
+        qDebug() << this << "::init" << "no native ui element. Waiting for it...";
+        return;
+    }
+
+    // TODO test if this actually nessecary anymore
+    if(!_nativeUIElement && !PlatformUtils::getNativeWindow()) {
+        qDebug() << this << "::init" << "no native ui element";
+        return;
+    }
+
+    if(!_nativeUIElement && PlatformUtils::getNativeWindow()) {
+        qDebug() << this << "::init" << "setting native ui element";
+        _nativeUIElement = PlatformUtils::getNativeWindow();
+    }
+
+    initInternal();
+}
+
+
+/*
+ * Admob banner base.
+ */
+
+QtFirebaseAdMobBannerBase::QtFirebaseAdMobBannerBase(QObject *parent)
+    : QtFirebaseAdMobBase(parent) {
+    _x = 0;
+    _y = 0;
+    _width = 0;
+    _height = 0;
+}
+
+int QtFirebaseAdMobBannerBase::getX() const {
+    return _x;
+}
+
+int QtFirebaseAdMobBannerBase::getY() const {
+    return _y;
+}
+
+int QtFirebaseAdMobBannerBase::getWidth() const {
+    return _width;
+}
+
+void QtFirebaseAdMobBannerBase::setWidth(int width) {
+    if(_width != width) {
+        _width = width;
+        emit widthChanged();
+    }
+}
+
+int QtFirebaseAdMobBannerBase::getHeight() const  {
+    return _height;
+}
+
+void QtFirebaseAdMobBannerBase::setHeight(int height) {
+    if(_height != height) {
+        _height = height;
+        emit heightChanged();
+    }
+}
+
+
+
+/*
+ * AdMobBanner
+ *
+ */
+
+QtFirebaseAdMobBanner::QtFirebaseAdMobBanner(QObject *parent) : QtFirebaseAdMobBannerBase(parent)
+{
 }
 
 QtFirebaseAdMobBanner::~QtFirebaseAdMobBanner()
@@ -467,53 +598,6 @@ QtFirebaseAdMobBanner::~QtFirebaseAdMobBanner()
         qFirebase->waitForFutureCompletion(_banner->DestroyLastResult()); // TODO MAYBE move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
         qDebug() << this << "::~QtFirebaseAdMobBanner" << "Destroyed banner";
     }
-}
-
-bool QtFirebaseAdMobBanner::ready()
-{
-    return _ready;
-}
-
-void QtFirebaseAdMobBanner::setReady(bool ready)
-{
-    if (_ready != ready) {
-        _ready = ready;
-        emit readyChanged();
-    }
-}
-
-bool QtFirebaseAdMobBanner::loaded()
-{
-    return _loaded;
-}
-
-void QtFirebaseAdMobBanner::setLoaded(bool loaded)
-{
-    if(_loaded != loaded) {
-        _loaded = loaded;
-        qDebug() << this << "::setLoaded" << _loaded;
-        emit loadedChanged();
-    }
-}
-
-QString QtFirebaseAdMobBanner::adUnitId()
-{
-    return _adUnitId;
-}
-
-void QtFirebaseAdMobBanner::setAdUnitId(const QString &adUnitId)
-{
-    if(_adUnitId != adUnitId) {
-        _adUnitId = adUnitId;
-        __adUnitIdByteArray = _adUnitId.toLatin1();
-
-        emit adUnitIdChanged();
-    }
-}
-
-bool QtFirebaseAdMobBanner::visible()
-{
-    return _visible;
 }
 
 void QtFirebaseAdMobBanner::setVisible(bool visible)
@@ -551,11 +635,6 @@ void QtFirebaseAdMobBanner::setVisible(bool visible)
     }
 }
 
-int QtFirebaseAdMobBanner::getX()
-{
-    return _x;
-}
-
 void QtFirebaseAdMobBanner::setX(int x)
 {
     if(!_ready) {
@@ -583,11 +662,6 @@ void QtFirebaseAdMobBanner::setX(int x)
         _x = x;
         emit xChanged();
     }
-}
-
-int QtFirebaseAdMobBanner::getY()
-{
-    return _y;
 }
 
 void QtFirebaseAdMobBanner::setY(int y)
@@ -619,79 +693,8 @@ void QtFirebaseAdMobBanner::setY(int y)
     }
 }
 
-int QtFirebaseAdMobBanner::getWidth()
+void QtFirebaseAdMobBanner::initInternal()
 {
-    return _width;
-}
-
-void QtFirebaseAdMobBanner::setWidth(int width)
-{
-    if(_width != width) {
-        _width = width;
-        emit widthChanged();
-    }
-}
-
-int QtFirebaseAdMobBanner::getHeight()
-{
-    return _height;
-}
-
-void QtFirebaseAdMobBanner::setHeight(int height)
-{
-    if(_height != height) {
-        _height = height;
-        emit heightChanged();
-    }
-}
-
-QtFirebaseAdMobRequest* QtFirebaseAdMobBanner::request() const
-{
-    return _request;
-}
-
-void QtFirebaseAdMobBanner::setRequest(QtFirebaseAdMobRequest* request)
-{
-    if(_request != request) {
-        _request = request;
-        emit requestChanged();
-    }
-}
-
-void QtFirebaseAdMobBanner::init()
-{
-    //qDebug() << "QtFirebase.AdMobBanner pre-initialize _ready" << _ready << "_init" << _initializing;
-    if(!qFirebase->ready()) {
-        qDebug() << this << "::init" << "base not ready";
-        return;
-    }
-
-    if(!qFirebaseAdMob->ready()) {
-        qDebug() << this << "::init" << "AdMob base not ready";
-        return;
-    }
-
-    if(_adUnitId.isEmpty()) {
-        qDebug() << this << "::init" << "adUnitId must be set in order to initialize the banner";
-        return;
-    }
-
-    if(_isFirstInit && !PlatformUtils::getNativeWindow()) {
-        qDebug() << this << "::init" << "no native ui element. Waiting for it...";
-        return;
-    }
-
-    // TODO test nessecity of this
-    if(!_nativeUIElement && !PlatformUtils::getNativeWindow()) {
-        qDebug() << this << "::init" << "no native ui element";
-        return;
-    }
-
-    if(!_nativeUIElement && PlatformUtils::getNativeWindow()) {
-        qDebug() << this << "::init" << "setting native ui element";
-        _nativeUIElement = PlatformUtils::getNativeWindow();
-    }
-
     if(!_ready && !_initializing) {
         _initializing = true;
 
@@ -711,7 +714,7 @@ void QtFirebaseAdMobBanner::init()
     }
 }
 
-void QtFirebaseAdMobBanner::onFutureEvent(QString eventId, firebase::FutureBase future)
+void QtFirebaseAdMobBanner::onFutureEvent(const QString &eventId, firebase::FutureBase future)
 {
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
@@ -856,33 +859,8 @@ void QtFirebaseAdMobBanner::moveTo(int position)
  * AdMobNativeExpressAd
  *
  */
-QtFirebaseAdMobNativeExpressAd::QtFirebaseAdMobNativeExpressAd(QObject *parent) : QObject(parent)
+QtFirebaseAdMobNativeExpressAd::QtFirebaseAdMobNativeExpressAd(QObject *parent) : QtFirebaseAdMobBannerBase(parent)
 {
-    __QTFIREBASE_ID = QString().sprintf("%8p", this);
-    _ready = false;
-    _loaded = false;
-    _initializing = false;
-    _nativeUIElement = 0;
-    _isFirstInit = true;
-
-    _visible = false;
-
-    _x = 0;
-    _y = 0;
-    _width = 0;
-    _height = 0;
-
-    _request = 0;
-    //connect(this,&QtFirebaseAdMobNativeAd::visibleChanged, this, &QtFirebaseAdMobNativeAd::onVisibleChanged);
-
-    _initTimer = new QTimer(this);
-    connect(_initTimer, &QTimer::timeout, this, &QtFirebaseAdMobNativeExpressAd::init);
-    _initTimer->start(500);
-
-    connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseAdMobNativeExpressAd::onFutureEvent);
-
-    //    connect(qGuiApp,&QGuiApplication::applicationStateChanged, this, &QtFirebaseAdMobNativeExpressAd::onApplicationStateChanged);
-
 }
 
 QtFirebaseAdMobNativeExpressAd::~QtFirebaseAdMobNativeExpressAd()
@@ -892,53 +870,6 @@ QtFirebaseAdMobNativeExpressAd::~QtFirebaseAdMobNativeExpressAd()
         qFirebase->waitForFutureCompletion(_nativeAd->DestroyLastResult()); // TODO MAYBE move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
         qDebug() << this << "::~QtFirebaseAdMobNativeExpressAd" << "Destroyed";
     }
-}
-
-bool QtFirebaseAdMobNativeExpressAd::ready()
-{
-    return _ready;
-}
-
-void QtFirebaseAdMobNativeExpressAd::setReady(bool ready)
-{
-    if (_ready != ready) {
-        _ready = ready;
-        emit readyChanged();
-    }
-}
-
-bool QtFirebaseAdMobNativeExpressAd::loaded()
-{
-    return _loaded;
-}
-
-void QtFirebaseAdMobNativeExpressAd::setLoaded(bool loaded)
-{
-    if(_loaded != loaded) {
-        _loaded = loaded;
-        qDebug() << this << "::setLoaded" << _loaded;
-        emit loadedChanged();
-    }
-}
-
-QString QtFirebaseAdMobNativeExpressAd::adUnitId()
-{
-    return _adUnitId;
-}
-
-void QtFirebaseAdMobNativeExpressAd::setAdUnitId(const QString &adUnitId)
-{
-    if(_adUnitId != adUnitId) {
-        _adUnitId = adUnitId;
-        __adUnitIdByteArray = _adUnitId.toLatin1();
-
-        emit adUnitIdChanged();
-    }
-}
-
-bool QtFirebaseAdMobNativeExpressAd::visible()
-{
-    return _visible;
 }
 
 void QtFirebaseAdMobNativeExpressAd::setVisible(bool visible)
@@ -976,11 +907,6 @@ void QtFirebaseAdMobNativeExpressAd::setVisible(bool visible)
     }
 }
 
-int QtFirebaseAdMobNativeExpressAd::getX()
-{
-    return _x;
-}
-
 void QtFirebaseAdMobNativeExpressAd::setX(int x)
 {
     if(!_ready) {
@@ -1008,11 +934,6 @@ void QtFirebaseAdMobNativeExpressAd::setX(int x)
         _x = x;
         emit xChanged();
     }
-}
-
-int QtFirebaseAdMobNativeExpressAd::getY()
-{
-    return _y;
 }
 
 void QtFirebaseAdMobNativeExpressAd::setY(int y)
@@ -1044,79 +965,8 @@ void QtFirebaseAdMobNativeExpressAd::setY(int y)
     }
 }
 
-int QtFirebaseAdMobNativeExpressAd::getWidth()
+void QtFirebaseAdMobNativeExpressAd::initInternal()
 {
-    return _width;
-}
-
-void QtFirebaseAdMobNativeExpressAd::setWidth(int width)
-{
-    if(_width != width) {
-        _width = width;
-        emit widthChanged();
-    }
-}
-
-int QtFirebaseAdMobNativeExpressAd::getHeight()
-{
-    return _height;
-}
-
-void QtFirebaseAdMobNativeExpressAd::setHeight(int height)
-{
-    if(_height != height) {
-        _height = height;
-        emit heightChanged();
-    }
-}
-
-QtFirebaseAdMobRequest* QtFirebaseAdMobNativeExpressAd::request() const
-{
-    return _request;
-}
-
-void QtFirebaseAdMobNativeExpressAd::setRequest(QtFirebaseAdMobRequest* request)
-{
-    if(_request != request) {
-        _request = request;
-        emit requestChanged();
-    }
-}
-
-void QtFirebaseAdMobNativeExpressAd::init()
-{
-    //qDebug() << "QtFirebase.AdMobBanner pre-initialize _ready" << _ready << "_init" << _initializing;
-    if(!qFirebase->ready()) {
-        qDebug() << this << "::init" << "base not ready";
-        return;
-    }
-
-    if(!qFirebaseAdMob->ready()) {
-        qDebug() << this << "::init" << "AdMob base not ready";
-        return;
-    }
-
-    if(_adUnitId.isEmpty()) {
-        qDebug() << this << "::init" << "adUnitId must be set in order to initialize the banner";
-        return;
-    }
-
-    if(_isFirstInit && !PlatformUtils::getNativeWindow()) {
-        qDebug() << this << "::init" << "no native ui element. Waiting for it...";
-        return;
-    }
-
-    // TODO test nessecity of this
-    if(!_nativeUIElement && !PlatformUtils::getNativeWindow()) {
-        qDebug() << this << "::init" << "no native ui element";
-        return;
-    }
-
-    if(!_nativeUIElement && PlatformUtils::getNativeWindow()) {
-        qDebug() << this << "::init" << "setting native ui element";
-        _nativeUIElement = PlatformUtils::getNativeWindow();
-    }
-
     if(!_ready && !_initializing) {
         _initializing = true;
 
@@ -1136,7 +986,7 @@ void QtFirebaseAdMobNativeExpressAd::init()
     }
 }
 
-void QtFirebaseAdMobNativeExpressAd::onFutureEvent(QString eventId, firebase::FutureBase future)
+void QtFirebaseAdMobNativeExpressAd::onFutureEvent(const QString &eventId, firebase::FutureBase future)
 {
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
@@ -1441,7 +1291,7 @@ void QtFirebaseAdMobInterstitial::init()
     }
 }
 
-void QtFirebaseAdMobInterstitial::onFutureEvent(QString eventId, firebase::FutureBase future)
+void QtFirebaseAdMobInterstitial::onFutureEvent(const QString &eventId, firebase::FutureBase future)
 {
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
@@ -1713,7 +1563,7 @@ void QtFirebaseAdMobRewardedVideoAd::init()
     }
 }
 
-void QtFirebaseAdMobRewardedVideoAd::onFutureEvent(QString eventId, firebase::FutureBase future)
+void QtFirebaseAdMobRewardedVideoAd::onFutureEvent(const QString &eventId, firebase::FutureBase future)
 {
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
@@ -1873,3 +1723,4 @@ void QtFirebaseAdMobRewardedVideoAd::OnPresentationStateChanged(firebase::admob:
     }
     emit presentationStateChanged(pState);
 }
+

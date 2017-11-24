@@ -39,7 +39,7 @@ bool QtFirebase::checkInstance(const char *function)
     return b;
 }
 
-bool QtFirebase::ready()
+bool QtFirebase::ready() const
 {
     return _ready;
 }
@@ -76,12 +76,12 @@ void QtFirebase::waitForFutureCompletion(firebase::FutureBase future)
     }
 }
 
-firebase::App* QtFirebase::firebaseApp()
+firebase::App* QtFirebase::firebaseApp() const
 {
     return _firebaseApp;
 }
 
-void QtFirebase::addFuture(QString eventId, firebase::FutureBase future)
+void QtFirebase::addFuture(const QString &eventId, const firebase::FutureBase &future)
 {
     qDebug() << self << "::addFuture" << "adding" << eventId;
     _futureMap.insert(eventId,future);
