@@ -124,6 +124,9 @@ Run the included script [`$$PWD/src/ios/download_firebase_ios.sh`](https://githu
 
 ... or manually download Firebase.zip from https://firebase.google.com/download/ios and extract it to `$$PWD/src/ios/`.
 
+**PRO TIP**
+> If you are upgrading QtFirebase to a newer version - you'll probably want to download the Firebase iOS Frameworks again in order to get the latest version
+
 #### Add entries in Info.plist
 ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/ios/Info.plist#L66-L71))
 
