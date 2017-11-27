@@ -10,7 +10,7 @@ isEmpty(QTFIREBASE_GIT_VERSION) {
   QTFIREBASE_GIT_VERSION = 0.0.0
 }
 
-QTFIREBASE_GIT_BRANCH_NAME = ""
+QTFIREBASE_GIT_BRANCH = ""
 
 # Need to discard STDERR so get path to NULL device
 win32 {
@@ -19,7 +19,7 @@ win32 {
     NULL_DEVICE = /dev/null
 }
 
-QTFIREBASE_GIT_BRANCH_NAME = $$system(git rev-parse --abbrev-ref HEAD)
+QTFIREBASE_GIT_BRANCH = $$system(git rev-parse --abbrev-ref HEAD)
 
 # Need to call git with manually specified paths to repository
 QTFIREBASE_BASE_GIT_COMMAND = git --git-dir $$QTFIREBASE_GIT_VERSION_ROOT/.git --work-tree $$QTFIREBASE_GIT_VERSION_ROOT
@@ -57,8 +57,11 @@ QTFIREBASE_GIT_VERSION ~= s/^v/""
 
 # Adding C preprocessor #DEFINE so we can use it in C++ code
 # also here we want full version on every system so using GIT_VERSION
-DEFINES += QTFIREBASE_VERSION=\\\"$$QTFIREBASE_VERSION\\\"
-DEFINES += QTFIREBASE_GIT_VERSION=\\\"$$QTFIREBASE_GIT_VERSION\\\"
+DEFINES += \
+    QTFIREBASE_VERSION=\\\"$$QTFIREBASE_VERSION\\\" \
+    QTFIREBASE_GIT_VERSION=\\\"$$QTFIREBASE_GIT_VERSION\\\" \
+    QTFIREBASE_GIT_BRANCH=\\\"$$QTFIREBASE_GIT_BRANCH\\\" \
+\
 
 # By default Qt only uses major and minor version for Info.plist on Mac.
 # This will rewrite Info.plist with full version
