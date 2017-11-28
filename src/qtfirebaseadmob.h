@@ -96,6 +96,7 @@ public:
     void setTestDevices(const QVariantList &testDevices);
 
 signals:
+    void shutdown();
     void readyChanged();
     void appIdChanged();
     void testDevicesChanged();
@@ -209,6 +210,7 @@ class QtFirebaseAdMobBase : public QObject
 
 protected:
     QtFirebaseAdMobBase(QObject* parent = 0);
+    ~QtFirebaseAdMobBase();
 
     virtual firebase::FutureBase initInternal() = 0;
     virtual firebase::FutureBase loadInternal() = 0;

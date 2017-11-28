@@ -90,8 +90,8 @@ class MessageListener : public QObject, public firebase::messaging::Listener
 public:
     MessageListener(QObject* parent = nullptr);
 
-    virtual void OnMessage(const ::firebase::messaging::Message& message);
-    virtual void OnTokenReceived(const char* token);
+    virtual void OnMessage(const ::firebase::messaging::Message& message) override;
+    virtual void OnTokenReceived(const char* token) override;
 
     QVariantMap data();
     void setData(QVariantMap data);
