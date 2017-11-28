@@ -42,8 +42,13 @@ contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
     HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebaseauth.h
 }
 
+# GooglAuth
+contains(DEFINES,QTFIREBASE_BUILD_GOOGLE_AUTH) {
+    HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebasegoogleauth.h
+}
+
 # Database
-contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
+contains(DEFINES,QTFIREBASE_BUILD_DATABASE) {
     HEADERS += $$QTFIREBASE_FAKE_PATH/src/qtfirebasedatabase.h
 }
 

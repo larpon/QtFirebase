@@ -76,7 +76,7 @@ include(/path/to/QtFirebase/qtfirebase.pri)
 ## Desktop specific setup
 As Firebase C++ SDK does not support desktop apps - no further setup is needed.
 
-QtFirebase provides stub implementations ("empty shells" or "placeholders") for desktop builds and ***no*** firebase libraries are linked to the application.
+QtFirebase provides "empty shells" or "placeholders" for desktop builds and ***no*** firebase libraries are linked to the application.
 
 ## Android specific setup
 When building QtFirebase for Android targets you need the following extra steps to get everything running.
@@ -84,7 +84,7 @@ When building QtFirebase for Android targets you need the following extra steps 
 ### General
 
 #### Ensure target device has `Google Services` apk installed
-Make sure you have `Google Services` apk installed and updated on the *target* device. Firebase won't work without it. 
+Make sure you have `Google Services` apk installed and updated on the *target* device. Firebase won't work without it.
 Furthermore the project needs `gradle` and the Android NDK (r10d+) to build on Android.
 
 #### Gradle setup
@@ -97,7 +97,7 @@ Edit paths to match your setup in `/path/to/QtFirebase/src/android/gradle.proper
 Edit paths to match your setup in `/path/to/QtFirebase/src/android/local.properties`.([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/android/local.properties))
 
 #### Firebase configuration
-Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/). ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/App.pro#L30))
+Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/)
 
 ### Firebase Messaging specific
 **Note**
@@ -120,9 +120,9 @@ Add Messaging specific services to your AndroidManifest.xml file. ([Example](htt
 ## iOS specifics
 
 #### Download the Firebase iOS Frameworks
-Run the included script [`$$PWD/src/ios/download_firebase_ios.sh`](https://github.com/Larpon/QtFirebase/blob/master/src/ios/download_firebase_ios.sh) to download the iOS SDK automatically
+Run the included script [`$$PWD/src/ios/download_firebase_ios.sh`](https://github.com/Larpon/QtFirebase/blob/master/src/ios/download_firebase_ios.sh)
 
-... or manually download Firebase.zip from https://firebase.google.com/download/ios and extract it to `$$PWD/src/ios/`.
+or download Firebase.zip from https://firebase.google.com/download/ios and extract it to `$$PWD/src/ios/`.
 
 **PRO TIP**
 > If you are upgrading QtFirebase to a newer version - you'll probably want to download the Firebase iOS Frameworks again in order to get the latest version

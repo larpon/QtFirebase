@@ -19,11 +19,6 @@ QtFirebaseAuth::QtFirebaseAuth(QObject *parent) : QtFirebaseService(parent),
     startInit();
 }
 
-QtFirebaseAuth::~QtFirebaseAuth()
-{
-    self = 0;
-}
-
 void QtFirebaseAuth::clearError()
 {
     setError(ErrorNone);
@@ -195,16 +190,14 @@ void QtFirebaseAuth::setSignIn(bool value)
 void QtFirebaseAuth::init()
 {
     if(!qFirebase->ready()) {
-        // NOTE using "self" pointer with qDebug() sometimes lead to crashes during life-cycle:
-        // init -> terminate -> init -> crash
-        qDebug() << this << "::init" << "base not ready";
+        qDebug() << self << "::init" << "base not ready";
         return;
     }
 
     if(!ready() && !initializing()) {
         setInitializing(true);
         m_auth = auth::Auth::GetAuth(qFirebase->firebaseApp());
-        qDebug() << this << "::init" << "native initialized";
+        qDebug() << self << "::init" << "native initialized";
         setInitializing(false);
         setReady(true);
 
@@ -222,7 +215,7 @@ void QtFirebaseAuth::onFutureEvent(QString eventId, firebase::FutureBase future)
     if(!eventId.startsWith(__QTFIREBASE_ID + QStringLiteral(".auth")))
         return;
 
-    qDebug() << this << "::onFutureEvent" << eventId;
+    qDebug() << self << "::onFutureEvent" << eventId;
 
     if(future.status() != firebase::kFutureStatusComplete)
     {

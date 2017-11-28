@@ -33,20 +33,20 @@ public:
         return self;
     }
 
-    bool ready() const;
+    bool ready();
 
     static void waitForFutureCompletion(firebase::FutureBase future);
     bool checkInstance(const char *function);
 
-    firebase::App* firebaseApp() const;
+    firebase::App* firebaseApp();
 
     // TODO make protected and have friend classes?
-    void addFuture(const QString &eventId, const firebase::FutureBase &future);
+    void addFuture(QString eventId, firebase::FutureBase future);
 
 signals:
     void readyChanged();
 
-    void futureEvent(const QString &eventId, firebase::FutureBase future);
+    void futureEvent(QString eventId, firebase::FutureBase future);
 
 public slots:
     void requestInit();

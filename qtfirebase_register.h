@@ -58,6 +58,16 @@
 
 # endif // QTFIREBASE_BUILD_AUTH
 
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_GOOGLE_AUTH)
+
+#if defined(QTFIREBASE_FAKE_BUILD)
+#include "fake/src/qtfirebasegoogleauth.h"
+#else
+#include "src/qtfirebasegoogleauth.h"
+#endif
+
+# endif // QTFIREBASE_BUILD_GOOGLE_AUTH
+
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
 
@@ -101,6 +111,10 @@ static void registerQtFirebase() {
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_AUTH)
     qmlRegisterType<QtFirebaseAuth>("QtFirebase", 1, 0, "Auth");
+#endif
+
+#if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_GOOGLE_AUTH)
+    qmlRegisterType<QtFirebaseGoogleAuth>("QtFirebase", 1, 0, "GoogleAuth");
 #endif
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)

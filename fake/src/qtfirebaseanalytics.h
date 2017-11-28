@@ -26,6 +26,7 @@ class QtFirebaseAnalytics : public QObject
 
     Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
     Q_PROPERTY(QVariantList userProperties READ userProperties WRITE setUserProperties NOTIFY userPropertiesChanged)
+
 public:
     explicit QtFirebaseAnalytics(QObject* parent = 0) { Q_UNUSED(parent); }
     ~QtFirebaseAnalytics() {}
@@ -36,6 +37,7 @@ public:
         }
         return self;
     }
+
     bool checkInstance(const char *function) { Q_UNUSED(function); return false; }
 
     bool ready() { return false; }

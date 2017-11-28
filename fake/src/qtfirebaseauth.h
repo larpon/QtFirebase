@@ -14,6 +14,7 @@ class QtFirebaseAuth: public QObject
     Q_OBJECT
     Q_PROPERTY(bool running READ running NOTIFY runningChanged)
     Q_PROPERTY(bool signedIn READ signedIn NOTIFY signedInChanged)
+
 public:
     static QtFirebaseAuth *instance()
     {
@@ -23,6 +24,7 @@ public:
         }
         return self;
     }
+
     enum Error
     {
         AuthErrorNone,
@@ -60,6 +62,7 @@ public slots:
     bool emailVerified() const{return false;}
     QString photoUrl() const{return QString();}
     QString uid() const{return QString();}
+
 signals:
     void signedInChanged();
     void runningChanged();
@@ -70,7 +73,6 @@ protected:
     static QtFirebaseAuth *self;
     explicit QtFirebaseAuth(QObject *parent = 0){Q_UNUSED(parent);}
     Q_DISABLE_COPY(QtFirebaseAuth)
-
 };
 
 #endif //QTFIREBASE_BUILD_AUTH

@@ -26,6 +26,10 @@ SOURCES += \
     $$PWD/src/qtfirebaseservice.cpp \
     \
 
+OTHER_FILES += \
+    $$PWD/src/android/GoogleSignInActivity.java \
+    \
+
 contains(QTPLUGIN,qtfirebase) {
     HEADERS += $$PWD/src/qtfirebase_plugin.h
     SOURCES += $$PWD/src/qtfirebase_plugin.cpp
@@ -42,7 +46,6 @@ RESOURCES += \
     \
 
 android: {
-
     # Setup tips
     #
     # Add services to xml file
@@ -53,6 +56,40 @@ android: {
 
     message("QtFirebase Android base")
     QT += androidextras gui-private
+
+    contains(QTFIREBASE_CONFIG,"googleauth") {
+        message("CONTAINS googleauth")
+        isEmpty(android_src){
+            message("ERROR: No android_src path found. Please set a path to the android src folder like below in your pro or pri:")
+            message("Example: android_src = pwd/projects/project_name/android")
+        } else {
+            # The java file will be symlinked to your android src folder.
+            contains(QMAKE_HOST.os,Windows) {
+                isEmpty(QMAKE_PRE_LINK){
+                    QMAKE_PRE_LINK += mklink $$shell_quote($$system_path($${android_src}/src/GoogleSignInActivity.java)) $$shell_quote($$system_path($$PWD/src/android/GoogleSignInActivity.java))
+                } else {
+                    QMAKE_PRE_LINK += & mklink $$shell_quote($$system_path($${android_src}/src/GoogleSignInActivity.java)) $$shell_quote($$system_path($$PWD/src/android/GoogleSignInActivity.java))
+                }
+            } else {
+                # check if the developer has already linked something
+                isEmpty(QMAKE_PRE_LINK){
+                    QMAKE_PRE_LINK += ln -s $$quote($$PWD/src/android/GoogleSignInActivity.java) $$quote($${android_src}/src/GoogleSignInActivity.java)
+                } else {
+                    QMAKE_PRE_LINK += && ln -s $$quote($$PWD/src/android/GoogleSignInActivity.java) $$quote($${android_src}/src/GoogleSignInActivity.java)
+                }
+            }
+        }
+
+        HEADERS += \
+            $$PWD/src/qtfirebaseintentfilter.h \
+            $$PWD/src/qtfirebasejnisetup.h \
+            \
+
+        SOURCES += \
+            $$PWD/src/qtfirebaseintentfilter.cpp \
+            $$PWD/src/qtfirebasejnisetup.cpp \
+            \
+    }
 
     QTFIREBASE_SDK_LIBS_PATH = $$QTFIREBASE_SDK_PATH/libs/android/$$ANDROID_TARGET_ARCH/gnustl
 
@@ -139,7 +176,6 @@ contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
     ios: {
         LIBS += \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/RemoteConfig \
-            -framework FirebaseABTesting \ # Required for Firebase iOS >= 4.5.0
             -framework FirebaseRemoteConfig \
             -framework Protobuf \
             \
@@ -208,12 +244,30 @@ contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Auth \
             -framework FirebaseAuth \
             -framework GTMSessionFetcher \
-            -framework SafariServices \ # Required for Firebase iOS >= 4.4.0
         \
     }
 
     HEADERS += $$PWD/src/qtfirebaseauth.h
     SOURCES += $$PWD/src/qtfirebaseauth.cpp
+
+    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/libauth.a
+    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lauth
+}
+
+# Google Auth
+contains(DEFINES,QTFIREBASE_BUILD_GOOGLE_AUTH) {
+    message( "QtFirebase including Google Auth" )
+
+    ios: {
+        LIBS += \
+            -F$$QTFIREBASE_FRAMEWORKS_ROOT/Auth \
+            -framework FirebaseAuth \
+            -framework GTMSessionFetcher \
+        \
+    }
+
+    HEADERS += $$PWD/src/qtfirebasegoogleauth.h
+    SOURCES += $$PWD/src/qtfirebasegoogleauth.cpp
 
     PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/libauth.a
     LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lauth

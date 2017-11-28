@@ -26,9 +26,6 @@ public:
         }
         return self;
     }
-
-    ~QtFirebaseAuth();
-
     enum Error
     {
         ErrorNone = firebase::auth::kAuthErrorNone,
@@ -45,8 +42,6 @@ public:
         ActionDeleteUser
     };
     Q_ENUM(Action)
-
-
 
 public slots:
     //Control
