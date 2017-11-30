@@ -804,28 +804,22 @@ firebase::FutureBase QtFirebaseAdMobBanner::moveToInternal(Position position)
     switch (position) {
     case PositionTopCenter:
         qDebug() << this << "::moveTo position top-center";
-        _banner->MoveTo(admob::BannerView::kPositionTop);
-        break;
+        return _banner->MoveTo(admob::BannerView::kPositionTop);
     case PositionTopLeft:
         qDebug() << this << "::moveTo position top-left";
-        _banner->MoveTo(admob::BannerView::kPositionTopLeft);
-        break;
+        return _banner->MoveTo(admob::BannerView::kPositionTopLeft);
     case PositionTopRight:
         qDebug() << this << "::moveTo position top-right";
-        _banner->MoveTo(admob::BannerView::kPositionTopRight);
-        break;
+        return _banner->MoveTo(admob::BannerView::kPositionTopRight);
     case PositionBottomCenter:
         qDebug() << this << "::moveTo position bottom-center";
-        _banner->MoveTo(admob::BannerView::kPositionBottom);
-        break;
+        return _banner->MoveTo(admob::BannerView::kPositionBottom);
     case PositionBottomLeft:
         qDebug() << this << "::moveTo position bottom-left";
-        _banner->MoveTo(admob::BannerView::kPositionBottomLeft);
-        break;
+        return _banner->MoveTo(admob::BannerView::kPositionBottomLeft);
     case PositionBottomRight:
         qDebug() << this << "::moveTo position bottom-right";
-        _banner->MoveTo(admob::BannerView::kPositionBottomRight);
-        break;
+        return _banner->MoveTo(admob::BannerView::kPositionBottomRight);
     }
 
     qDebug() << this << "::moveTo position unknown" << position;
