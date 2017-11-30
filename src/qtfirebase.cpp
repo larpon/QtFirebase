@@ -55,10 +55,10 @@ void QtFirebase::waitForFutureCompletion(firebase::FutureBase future)
         QGuiApplication::processEvents();
         count++;
 
-        if(count % 100000 == 0)
+        if(count % 100 == 0)
             qDebug() << count << "Future" << &future << "is still pending. Has current status" << future.status();
 
-        if(count % 200000 == 0) {
+        if(count % 200 == 0) {
             qDebug() << count << "Future" << &future << "is still pending. Something is probably wrong. Breaking wait cycle. Current status" << future.status();
             count = 0;
             break;
