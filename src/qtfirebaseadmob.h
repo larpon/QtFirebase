@@ -422,13 +422,10 @@ public:
 
 signals:
     void closed();
-    void presentationStateChanged(int state);
 
 public slots:
     void show() override;
-
-private slots:
-    void onPresentationStateChanged(int state);
+    void onPresentationStateChanged(PresentationState state);
 
 private:
     firebase::FutureBase initInternal() override;
@@ -456,14 +453,14 @@ public:
         qDebug() << _qtFirebaseAdMobInterstitial << "::OnPresentationStateChanged";
         qDebug("InterstitialAd PresentationState has changed to %d.", state);
 
-        int pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
+        auto pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
 
         if(state == firebase::admob::InterstitialAd::PresentationState::kPresentationStateHidden) {
             pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
         } else if(state == firebase::admob::InterstitialAd::PresentationState::kPresentationStateCoveringUI) {
              pState = QtFirebaseAdMobInterstitial::PresentationStateCoveringUI;
         }
-        _qtFirebaseAdMobInterstitial->presentationStateChanged(pState);
+        _qtFirebaseAdMobInterstitial->onPresentationStateChanged(pState);
     }
 
 private:

@@ -1004,7 +1004,7 @@ firebase::FutureBase QtFirebaseAdMobInterstitial::initInternal()
     return firebase::FutureBase(); // invalid future because we already handled it
 }
 
-void QtFirebaseAdMobInterstitial::onPresentationStateChanged(int state)
+void QtFirebaseAdMobInterstitial::onPresentationStateChanged(PresentationState state)
 {
     if(state == PresentationStateCoveringUI) {
         if(!_visible) {
