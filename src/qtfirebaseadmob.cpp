@@ -919,6 +919,7 @@ firebase::FutureBase QtFirebaseAdMobNativeExpressAd::moveToInternal(Position pos
 
 QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent) : QtFirebaseAdMobBase(parent)
 {
+    _interstitial = NULL;
     _interstitialAdListener = NULL;
 }
 
@@ -955,6 +956,7 @@ void QtFirebaseAdMobInterstitial::setVisible(bool visible)
 
 firebase::FutureBase QtFirebaseAdMobInterstitial::initInternal()
 {
+    auto iCpy = _interstitial;
     _interstitial = new admob::InterstitialAd();
 
     //__adUnitIdByteArray = _adUnitId.toLatin1();
@@ -964,7 +966,7 @@ firebase::FutureBase QtFirebaseAdMobInterstitial::initInternal()
     // This is the parent UIView or Activity of the Interstitial view.
     qDebug() << this << "::init initializing with AdUnitID" << __adUnitIdByteArray.constData();
     auto future = _interstitial->Initialize(static_cast<admob::AdParent>(_nativeUIElement), __adUnitIdByteArray.constData());
-    future.OnCompletion([this](const firebase::FutureBase& completed_future)
+    future.OnCompletion([this, iCpy](const firebase::FutureBase& completed_future)
     {
         if (completed_future.error() != admob::kAdMobErrorNone) {
             qDebug() << this << "::init" << "initializing failed." << "ERROR: Action failed with error code and message: " << completed_future.error() << completed_future.error_message();
@@ -989,6 +991,11 @@ firebase::FutureBase QtFirebaseAdMobInterstitial::initInternal()
             }
 
             setReady(true);
+        }
+
+        if (iCpy)
+        {
+            delete iCpy;
         }
     });
 
@@ -1066,7 +1073,8 @@ void QtFirebaseAdMobInterstitial::show()
  */
 
 QtFirebaseAdMobRewardedVideoAd::QtFirebaseAdMobRewardedVideoAd(QObject* parent):
-    QtFirebaseAdMobBase(parent)
+    QtFirebaseAdMobBase(parent),
+    firebase::admob::rewarded_video::Listener()
 {
 }
 
