@@ -995,8 +995,9 @@ firebase::FutureBase QtFirebaseAdMobInterstitial::initInternal()
     return firebase::FutureBase(); // invalid future because we already handled it
 }
 
-void QtFirebaseAdMobInterstitial::onPresentationStateChanged(PresentationState state)
+void QtFirebaseAdMobInterstitial::setPresentationState(PresentationState state)
 {
+    emit presentationStateChanged(state);
     if(state == PresentationStateCoveringUI) {
         if(!_visible) {
             _visible = true;
@@ -1123,8 +1124,10 @@ firebase::FutureBase QtFirebaseAdMobRewardedVideoAd::initInternal()
     return firebase::FutureBase();
 }
 
-void QtFirebaseAdMobRewardedVideoAd::onPresentationStateChanged(int state)
+void QtFirebaseAdMobRewardedVideoAd::setPresentationState(QtFirebaseAdMobInterstitial::PresentationState state)
 {
+    emit presentationStateChanged(state);
+
     switch (state) {
     case QtFirebaseAdMobInterstitial::PresentationStateCoveringUI: {
         if(!_visible) {
@@ -1225,13 +1228,13 @@ void QtFirebaseAdMobRewardedVideoAd::OnPresentationStateChanged(firebase::admob:
         qDebug() << this << "kPresentationStateVideoHasStarted";
     }
 
-    int pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
+    auto pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
 
     if(state == firebase::admob::rewarded_video::kPresentationStateHidden) {
         pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
     } else if(state == firebase::admob::rewarded_video::kPresentationStateCoveringUI) {
         pState = QtFirebaseAdMobInterstitial::PresentationStateCoveringUI;
     }
-    emit presentationStateChanged(pState);
+    setPresentationState(pState);
 }
 
