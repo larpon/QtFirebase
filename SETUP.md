@@ -132,9 +132,16 @@ Run the included script [`$$PWD/src/ios/download_firebase_ios.sh`](https://githu
 **PRO TIP**
 > If you are upgrading QtFirebase to a newer version - you'll probably want to download the Firebase iOS Frameworks again in order to get the latest matching versions
 
-#### Add entries in Info.plist
-([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/ios/Info.plist#L66-L71))
+#### Project setup
 
+##### XCode setup
+Remember to enable `Push Notifications` and set `Background Modes` in your app's Capabilities:
+
+
+##### Info.plist
+For a fully working `Info.plist` please see [this Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/ios/Info.plist#L66-L71)
+
+##### GoogleService-Info.plist
 Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/). ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/App.pro#L54-L56))
 
 
