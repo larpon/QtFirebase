@@ -132,28 +132,6 @@ Run the included script [`$$PWD/src/ios/download_firebase_ios.sh`](https://githu
 **PRO TIP**
 > If you are upgrading QtFirebase to a newer version - you'll probably want to download the Firebase iOS Frameworks again in order to get the latest matching versions
 
-#### Project setup
-
-The following changes can be made permanent with each build from Qt Creator by using various build tool (qmake) tricks.
-It's currently beyond the scope of this documentation to tell you *how* though.
-
-##### XCode setup
-
-In your app's `Capabilities` tab.
-
-Remember to enable `Push Notifications`
-<img src="https://user-images.githubusercontent.com/23259226/33664253-360c64e2-daa8-11e7-8f0b-07827c6a01a4.png" />
-
-Remember to set `Remote notifications` in `Background Modes`
-<img src="https://user-images.githubusercontent.com/23259226/33664370-a344ba64-daa8-11e7-9872-586bbf5927b4.png" />
-
-##### Info.plist
-For a fully working `Info.plist` please see [this example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/ios/Info.plist#L66-L71)
-
-##### GoogleService-Info.plist
-Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/). ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/App.pro#L54-L56))
-
-
 
 ### Firebase Messaging specific
 To use Messaging on iOS there is some additional setup.
@@ -167,6 +145,30 @@ To use Messaging on iOS there is some additional setup.
 6. Go to https://console.firebase.google.com/
 7. Navigate to **Overview (Gear icon)** -> **Project settings** -> **Cloud Messaging (Tab)**
 8. Upload your APNs info
+
+
+
+**PRO TIP**
+> The following changes can be made permanent with each build from Qt Creator by using various build tool (qmake) tricks.
+It's currently beyond the scope of this documentation to tell you *how* though.
+
+#### XCode 
+
+In your app's `Capabilities` tab.
+
+Remember to enable `Push Notifications`
+<img src="https://user-images.githubusercontent.com/23259226/33664253-360c64e2-daa8-11e7-8f0b-07827c6a01a4.png" />
+
+Remember to set `Remote notifications` in `Background Modes`
+<img src="https://user-images.githubusercontent.com/23259226/33664370-a344ba64-daa8-11e7-9872-586bbf5927b4.png" />
+
+#### Info.plist
+For a fully working `Info.plist` please see [this example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/ios/Info.plist#L66-L71)
+
+#### GoogleService-Info.plist
+Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/). ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/App.pro#L54-L56))
+
+
 
 ## Push the *Run* button
 
