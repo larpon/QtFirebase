@@ -134,9 +134,11 @@ Run the included script [`$$PWD/src/ios/download_firebase_ios.sh`](https://githu
 
 #### Project setup
 
-##### XCode setup
-Remember to enable `Push Notifications` and set `Background Modes` in your app's Capabilities:
+The following changes can be made permanent with each build from Qt Creator by using various build tool (qmake) tricks.
+It's currently beyond the scope of this documentation to tell you *how* though.
 
+##### XCode setup
+Remember to enable `Push Notifications` and set `Remote notifications` in `Background Modes` in your app's `Capabilities` tab.
 
 ##### Info.plist
 For a fully working `Info.plist` please see [this Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/ios/Info.plist#L66-L71)
