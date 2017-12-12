@@ -138,7 +138,14 @@ The following changes can be made permanent with each build from Qt Creator by u
 It's currently beyond the scope of this documentation to tell you *how* though.
 
 ##### XCode setup
-Remember to enable `Push Notifications` and set `Remote notifications` in `Background Modes` in your app's `Capabilities` tab.
+
+In your app's `Capabilities` tab.
+
+Remember to enable `Push Notifications`
+<img src="https://user-images.githubusercontent.com/23259226/33664253-360c64e2-daa8-11e7-8f0b-07827c6a01a4.png" />
+
+Remember to set `Remote notifications` in `Background Modes`
+<img src="https://user-images.githubusercontent.com/23259226/33664370-a344ba64-daa8-11e7-9872-586bbf5927b4.png" />
 
 ##### Info.plist
 For a fully working `Info.plist` please see [this Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/ios/Info.plist#L66-L71)
