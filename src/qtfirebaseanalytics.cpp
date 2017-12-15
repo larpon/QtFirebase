@@ -61,7 +61,7 @@ void QtFirebaseAnalytics::setCurrentScreen(const QString &screenName, const QStr
     }
 
     qDebug() << this << "::setCurrentScreen" << screenName << ":" << screenClass ;
-    analytics::SetCurrentScreen(screenName.toLatin1().constData(), screenName.toLatin1().constData());
+    analytics::SetCurrentScreen(screenName.toLatin1().constData(), screenClass.toLatin1().constData());
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name)
