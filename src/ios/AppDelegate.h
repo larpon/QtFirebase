@@ -2,8 +2,11 @@
 
 #import "Firebase/Firebase.h"
 
-@interface AppDelegate : UIResponder<UIApplicationDelegate>
+#import <GoogleSignIn/GoogleSignIn.h>
+
+@interface AppDelegate : UIResponder<UIApplicationDelegate, GIDSignInDelegate>
 
 +(AppDelegate *)sharedAppDelegate;
 
 @end
+

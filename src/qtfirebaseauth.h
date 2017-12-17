@@ -50,6 +50,14 @@ public slots:
     void signOut();
     void sendPasswordResetEmail(const QString& email);
     void deleteUser();
+    
+    // social sign in
+    bool googleSignIn();
+    bool facebookSignIn();
+    bool twitterSignIn();
+    bool addGoogleSignInBtn(const qreal& xPos, const qreal& yPos,const qreal& width,const qreal& height);
+    bool addFacebookSignInBtn(const qreal& xPos, const qreal& yPos,const qreal& width,const qreal& height);
+    bool addTwitterSignInBtn(const qreal& xPos, const qreal& yPos,const qreal& width,const qreal& height);
 
     //Status
     bool signedIn() const;
