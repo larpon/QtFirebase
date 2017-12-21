@@ -48,8 +48,7 @@ signals:
     void readyChanged();
     void dataChanged();
     void tokenChanged();
-    void OnMessage();
-
+    void messageReceived();
 
 private:
     static QtFirebaseMessaging *self;
