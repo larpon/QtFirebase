@@ -5,13 +5,19 @@
 #import <GoogleSignIn/GoogleSignIn.h>
 #import "Firebase/Firebase.h"
 
+#include "qtfirebaseauth.h"
+
 /*
- * GoogleSignIn interface for ios
+ * social signIn interface for ios
  */
 
 // [START viewcontroller_interfaces]
 @interface socialsignin : UIResponder <UIPageViewControllerDelegate, GIDSignInDelegate, GIDSignInUIDelegate>
+{
+
+}
 // [END viewcontroller_interfaces]
 
 @end
+
 

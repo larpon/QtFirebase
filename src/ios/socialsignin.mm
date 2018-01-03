@@ -1,18 +1,16 @@
 #import "UIKit/UIKit.h"
 #include <QtCore>
-
 #import "socialsignin.h"
-
 #import "qtfirebaseauth.h"
+#import "qtfirebasegoogleauth.h"
 #import "Firebase/Firebase.h"
 
 // Facebook header
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import <FBSDKLoginKit/FBSDKLoginKit.h>
+//#import <FBSDKCoreKit/FBSDKCoreKit.h>
+//#import <FBSDKLoginKit/FBSDKLoginKit.h>
 
 // Twitter header
-#import <TwitterKit/TwitterKit.h>
-
+//#import <TwitterKit/TwitterKit.h>
 
 @interface QIOSViewController : UIResponder <UIPageViewControllerDelegate, GIDSignInDelegate, GIDSignInUIDelegate>
 @end
@@ -22,216 +20,143 @@
 
 @implementation QIOSViewController (socialsignin)
 
-  UIApplication* app;
   UIWindow* rootWindow;
-  UIViewController* rootViewController;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    app = [UIApplication sharedApplication];
-    rootWindow = app.windows[0];
-    rootViewController = rootWindow.rootViewController;
+    rootWindow = [PlatformUtils::getNativeWindow() window];
 
-    GIDSignIn *signIn = [GIDSignIn sharedInstance];
-    signIn.shouldFetchBasicProfile = YES;
-    signIn.delegate = self;
-    signIn.uiDelegate = self;
+    [GIDSignIn sharedInstance].delegate = self;
+    [GIDSignIn sharedInstance].uiDelegate = self;
 }
 
-bool QtFirebaseAuth::googleSignIn()
+void QtFirebaseAuth::googleSignIn()
 {
-    GIDSignIn *signin = [GIDSignIn sharedInstance];
-//    signin.scopes = @[@"https://www.googleapis.com/auth/plus.login",
-//                      @"https://www.googleapis.com/auth/plus.me"];
-    [signin setScopes:[NSArray arrayWithObject:@"profile"]];
+    //[GIDSignIn sharedInstance].shouldFetchBasicProfile = YES;
+    [GIDSignIn sharedInstance].scopes = @[@"profile", @"email"];
 
-    if (signin.hasAuthInKeychain) {
+    if ([GIDSignIn sharedInstance].hasAuthInKeychain) {
 
            NSLog(@"user signed in already, signing silently...");
-
            GIDGoogleUser *user = [GIDSignIn sharedInstance].currentUser;
-           if(!user) {
-               [[GIDSignIn sharedInstance] signInSilently];
+           NSString *userId = user.userID;
+           NSString *fullName = user.profile.name;
+           NSString *email = user.profile.email;
+           //NSLog(@"------->>>>User : %@, %@, %@", userId, fullName, email);
+           if (user.profile.hasImage)
+           {
+               NSURL *url = [user.profile imageURLWithDimension:100];
+               //NSLog(@"url : %@",url);
            }
+           if(!user)
+               [[GIDSignIn sharedInstance] signInSilently];
      }
      else {
-
         NSLog(@"Not signed in, start signing procedure");
-        [signin signIn];
+        [[GIDSignIn sharedInstance] signIn];
     }
 }
 
-bool QtFirebaseAuth::facebookSignIn()
+/*void QtFirebaseAuth::facebookSignIn()
 {
     FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
 
     if ([FBSDKAccessToken currentAccessToken])
     {
         NSLog(@"Token is available : %@",[[FBSDKAccessToken currentAccessToken]tokenString]); 
+                  //signInwithCredential(firebase::auth::FacebookAuthProvider::GetCredential([[FBSDKAccessToken currentAccessToken].tokenString UTF8String]));
     }
     else
     {
     [login logInWithReadPermissions: @[@"public_profile",@"email"]
-    fromViewController: rootViewController handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
+    fromViewController: rootWindow.rootViewController handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
         {
       if (error) {
         NSLog(@"Process error");
       } else if (result.isCancelled) {
         NSLog(@"Cancelled");
       } else {
-
-          FIRAuthCredential *credential = [FIRFacebookAuthProvider
-              credentialWithAccessToken:[FBSDKAccessToken currentAccessToken].tokenString];
-
-          [[FIRAuth auth] signInWithCredential:credential
-                                    completion:^(FIRUser *user, NSError *error) {
-              if (error) {
-                //[self showMessagePrompt:error.localizedDescription];
-                  NSLog(@"error at sign in %@", error, error.localizedDescription);
-                return;
-              } else {
-
-              // User successfully signed in, getting user data, perform any operations on signed in user here
-                  NSString *uid = user.uid;
-                  NSString *displayName = user.displayName;
-                  NSString *email = user.email;
-                  NSString *phoneNumber = user.phoneNumber;
-                  NSURL *photoURL = user.photoURL;
-
-                  NSLog(@"userData: %@   %@   %@  %@  %@", uid, displayName, email, phoneNumber, photoURL);
-              }
-          }];
+          NSLog(@"facebook signing in");
+          //QString accessToken = QString::fromNSString([FBSDKAccessToken currentAccessToken].tokenString);
+          //signInwithCredential(firebase::auth::FacebookAuthProvider::GetCredential([[FBSDKAccessToken currentAccessToken].tokenString UTF8String]));
       }
     }];
    }
 
     [login logOut];
-}
+}*/
 
-bool QtFirebaseAuth::twitterSignIn()
+/*void QtFirebaseAuth::twitterSignIn()
     {
+    // https://developer.twitter.com/en/docs/basics/authentication/overview/application-permission-model#announcement
+//    Application permission model
+//    There are three levels of permission available to applications:
+//    read only
+//    read and write
+//    read, write and access Direct Messages
 
     [[Twitter sharedInstance] logInWithCompletion:^(TWTRSession *session, NSError *error) {
       if (session) {
 
-          FIRAuthCredential *credential =
-              [FIRTwitterAuthProvider credentialWithToken:session.authToken
-                                                   secret:session.authTokenSecret];
+         std::string idtoken = session.authToken.UTF8String;
+         std::string secret = session.authTokenSecret.UTF8String;
 
-          // [START signin_credential]
-          [[FIRAuth auth] signInWithCredential:credential
-                                      completion:^(FIRUser *user, NSError *error) {
-              if (error) {
-                //[self showMessagePrompt:error.localizedDescription];
-                  NSLog(@"error at sign in %@", error, error.localizedDescription);
-                return;
-              } else {
+         //signInwithCredential(firebase::auth::TwitterAuthProvider::GetCredential(idtoken.c_str(),secret.c_str()));
 
-              // User successfully signed in, getting user data, perform any operations on signed in user here
-                  NSString *uid = user.uid;
-                  NSString *displayName = user.displayName;
-                  NSString *email = user.email;
-                  NSString *phoneNumber = user.phoneNumber;
-                  NSURL *photoURL = user.photoURL;
+         TWTRSessionStore *store = [[Twitter sharedInstance] sessionStore];
+         NSString *userID = store.session.userID;
 
-                  NSLog(@"userData: %@   %@   %@  %@  %@", uid, displayName, email, phoneNumber, photoURL);
-
-                  TWTRAPIClient *client = [TWTRAPIClient clientWithCurrentUser];
-                  // to access the user email
-                  [client requestEmailForCurrentUser:^(NSString *email, NSError *error) {
-                    if (email) {
-                        NSLog(@"signed in as %@", email);
-                    } else {
-                        NSLog(@"error: %@", [error localizedDescription]);
-                    }
-
-                  }];
-
-                  TWTRSessionStore *store = [[Twitter sharedInstance] sessionStore];
-                  NSString *userID = store.session.userID;
-
-                  [store logOutUserID:userID];
-              }
-          }];
-          // [END signin_credential]
+         [store logOutUserID:userID];
 
       } else {
           NSLog(@"error: %@", [error localizedDescription]);
       }
     }];
-}
+}*/
 
-- (void)signIn:(GIDSignIn *)signIn
+- (void) signIn:(GIDSignIn *)signIn
 didSignInForUser:(GIDGoogleUser *)user
      withError:(NSError *)error {
     if (error) {
         NSLog(@"error at sign in %@", error);
+        /*qFirebaseGoogleAuth->setError(error.code, QString::fromNSString(error.localizedDescription));
+        qFirebaseGoogleAuth->setSignIn(false);
+        qFirebaseGoogleAuth->setComplete(true);*/
         return;
     }
     else
     {
         // The OAuth2 access token to access Google services, needed to connect with firebase
         GIDAuthentication *authentication = user.authentication;
-        FIRAuthCredential *credential =
-        [FIRGoogleAuthProvider credentialWithIDToken:authentication.idToken
-                                          accessToken:authentication.accessToken];
+        std::string idtoken = authentication.idToken.UTF8String;
 
-        // [START signin_credential]
-        [[FIRAuth auth] signInWithCredential:credential
-                                    completion:^(FIRUser *user, NSError *error) {
-            if (error) {
-              //[self showMessagePrompt:error.localizedDescription];
-                NSLog(@"error at sign in %@", error, error.localizedDescription);
-              return;
-            } else {
+        NSString *userId = user.userID;
+        NSString *fullName = user.profile.name;
+        NSString *email = user.profile.email;
+        //NSLog(@"------->>>>User : %@, %@, %@", userId, fullName, email);
 
-            // User successfully signed in, getting user data, perform any operations on signed in user here
-                NSString *uid = user.uid;
-                NSString *displayName = user.displayName;
-                NSString *email = user.email;
-                NSString *phoneNumber = user.phoneNumber;
-                NSURL *photoURL = user.photoURL;
+        if (user.profile.hasImage)
+        {
+            NSURL *url = [user.profile imageURLWithDimension:100];
+            qFirebaseGoogleAuth->photoUrl = QString::fromUtf8(url.absoluteString.UTF8String);
+            qDebug() << "----->>>> Hereeee is fine the photo_url: " << qFirebaseGoogleAuth->photoUrl;
+        }
 
-                NSLog(@"userData: %@   %@   %@  %@  %@", uid, displayName, email, phoneNumber, photoURL);
-            }
-        }];
-        // [END signin_credential]
+        qFirebaseGoogleAuth->firebaseSignIn(QString::fromUtf8(idtoken.c_str()));
 
         [[GIDSignIn sharedInstance] signOut];
     }
 }
 
-bool QtFirebaseAuth::addGoogleSignInBtn(const qreal& xPos, const qreal& yPos,const qreal& width,const qreal& height)
-{
-    GIDSignInButton *loginButton = [[GIDSignInButton alloc] initWithFrame: CGRectMake ( xPos, yPos, width, height)];
-    //loginButton.readPermissions = @[@"public_profile", @"email"];
-    [rootWindow addSubview:loginButton];
-}
-
-bool QtFirebaseAuth::addFacebookSignInBtn(const qreal& xPos, const qreal& yPos,const qreal& width,const qreal& height)
-{
-    FBSDKLoginButton *loginButton = [[FBSDKLoginButton alloc] initWithFrame: CGRectMake ( xPos, yPos, width, height)];
-    loginButton.readPermissions = @[@"public_profile", @"email"];
-    [rootWindow addSubview:loginButton];
-}
-
-bool QtFirebaseAuth::addTwitterSignInBtn(const qreal& xPos, const qreal& yPos,const qreal& width,const qreal& height)
-{
-     TWTRLogInButton *loginButton = [[TWTRLogInButton alloc] initWithFrame: CGRectMake ( xPos, yPos, width, height)];
-
-     //loginButton.readPermissions = @[@"public_profile", @"email", @"user_friends"];
-
-     [TWTRLogInButton buttonWithLogInCompletion:^(TWTRSession *session, NSError *error) {
-        if (session) {
-            NSLog(@"signed in as %@", [session userName]);
-        } else {
-            NSLog(@"error: %@", [error localizedDescription]);
-        }
-      }];
-
-      loginButton.center = rootWindow.center;
-      [rootWindow addSubview:loginButton];
+- (void)signIn:(GIDSignIn *)signIn
+didDisconnectWithUser:(GIDGoogleUser *)user
+     withError:(NSError *)error {
+    if (error) {
+        NSLog(@"error at sign out %@", error);
+        // qFirebaseGoogleAuth->setError(error.code, QString::fromNSString(error.localizedDescription));
+        return;
+    }
 }
 
 @end

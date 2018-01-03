@@ -19,13 +19,11 @@ HEADERS += \
     $$PWD/src/platformutils.h \
     $$PWD/src/qtfirebase.h \
     $$PWD/src/qtfirebaseservice.h \
-    \
     $$PWD/src/ios/socialsignin.h
 
 SOURCES += \
     $$PWD/src/qtfirebase.cpp \
     $$PWD/src/qtfirebaseservice.cpp \
-    \
     $$PWD/src/ios/socialsignin.mm
 
 OTHER_FILES += \
@@ -249,34 +247,6 @@ contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
             -framework GTMSessionFetcher \
             -framework SafariServices \ # Required for Firebase iOS >= 4.4.0
         \
-
-   # Google
-
-        LIBS += \
-            -F$$QTFIREBASE_FRAMEWORKS_ROOT/Invites \
-            -framework GoogleSignIn\
-            -framework GTMOAuth2\
-        \
-
-        GOOGLEKIT_BUNDLE.files = $$QTFIREBASE_FRAMEWORKS_ROOT/Invites/Resources/GoogleSignIn.bundle
-        QMAKE_BUNDLE_DATA += GOOGLEKIT_BUNDLE
-
-   # Twitter
-   # Download Twitter SDks for ios from https://dev.twitter.com/twitterkit/ios/installation
-   # and place the forlder in the Auth folder of the porject as shown below
-        LIBS += \
-             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Auth/Twitter-Kit-iOS \
-             -framework TwitterCore -framework TwitterKit
-
-        TWITTERKIT_BUNDLE.files = $$QTFIREBASE_FRAMEWORKS_ROOT/Auth/Twitter-Kit-iOS/TwitterKit.framework/TwitterKitResources.bundle
-        QMAKE_BUNDLE_DATA += TWITTERKIT_BUNDLE
-
-   # Facebook
-   # Download facebook SDKs for ios from https://developers.facebook.com/docs/facebook-login/ios
-   # and place the forlder in the Auth folder of the porject as shown below
-        LIBS += \
-            -F$$QTFIREBASE_FRAMEWORKS_ROOT/Auth/FacebookSDKs-iOS-4 \
-            -framework FBSDKCoreKit -framework FBSDKLoginKit
     }
 
     HEADERS += $$PWD/src/qtfirebaseauth.h
@@ -295,7 +265,17 @@ contains(DEFINES,QTFIREBASE_BUILD_GOOGLE_AUTH) {
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Auth \
             -framework FirebaseAuth \
             -framework GTMSessionFetcher \
+            -framework SafariServices \ # Required for Firebase iOS >= 4.4.0
         \
+
+        LIBS += \
+            -F$$QTFIREBASE_FRAMEWORKS_ROOT/Invites \
+            -framework GoogleSignIn\
+            -framework GTMOAuth2\
+        \
+
+        GOOGLEKIT_BUNDLE.files = $$QTFIREBASE_FRAMEWORKS_ROOT/Invites/Resources/GoogleSignIn.bundle
+        QMAKE_BUNDLE_DATA += GOOGLEKIT_BUNDLE
     }
 
     HEADERS += $$PWD/src/qtfirebasegoogleauth.h

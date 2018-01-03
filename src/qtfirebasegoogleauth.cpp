@@ -1,12 +1,13 @@
 #include "qtfirebasegoogleauth.h"
 
 #include <QDebug>
+
+#if defined(Q_OS_ANDROID)
 #include <QtAndroid>
 #include <QAndroidJniEnvironment>
-
 #include "src/qtfirebaseintentfilter.h"
-
 using namespace FirebaseIntent;
+#endif
 
 namespace auth = ::firebase::auth;
 
@@ -20,7 +21,8 @@ QtFirebaseGoogleAuth::QtFirebaseGoogleAuth(QObject *parent) : QtFirebaseService(
         self = this;
         qDebug() << self << "::QtFirebaseGoogleAuth" << "singleton";
     }
-
+    
+#if defined(Q_OS_ANDROID)
     connect(&FirebaseIntentfilter::instance(), &FirebaseIntentfilter::googleAuthActivityResult, this, [this](int requestCode, int resultCode, const QAndroidJniObject &data) {
         m_javaGoogleAuth.callMethod<void>("activityResult",
                                           "(Landroid/content/Intent;)V",
@@ -36,6 +38,8 @@ QtFirebaseGoogleAuth::QtFirebaseGoogleAuth(QObject *parent) : QtFirebaseService(
         qDebug() << "FirebaseIntentfilter::signedOut";
         // todo
     });
+#endif
+    
 }
 
 void QtFirebaseGoogleAuth::init()
@@ -62,6 +66,7 @@ void QtFirebaseGoogleAuth::login()
         return;
     }
 
+    #if defined(Q_OS_ANDROID)
     if(!initJava()){
         // todo give info java is not initialized correctly
         qDebug() << "todo give info java is not initialized correctly";
@@ -69,10 +74,12 @@ void QtFirebaseGoogleAuth::login()
     } else {
         m_javaGoogleAuth.callMethod<void>("login");
     }
+    #endif
 }
 
 void QtFirebaseGoogleAuth::logout()
 {
+    #if defined(Q_OS_ANDROID)
     if(!initJava()){
         // todo give info java is not initialized correctly
         return;
@@ -83,10 +90,12 @@ void QtFirebaseGoogleAuth::logout()
     } else {
         // todo?
     }
+    #endif
 }
 
 bool QtFirebaseGoogleAuth::initJava()
 {
+        #if defined(Q_OS_ANDROID)
     qDebug() << "QtFirebaseGoogleAuth::initJava";
 
     QAndroidJniEnvironment env;
@@ -115,6 +124,7 @@ bool QtFirebaseGoogleAuth::initJava()
     } else {
         return true;
     }
+     #endif
 }
 
 void QtFirebaseGoogleAuth::firebaseSignIn(QString googleToken)

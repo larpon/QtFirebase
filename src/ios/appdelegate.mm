@@ -10,10 +10,10 @@
 #import <GoogleSignIn/GoogleSignIn.h>
 
 //facebook heder
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
+//#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 // Twitter header
-#import <TwitterKit/TwitterKit.h>
+//#import <TwitterKit/TwitterKit.h>
 
 @interface QIOSApplicationDelegate : UIResponder <UIApplicationDelegate, GIDSignInDelegate>
 @end
@@ -78,11 +78,11 @@ static NSString * const twitterApiSecret = @"Your-Twitter-Api-Secret";
     [GIDSignIn sharedInstance].clientID = googleClientID;
 
     // Facebook configure
-    [FBSDKSettings setAppID:facebookAppID];
-    [FBSDKSettings setDisplayName:facebookAppDisplayName];
+    //[FBSDKSettings setAppID:facebookAppID];
+    //[FBSDKSettings setDisplayName:facebookAppDisplayName];
 
     // Twitter configure
-    [[Twitter sharedInstance] startWithConsumerKey:twitterApiKey consumerSecret:twitterApiSecret];
+    //[[Twitter sharedInstance] startWithConsumerKey:twitterApiKey consumerSecret:twitterApiSecret];
 
     NSLog(@"FireApp configured successfully");
 
@@ -99,7 +99,7 @@ static NSString * const twitterApiSecret = @"Your-Twitter-Api-Secret";
                       sourceApplication:sourceApplication
                       annotation:annotation];
 
- BOOL facebookHandled = [[FBSDKApplicationDelegate sharedInstance] handleURL:url
+ //BOOL facebookHandled = [[FBSDKApplicationDelegate sharedInstance] handleURL:url
                       sourceApplication:sourceApplication
                       annotation:annotation];
 
@@ -107,12 +107,12 @@ static NSString * const twitterApiSecret = @"Your-Twitter-Api-Secret";
 //                      sourceApplication:sourceApplication
 //                      annotation:annotation];
 
-  return googleHandled || facebookHandled /*|| twitterHandled*/;
+  return googleHandled /*|| facebookHandled || twitterHandled*/;
 }
 // [END google facebook twitter openurl method]
 
-- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options {
+/*- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options {
  return [[Twitter sharedInstance] application:app openURL:url options:options];
-}
+}*/
 
 @end
