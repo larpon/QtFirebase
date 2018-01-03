@@ -51,6 +51,11 @@ public slots:
     void sendPasswordResetEmail(const QString& email);
     void deleteUser();
 
+    // social sign in
+    void googleSignIn();
+    //void facebookSignIn();
+    //void twitterSignIn();
+
     //Status
     bool signedIn() const;
     bool running() const;

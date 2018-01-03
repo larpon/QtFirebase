@@ -19,12 +19,12 @@ HEADERS += \
     $$PWD/src/platformutils.h \
     $$PWD/src/qtfirebase.h \
     $$PWD/src/qtfirebaseservice.h \
-    \
+    $$PWD/src/ios/socialsignin.h
 
 SOURCES += \
     $$PWD/src/qtfirebase.cpp \
     $$PWD/src/qtfirebaseservice.cpp \
-    \
+    $$PWD/src/ios/socialsignin.mm
 
 OTHER_FILES += \
     $$PWD/src/android/GoogleSignInActivity.java \
@@ -265,7 +265,17 @@ contains(DEFINES,QTFIREBASE_BUILD_GOOGLE_AUTH) {
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Auth \
             -framework FirebaseAuth \
             -framework GTMSessionFetcher \
+            -framework SafariServices \ # Required for Firebase iOS >= 4.4.0
         \
+
+        LIBS += \
+            -F$$QTFIREBASE_FRAMEWORKS_ROOT/Invites \
+            -framework GoogleSignIn\
+            -framework GTMOAuth2\
+        \
+
+        GOOGLEKIT_BUNDLE.files = $$QTFIREBASE_FRAMEWORKS_ROOT/Invites/Resources/GoogleSignIn.bundle
+        QMAKE_BUNDLE_DATA += GOOGLEKIT_BUNDLE
     }
 
     HEADERS += $$PWD/src/qtfirebasegoogleauth.h

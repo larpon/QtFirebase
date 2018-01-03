@@ -42,6 +42,9 @@ public:
     QString clientId() const { return m_clientId; }
     void setClientId(const QString &clientId);
 
+    // photoUrl
+    QString photoUrl;
+
 protected:
     explicit QtFirebaseGoogleAuth(QObject *parent = 0);
 
@@ -57,7 +60,7 @@ private:
     firebase::Future<auth::User*> m_result;
     firebase::auth::User* m_user;
 
-    QAndroidJniObject m_javaGoogleAuth;
+   // QAndroidJniObject m_javaGoogleAuth;
 
     QString m_clientId;
     bool isLoggedIn = false;
