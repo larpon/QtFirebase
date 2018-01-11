@@ -170,7 +170,7 @@ Remember to set `Remote notifications` in `Background Modes`
 For a fully working `Info.plist` please see [this example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/ios/Info.plist#L66-L71)
 
 #### GoogleService-Info.plist
-Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/). ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/App.pro#L54-L56))
+Include `GoogleService-Info.plist` downloaded from the [Firebase console](https://console.firebase.google.com/). ([Example](https://github.com/Larpon/QtFirebaseExample/blob/1dc13c/App/App.pro#L69))
 
 
 
