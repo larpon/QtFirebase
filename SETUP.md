@@ -87,7 +87,7 @@ When building QtFirebase for Android targets you need the following extra steps 
 Make sure you have `Google Services` apk installed and updated on the *target* device. Firebase won't work without it. 
 Furthermore the project needs `gradle` and the Android NDK (r10d+) to build on Android.
 
-#### ABI level
+#### API level
 Make sure you set your `Android build SDK` to **API level 23** in your Qt Creator project settings.
 Firebase still work on devices from API level 14 [according to this source](https://firebase.googleblog.com/2016/11/google-play-services-and-firebase-for-android-will-support-api-level-14-at-minimum.html) - but it apparently need to be build with a higher target API.
 
