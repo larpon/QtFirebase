@@ -98,6 +98,7 @@ ios: {
         -framework GLKit \
         -framework AddressBook \
         -framework UIKit \
+        -framework SystemConfiguration \
         \
 
     INCLUDEPATH += \
