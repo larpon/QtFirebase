@@ -1,29 +1,29 @@
 #include "qtfirebase_plugin.h"
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_ANALYTICS)
-#include "src/qtfirebaseanalytics.h"
+#include <src/qtfirebaseanalytics.h>
 # endif // QTFIREBASE_BUILD_ANALYTICS
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_MESSAGING)
-#include "src/qtfirebasemessaging.h"
+#include <src/qtfirebasemessaging.h>
 # endif // QTFIREBASE_BUILD_MESSAGING
 
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_ADMOB)
-#include "src/qtfirebaseadmob.h"
+#include <src/qtfirebaseadmob.h>
 # endif // QTFIREBASE_BUILD_ADMOB
 
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
-#include "src/qtfirebaseremoteconfig.h"
+#include <src/qtfirebaseremoteconfig.h>
 # endif // QTFIREBASE_BUILD_REMOTE_CONFIG
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_AUTH)
-#include "src/qtfirebaseauth.h"
+#include <src/qtfirebaseauth.h>
 # endif // QTFIREBASE_BUILD_AUTH
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
-#include "src/qtfirebasedatabase.h"
+#include <src/qtfirebasedatabase.h>
 # endif // QTFIREBASE_BUILD_DATABASE
 
 #include <qqml.h>

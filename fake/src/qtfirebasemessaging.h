@@ -3,7 +3,7 @@
 
 #ifdef QTFIREBASE_BUILD_MESSAGING
 
-#include "src/qtfirebase.h"
+#include <src/qtfirebase.h>
 
 #if defined(qFirebaseMessaging)
 #undef qFirebaseMessaging

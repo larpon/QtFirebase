@@ -5,7 +5,7 @@
 
 #ifdef QTFIREBASE_BUILD_REMOTE_CONFIG
 
-#include "src/qtfirebase.h"
+#include <src/qtfirebase.h>
 #include <QVariantMap>
 
 #if defined(qFirebaseRemoteConfig)

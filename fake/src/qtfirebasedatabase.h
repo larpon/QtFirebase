@@ -4,8 +4,8 @@
 #include <QVariant>
 
 #ifdef QTFIREBASE_BUILD_DATABASE
-#include "src/qtfirebase.h"
-#include "src/qtfirebaseservice.h"
+#include <src/qtfirebase.h>
+#include <src/qtfirebaseservice.h>
 #if defined(qFirebaseDatabase)
 #undef qFirebaseDatabase
 #endif
