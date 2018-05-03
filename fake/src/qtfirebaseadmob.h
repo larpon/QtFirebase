@@ -326,6 +326,13 @@ class QtFirebaseAdMobInterstitial : public QObject
     Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 public:
+    enum PresentationState
+    {
+        PresentationStateHidden,
+        PresentationStateCoveringUI
+    };
+    Q_ENUM(PresentationState)
+
     QtFirebaseAdMobInterstitial(QObject* parent = 0) { Q_UNUSED(parent); }
     ~QtFirebaseAdMobInterstitial() {}
 
@@ -351,6 +358,7 @@ signals:
     void visibleChanged();
     void error(int code);
     void closed();
+    void presentationStateChanged(int state);
     void loading();
     void requestChanged();
 
