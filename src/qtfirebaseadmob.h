@@ -216,6 +216,15 @@ protected:
     virtual firebase::FutureBase loadInternal() = 0;
 
 public:
+    enum PresentationState
+    {
+        PresentationStateHidden,
+        PresentationStateCoveringUI,
+        PresentationStateVideoHasStarted,
+        PresentationStateVideoHasCompleted
+    };
+    Q_ENUM(PresentationState)
+
     bool ready() const;
     virtual void setReady(bool ready);
 
@@ -226,7 +235,7 @@ public:
     virtual void setAdUnitId(const QString &adUnitId);
 
     bool visible() const;
-    virtual void setVisible(bool visible) = 0;
+    virtual void setVisible(bool visible);
 
     QtFirebaseAdMobRequest *request() const;
     virtual void setRequest(QtFirebaseAdMobRequest *request);
@@ -239,6 +248,8 @@ signals:
     void loading();
     void error(int code, QString message);
     void visibleChanged();
+    void closed();
+    void presentationStateChanged(int state);
 
 public slots:
     virtual void load();
@@ -246,6 +257,9 @@ public slots:
 
 protected slots:
     void init();
+
+private slots:
+    void onPresentationStateChanged(int state);
 
 protected:
     QString __QTFIREBASE_ID;
@@ -408,27 +422,11 @@ class QtFirebaseAdMobInterstitial : public QtFirebaseAdMobBase
     Q_OBJECT
 
 public:
-    enum PresentationState
-    {
-        PresentationStateHidden,
-        PresentationStateCoveringUI
-    };
-    Q_ENUM(PresentationState)
-
     QtFirebaseAdMobInterstitial(QObject* parent = 0);
     ~QtFirebaseAdMobInterstitial();
 
-    void setVisible(bool visible) override;
-
-signals:
-    void closed();
-    void presentationStateChanged(int state);
-
 public slots:
     void show() override;
-
-private slots:
-    void onPresentationStateChanged(int state);
 
 private:
     firebase::FutureBase initInternal() override;
@@ -456,12 +454,12 @@ public:
         qDebug() << _qtFirebaseAdMobInterstitial << "::OnPresentationStateChanged";
         qDebug("InterstitialAd PresentationState has changed to %d.", state);
 
-        int pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
+        int pState = QtFirebaseAdMobBase::PresentationStateHidden;
 
         if(state == firebase::admob::InterstitialAd::PresentationState::kPresentationStateHidden) {
-            pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
+            pState = QtFirebaseAdMobBase::PresentationStateHidden;
         } else if(state == firebase::admob::InterstitialAd::PresentationState::kPresentationStateCoveringUI) {
-             pState = QtFirebaseAdMobInterstitial::PresentationStateCoveringUI;
+             pState = QtFirebaseAdMobBase::PresentationStateCoveringUI;
         }
         _qtFirebaseAdMobInterstitial->presentationStateChanged(pState);
     }
@@ -506,28 +504,14 @@ class QtFirebaseAdMobRewardedVideoAd : public QtFirebaseAdMobBase, public fireba
     Q_OBJECT
 
 public:
-    enum PresentationState
-    {
-        PresentationStateHidden,
-        PresentationStateCoveringUI
-    };
-    Q_ENUM(PresentationState)
-
     QtFirebaseAdMobRewardedVideoAd(QObject* parent = 0);
     ~QtFirebaseAdMobRewardedVideoAd();
 
-    void setVisible(bool visible) override;
-
 signals:
-    void closed();
-    void presentationStateChanged(int state);
     void rewarded(const QString &type, float value);
 
 public slots:
     void show() override;
-
-private slots:
-    void onPresentationStateChanged(int state);
 
 private:
     firebase::FutureBase initInternal() override;

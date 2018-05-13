@@ -437,11 +437,12 @@ QtFirebaseAdMobBase::QtFirebaseAdMobBase(QObject *parent) : QObject(parent) {
 
     _visible = false;
     _request = 0;
-    //connect(this,&QtFirebaseAdMobBase::visibleChanged, this, &QtFirebaseAdMobBase::onVisibleChanged);
 
     _initTimer = new QTimer(this);
     connect(_initTimer, &QTimer::timeout, this, &QtFirebaseAdMobBase::init);
     _initTimer->start(500);
+
+    connect(this, &QtFirebaseAdMobBase::presentationStateChanged, this, &QtFirebaseAdMobBase::onPresentationStateChanged);
 }
 
 QtFirebaseAdMobBase::~QtFirebaseAdMobBase()
@@ -483,6 +484,26 @@ void QtFirebaseAdMobBase::setAdUnitId(const QString &adUnitId) {
         _adUnitId = adUnitId;
         __adUnitIdByteArray = _adUnitId.toLatin1();
         emit adUnitIdChanged();
+    }
+}
+
+void QtFirebaseAdMobBase::setVisible(bool visible)
+{
+    if(!_ready) {
+        qDebug() << this << "::setVisible native part not ready";
+        return;
+    }
+
+    if(!_loaded) {
+        qDebug() << this << "::setVisible native part not loaded - so not changing visiblity to" << visible;
+        return;
+    }
+
+    if(!_visible && visible) {
+        show(); // NOTE show will change _visible and emit signal
+    } else {
+        // NOTE An interstitial can't be hidden by any other than the user
+        qInfo() << this << "::setVisible" << visible << " - interstitials can't be hidden programmatically. Not hidding";
     }
 }
 
@@ -556,6 +577,46 @@ void QtFirebaseAdMobBase::init()
                 }
             });
         }
+    }
+}
+
+void QtFirebaseAdMobBase::onPresentationStateChanged(int state)
+{
+    switch (state) {
+    case QtFirebaseAdMobBase::PresentationStateCoveringUI: {
+        if(!_visible) {
+            _visible = true;
+            emit visibleChanged();
+        }
+    }
+        break;
+    case QtFirebaseAdMobBase::PresentationStateHidden: {
+        if(_visible) {
+            _visible = false;
+            emit visibleChanged();
+        }
+
+        setLoaded(false);
+        qDebug() << this << "::onPresentationStateChanged() loaded false";
+
+        // NOTE iOS necessities
+        /*#if defined(Q_OS_IOS)
+
+            setReady(false);
+            qDebug() << this << "::onPresentationStateChanged() ready false";
+
+            // Will be newed when init() is called
+            //delete _interstitial; // NOTE Crashes the app when used
+
+            // NOTE Auto re-initializing because of this: https://firebase.google.com/docs/admob/ios/interstitial#only_show_gadinterstitial_once
+            qDebug() << this << "::onPresentationStateChanged() re-initializing one-time use GADInterstitial";
+            _initTimer->start(500);
+
+            #endif*/
+
+        emit closed();
+    }
+        break;
     }
 }
 
@@ -943,26 +1004,6 @@ QtFirebaseAdMobInterstitial::~QtFirebaseAdMobInterstitial()
     delete _initTimer;
 }
 
-void QtFirebaseAdMobInterstitial::setVisible(bool visible)
-{
-    if(!_ready) {
-        qDebug() << this << "::setVisible native part not ready";
-        return;
-    }
-
-    if(!_loaded) {
-        qDebug() << this << "::setVisible native part not loaded - so not changing visiblity to" << visible;
-        return;
-    }
-
-    if(!_visible && visible) {
-        show(); // NOTE show will change _visible and emit signal
-    } else {
-        // NOTE An interstitial can't be hidden by any other than the user
-        qInfo() << this << "::setVisible" << visible << " - interstitials can't be hidden programmatically. Not hidding";
-    }
-}
-
 firebase::FutureBase QtFirebaseAdMobInterstitial::initInternal()
 {
     _interstitial = new admob::InterstitialAd();
@@ -1002,43 +1043,6 @@ firebase::FutureBase QtFirebaseAdMobInterstitial::initInternal()
     });
 
     return firebase::FutureBase(); // invalid future because we already handled it
-}
-
-void QtFirebaseAdMobInterstitial::onPresentationStateChanged(int state)
-{
-    if(state == PresentationStateCoveringUI) {
-        if(!_visible) {
-            _visible = true;
-            emit visibleChanged();
-        }
-    }
-
-    if(state == PresentationStateHidden) {
-        if(_visible) {
-            _visible = false;
-            emit visibleChanged();
-        }
-
-        setLoaded(false);
-        qDebug() << this << "::onPresentationStateChanged() loaded false";
-
-        // NOTE iOS necessities
-#if defined(Q_OS_IOS)
-
-        setReady(false);
-        qDebug() << this << "::onPresentationStateChanged() ready false";
-
-        // Will be newed when init() is called
-        //delete _interstitial; // NOTE Crashes the app when used
-
-        // NOTE Auto re-initializing because of this: https://firebase.google.com/docs/admob/ios/interstitial#only_show_gadinterstitial_once
-        qDebug() << this << "::onPresentationStateChanged() re-initializing one-time use GADInterstitial";
-        _initTimer->start(500);
-
-#endif
-
-        emit closed();
-    }
 }
 
 firebase::FutureBase QtFirebaseAdMobInterstitial::loadInternal()
@@ -1088,26 +1092,6 @@ QtFirebaseAdMobRewardedVideoAd::~QtFirebaseAdMobRewardedVideoAd()
     _initTimer->stop();
 }
 
-void QtFirebaseAdMobRewardedVideoAd::setVisible(bool visible)
-{
-    if(!_ready) {
-        qDebug() << this << "::setVisible native part not ready";
-        return;
-    }
-
-    if(!_loaded) {
-        qDebug() << this << "::setVisible native part not loaded - so not changing visiblity to" << visible;
-        return;
-    }
-
-    if(!_visible && visible) {
-        show(); // NOTE show will change _visible and emit signal
-    } else {
-        // NOTE An interstitial can't be hidden by any other than the user
-        qInfo() << this << "::setVisible" << visible << " - interstitials can't be hidden programmatically. Not hidding";
-    }
-}
-
 firebase::FutureBase QtFirebaseAdMobRewardedVideoAd::initInternal()
 {
     auto future = firebase::admob::rewarded_video::Initialize();
@@ -1132,46 +1116,6 @@ firebase::FutureBase QtFirebaseAdMobRewardedVideoAd::initInternal()
     });
 
     return firebase::FutureBase();
-}
-
-void QtFirebaseAdMobRewardedVideoAd::onPresentationStateChanged(int state)
-{
-    switch (state) {
-    case QtFirebaseAdMobInterstitial::PresentationStateCoveringUI: {
-        if(!_visible) {
-            _visible = true;
-            emit visibleChanged();
-        }
-    }
-        break;
-    case QtFirebaseAdMobInterstitial::PresentationStateHidden: {
-        if(_visible) {
-            _visible = false;
-            emit visibleChanged();
-        }
-
-        setLoaded(false);
-        qDebug() << this << "::onPresentationStateChanged() loaded false";
-
-        // NOTE iOS necessities
-        /*#if defined(Q_OS_IOS)
-
-        setReady(false);
-        qDebug() << this << "::onPresentationStateChanged() ready false";
-
-        // Will be newed when init() is called
-        //delete _interstitial; // NOTE Crashes the app when used
-
-        // NOTE Auto re-initializing because of this: https://firebase.google.com/docs/admob/ios/interstitial#only_show_gadinterstitial_once
-        qDebug() << this << "::onPresentationStateChanged() re-initializing one-time use GADInterstitial";
-        _initTimer->start(500);
-
-        #endif*/
-
-        emit closed();
-    }
-        break;
-    }
 }
 
 firebase::FutureBase QtFirebaseAdMobRewardedVideoAd::loadInternal()
@@ -1224,26 +1168,27 @@ void QtFirebaseAdMobRewardedVideoAd::OnRewarded(firebase::admob::rewarded_video:
 
 void QtFirebaseAdMobRewardedVideoAd::OnPresentationStateChanged(firebase::admob::rewarded_video::PresentationState state)
 {
-    if(state == firebase::admob::rewarded_video::kPresentationStateHidden)
-    {
+    int pState = QtFirebaseAdMobBase::PresentationStateHidden;
+
+    switch (state) {
+    case firebase::admob::rewarded_video::kPresentationStateHidden:
         qDebug() << this << "kPresentationStateHidden";
-    }
-    else if(state == firebase::admob::rewarded_video::kPresentationStateCoveringUI)
-    {
+        pState = QtFirebaseAdMobBase::PresentationStateHidden;
+        break;
+    case firebase::admob::rewarded_video::kPresentationStateCoveringUI:
         qDebug() << this << "kPresentationStateCoveringUI";
-    }
-    else if(state == firebase::admob::rewarded_video::kPresentationStateVideoHasStarted)
-    {
+        pState = QtFirebaseAdMobBase::PresentationStateCoveringUI;
+        break;
+    case firebase::admob::rewarded_video::kPresentationStateVideoHasStarted:
         qDebug() << this << "kPresentationStateVideoHasStarted";
+        pState = QtFirebaseAdMobBase::PresentationStateVideoHasStarted;
+        break;
+    case firebase::admob::rewarded_video::kPresentationStateVideoHasCompleted:
+        qDebug() << this << "kPresentationStateVideoHasCompleted";
+        pState = QtFirebaseAdMobBase::PresentationStateVideoHasCompleted;
+        break;
     }
 
-    int pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
-
-    if(state == firebase::admob::rewarded_video::kPresentationStateHidden) {
-        pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
-    } else if(state == firebase::admob::rewarded_video::kPresentationStateCoveringUI) {
-        pState = QtFirebaseAdMobInterstitial::PresentationStateCoveringUI;
-    }
     emit presentationStateChanged(pState);
 }
 
