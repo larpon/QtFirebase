@@ -125,7 +125,7 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap bundle
     while (i.hasNext()) {
         i.next();
 
-        keys.append(i.key().toLatin1());
+        keys.append(i.key().toUtf8());
         QString eventKey = i.key();
         QVariant variant = i.value();
 
@@ -136,7 +136,7 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap bundle
             parameters[index] = analytics::Parameter(keys.at(index).constData(),variant.toDouble());
             qDebug() << this << "::logEvent" << "bundle parameter" << eventKey << ":" << variant.toDouble();
         } else if(variant.type() == QVariant::Type(QMetaType::QString)) {
-            strings.append(variant.toString().toLatin1());
+            strings.append(variant.toString().toUtf8());
             parameters[index] = analytics::Parameter(keys.at(index).constData(), strings.at(strings.size()-1).constData());
             qDebug() << this << "::logEvent" << "bundle parameter" << eventKey << ":" << strings.at(strings.size()-1);
         } else {
