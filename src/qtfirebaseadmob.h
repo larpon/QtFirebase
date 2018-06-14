@@ -13,7 +13,6 @@
 #include "firebase/admob.h"
 #include "firebase/admob/types.h"
 #include "firebase/admob/banner_view.h"
-#include "firebase/admob/native_express_ad_view.h"
 #include "firebase/admob/interstitial_ad.h"
 #include "firebase/admob/rewarded_video.h"
 
@@ -366,35 +365,6 @@ private:
 
 private:
     firebase::admob::BannerView* _banner;
-};
-
-/*
- * AdMobNativeExpressAd
- */
-class QtFirebaseAdMobNativeExpressAd : public QtFirebaseAdMobBannerBase
-{
-    Q_OBJECT
-
-public:
-
-    QtFirebaseAdMobNativeExpressAd(QObject* parent = 0);
-    ~QtFirebaseAdMobNativeExpressAd();
-
-private:
-    firebase::FutureBase initInternal() override;
-    firebase::FutureBase loadInternal() override;
-
-    firebase::FutureBase moveToInternal(int x, int y) override;
-    firebase::FutureBase moveToInternal(Position position) override;
-
-    firebase::FutureBase setXInternal(int x) override;
-    firebase::FutureBase setYInternal(int y) override;
-
-    firebase::FutureBase setVisibleInternal(bool visible) override;
-
-private:
-    firebase::admob::NativeExpressAdView* _nativeAd;
-
 };
 
 /*
