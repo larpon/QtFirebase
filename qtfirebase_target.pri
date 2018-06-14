@@ -56,7 +56,6 @@ android: {
     message("QtFirebase Android base")
     QT += androidextras gui-private
 
-    QTFIREBASE_SDK_LIBS_PREFIX = ""
     QTFIREBASE_SDK_LIBS_PATH = $$QTFIREBASE_SDK_PATH/libs/android/$$ANDROID_TARGET_ARCH/gnustl
 
     DEPENDPATH += $$QTFIREBASE_SDK_LIBS_PATH
