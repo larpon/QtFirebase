@@ -33,7 +33,7 @@ Remote Config             |libremote_config.a     |✓|✓|[greenfield932](https
 Please note that Native Express ads are now deprecated. `QtFirebaseAdMobNativeExpressAd` is therefore removed in commit [4e217cc](https://github.com/Larpon/QtFirebase/commit/4e217cc5ae4270631c8f98d1cce94c8b849b1f08).
 
 ## Contributors
-Without [contributions](https://github.com/Larpon/QtFirebase/pulls?q=is%3Apr+is%3Aclosed) from these good people this project would not exist.
+Without [contributions from these good people](https://github.com/Larpon/QtFirebase/pulls?q=is%3Apr+is%3Aclosed) this project would not exist.
 
 [Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder, Base, AdMob, Analytics),
 [greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
