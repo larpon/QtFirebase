@@ -1,5 +1,9 @@
 #include "platformutils.h"
 
+#if defined(Q_OS_ANDROID)
+jobject PlatformUtils::nativeWindow = nullptr;
+#endif
+
 /*
  * Google Play Services (only available under Android)
  */
@@ -35,9 +39,11 @@ jobject PlatformUtils::getNativeWindow()
 
     QAndroidJniObject activity = QtAndroid::androidActivity();
 
-    jobject globalActivity = env->NewGlobalRef(activity.object());
+    if (!nativeWindow) {
+        nativeWindow = env->NewGlobalRef(activity.object());
+    }
 
-    return globalActivity;
+    return nativeWindow;
 }
 #else
 void PlatformUtils::getNativeWindow()

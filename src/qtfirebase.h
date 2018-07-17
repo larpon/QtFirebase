@@ -24,12 +24,12 @@ class QtFirebase : public QObject
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
 
 public:
-    explicit QtFirebase(QObject* parent = 0);
+    explicit QtFirebase(QObject* parent = nullptr);
     ~QtFirebase();
 
     static QtFirebase *instance() {
-        if(self == 0)
-            self = new QtFirebase(0);
+        if(!self)
+            self = new QtFirebase();
         return self;
     }
 
@@ -57,11 +57,11 @@ private:
     Q_DISABLE_COPY(QtFirebase)
 
     bool _ready = false;
-    firebase::App* _firebaseApp;
+    firebase::App* _firebaseApp = nullptr;
 
-    QTimer *_initTimer;
+    QTimer *_initTimer = nullptr;
 
-    QTimer *_futureWatchTimer;
+    QTimer *_futureWatchTimer = nullptr;
     QMap<QString, firebase::FutureBase> _futureMap;
 };
 
