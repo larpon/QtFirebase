@@ -72,6 +72,11 @@ public:
     #else
     static void getNativeWindow();
     #endif
+
+private:
+    #if defined(Q_OS_ANDROID)
+    static jobject nativeWindow;
+    #endif
 };
 
 #endif // PLATFORM_UTILS_H
