@@ -23,12 +23,12 @@ class QtFirebaseMessaging : public QObject
     Q_PROPERTY(QString token READ token NOTIFY tokenChanged)
 
 public:
-    explicit QtFirebaseMessaging(QObject* parent = 0) { Q_UNUSED(parent); }
+    explicit QtFirebaseMessaging(QObject* parent = nullptr) { Q_UNUSED(parent); }
     ~QtFirebaseMessaging() {}
 
     static QtFirebaseMessaging *instance() {
-        if(self == 0) {
-            self = new QtFirebaseMessaging(0);
+        if(!self) {
+            self = new QtFirebaseMessaging();
         }
         return self;
     }

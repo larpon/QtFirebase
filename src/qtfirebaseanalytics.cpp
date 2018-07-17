@@ -4,11 +4,11 @@
 
 namespace analytics = ::firebase::analytics;
 
-QtFirebaseAnalytics *QtFirebaseAnalytics::self = 0;
+QtFirebaseAnalytics *QtFirebaseAnalytics::self = nullptr;
 
 QtFirebaseAnalytics::QtFirebaseAnalytics(QObject* parent) : QObject(parent)
 {
-    if(self == 0) {
+    if(!self) {
         self = this;
         qDebug() << self << "::QtFirebaseAnalytics" << "singleton";
     }
@@ -30,13 +30,13 @@ QtFirebaseAnalytics::~QtFirebaseAnalytics()
         qDebug() << self << "::~QtFirebaseAnalytics" << "shutting down";
         analytics::Terminate();
         _ready = false;
-        self = 0;
+        self = nullptr;
     }
 }
 
 bool QtFirebaseAnalytics::checkInstance(const char *function)
 {
-    bool b = (QtFirebaseAnalytics::self != 0);
+    bool b = (QtFirebaseAnalytics::self != nullptr);
     if (!b)
         qWarning("QtFirebaseAnalytics::%s: Please instantiate the QtFirebaseAnalytics object first", function);
     return b;
@@ -108,7 +108,7 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QString &parameter
     analytics::LogEvent(name.toUtf8().constData(), parameterName.toUtf8().constData(),parameterValue);
 }
 
-void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap bundle)
+void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap &bundle)
 {
     if(!_ready) {
         qDebug() << this << "::logEvent native part not ready";

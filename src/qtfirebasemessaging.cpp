@@ -11,7 +11,7 @@
 
 namespace messaging = ::firebase::messaging;
 
-QtFirebaseMessaging *QtFirebaseMessaging::self = 0;
+QtFirebaseMessaging *QtFirebaseMessaging::self = nullptr;
 
 QtFirebaseMessaging::QtFirebaseMessaging(QObject* parent)
     : QObject(parent)
@@ -19,7 +19,7 @@ QtFirebaseMessaging::QtFirebaseMessaging(QObject* parent)
 {
     __QTFIREBASE_ID = QString().sprintf("%8p", this);
 
-    if(self == 0) {
+    if(!self) {
         self = this;
         qDebug() << self << "::QtFirebaseMessaging" << "singleton";
     }
@@ -29,7 +29,7 @@ QtFirebaseMessaging::QtFirebaseMessaging(QObject* parent)
 
     if(qFirebase->ready()) {
         //Call init outside of constructor, otherwise signal readyChanged not emited
-        QTimer::singleShot(100, this, SLOT(init()));
+        QTimer::singleShot(100, this, &QtFirebaseMessaging::init);
     } else {
         connect(qFirebase,&QtFirebase::readyChanged, this, &QtFirebaseMessaging::init);
         qFirebase->requestInit();
@@ -58,7 +58,7 @@ void QtFirebaseMessaging::componentComplete()
 
 bool QtFirebaseMessaging::checkInstance(const char *function)
 {
-    bool b = (QtFirebaseMessaging::self != 0);
+    const bool b = (QtFirebaseMessaging::self != nullptr);
     if (!b)
         qWarning("QtFirebaseMessaging::%s: Please instantiate the QtFirebaseMessaging object first", function);
     return b;
@@ -79,7 +79,7 @@ void QtFirebaseMessaging::init()
     }
 }
 
-void QtFirebaseMessaging::onFutureEvent(QString eventId, firebase::FutureBase future)
+void QtFirebaseMessaging::onFutureEvent(const QString &eventId, const firebase::FutureBase &future)
 {
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
@@ -124,7 +124,7 @@ QVariantMap QtFirebaseMessaging::data()
     return _data;
 }
 
-void QtFirebaseMessaging::setData(QVariantMap data)
+void QtFirebaseMessaging::setData(const QVariantMap &data)
 {
     if (_data != data) {
         _data = data;
@@ -138,7 +138,7 @@ QString QtFirebaseMessaging::token()
     return _token;
 }
 
-void QtFirebaseMessaging::setToken(QString token)
+void QtFirebaseMessaging::setToken(const QString &token)
 {
     if (_token != token) {
         _token = token;
@@ -244,7 +244,7 @@ QVariantMap MessageListener::data()
     return _data;
 }
 
-void MessageListener::setData(QVariantMap data)
+void MessageListener::setData(const QVariantMap &data)
 {
     if (_data != data) {
         _notifyMessageReceived = true;
@@ -262,7 +262,7 @@ QString MessageListener::token()
     return _token;
 }
 
-void MessageListener::setToken(QString token)
+void MessageListener::setToken(const QString &token)
 {
     if (_token != token) {
         _notifyTokenReceived = true;

@@ -34,12 +34,12 @@ class QtFirebaseAnalytics : public QObject
     Q_PROPERTY(QVariantList userProperties READ userProperties WRITE setUserProperties NOTIFY userPropertiesChanged)
 
 public:
-    explicit QtFirebaseAnalytics(QObject* parent = 0);
+    explicit QtFirebaseAnalytics(QObject* parent = nullptr);
     ~QtFirebaseAnalytics();
 
     static QtFirebaseAnalytics *instance() {
-        if(self == 0) {
-            self = new QtFirebaseAnalytics(0);
+        if(!self) {
+            self = new QtFirebaseAnalytics();
             qDebug() << self << "::instance" << "singleton";
         }
         return self;
@@ -81,7 +81,7 @@ public slots:
     void logEvent(const QString &name, const QString &parameterName, const QString &parameterValue);
     void logEvent(const QString &name, const QString &parameterName, const double parameterValue);
     void logEvent(const QString &name, const QString &parameterName, const int parameterValue);
-    void logEvent(const QString &name, const QVariantMap bundle);
+    void logEvent(const QString &name, const QVariantMap &bundle);
     //void logEvent(const QString &name, const QString &parameterName, const int64_t parameterValue);
 
 private slots:
