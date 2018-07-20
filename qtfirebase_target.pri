@@ -184,6 +184,7 @@ contains(DEFINES,QTFIREBASE_BUILD_ANALYTICS) {
 
     ios: {
         LIBS += \
+            -framework StoreKit \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Analytics \
             -framework FirebaseAnalytics \
             -framework FirebaseCore \
