@@ -63,6 +63,7 @@ Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be832
 * v4.5.0 **NOTE** Native Express ads are deprecated from this release
 * v4.5.1
 * v5.0.0
+* v5.1.1
 
 We recommend you build against the latest version of the Firebase C++ SDK.
 
