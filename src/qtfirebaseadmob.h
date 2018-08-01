@@ -376,6 +376,7 @@ class QtFirebaseAdMobInterstitialAdListener;
 class QtFirebaseAdMobInterstitial : public QtFirebaseAdMobBase
 {
     Q_OBJECT
+    Q_ENUMS(PresentationState)
 
 public:
     enum PresentationState
@@ -383,7 +384,6 @@ public:
         PresentationStateHidden,
         PresentationStateCoveringUI
     };
-    Q_ENUM(PresentationState)
 
     QtFirebaseAdMobInterstitial(QObject* parent = 0);
     ~QtFirebaseAdMobInterstitial();
@@ -392,13 +392,11 @@ public:
 
 signals:
     void closed();
-    void presentationStateChanged(int state);
+    void presentationStateChanged(PresentationState state);
 
 public slots:
     void show() override;
-
-private slots:
-    void onPresentationStateChanged(int state);
+    void setPresentationState(PresentationState state);
 
 private:
     firebase::FutureBase initInternal() override;
@@ -409,6 +407,7 @@ private:
     QtFirebaseAdMobInterstitialAdListener* _interstitialAdListener;
 
 };
+Q_DECLARE_METATYPE(QtFirebaseAdMobInterstitial::PresentationState)
 
 // A listener class to an InterstitialAd.
 class QtFirebaseAdMobInterstitialAdListener : public firebase::admob::InterstitialAd::Listener {
@@ -426,14 +425,14 @@ public:
         qDebug() << _qtFirebaseAdMobInterstitial << "::OnPresentationStateChanged";
         qDebug("InterstitialAd PresentationState has changed to %d.", state);
 
-        int pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
+        auto pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
 
         if(state == firebase::admob::InterstitialAd::PresentationState::kPresentationStateHidden) {
             pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
         } else if(state == firebase::admob::InterstitialAd::PresentationState::kPresentationStateCoveringUI) {
              pState = QtFirebaseAdMobInterstitial::PresentationStateCoveringUI;
         }
-        _qtFirebaseAdMobInterstitial->presentationStateChanged(pState);
+        _qtFirebaseAdMobInterstitial->setPresentationState(pState);
     }
 
 private:
@@ -476,13 +475,6 @@ class QtFirebaseAdMobRewardedVideoAd : public QtFirebaseAdMobBase, public fireba
     Q_OBJECT
 
 public:
-    enum PresentationState
-    {
-        PresentationStateHidden,
-        PresentationStateCoveringUI
-    };
-    Q_ENUM(PresentationState)
-
     QtFirebaseAdMobRewardedVideoAd(QObject* parent = 0);
     ~QtFirebaseAdMobRewardedVideoAd();
 
@@ -490,14 +482,14 @@ public:
 
 signals:
     void closed();
-    void presentationStateChanged(int state);
+    void presentationStateChanged(QtFirebaseAdMobInterstitial::PresentationState state);
     void rewarded(const QString &type, float value);
 
 public slots:
     void show() override;
 
 private slots:
-    void onPresentationStateChanged(int state);
+    void setPresentationState(QtFirebaseAdMobInterstitial::PresentationState state);
 
 private:
     firebase::FutureBase initInternal() override;
