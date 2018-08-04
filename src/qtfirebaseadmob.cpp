@@ -25,9 +25,7 @@ QtFirebaseAdMob::QtFirebaseAdMob(QObject* parent) : QObject(parent)
 
     __testDevices = 0;
 
-    if(qFirebase->ready())
-        init();
-    else {
+    if(!qFirebase->ready()) {
         connect(qFirebase,&QtFirebase::readyChanged, this, &QtFirebaseAdMob::init);
         qFirebase->requestInit();
     }
