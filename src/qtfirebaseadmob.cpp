@@ -542,7 +542,9 @@ void QtFirebaseAdMobBase::init()
             future.OnCompletion([this](const firebase::FutureBase& completed_future)
             {
                 // We are probably in a different thread right now.
+                #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
                 QMetaObject::invokeMethod(this, [this, completed_future]() {
+                #endif
                     if(completed_future.error() != admob::kAdMobErrorNone) {
                         qDebug() << this << "::init" << "initializing failed." << "ERROR: Action failed with error code and message: " << completed_future.error() << completed_future.error_message();
                         emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
@@ -554,7 +556,9 @@ void QtFirebaseAdMobBase::init()
                         _isFirstInit = false;
                         setReady(true);
                     }
+                #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
                 });
+                #endif
             });
         }
     }
@@ -580,7 +584,9 @@ void QtFirebaseAdMobBase::load()
     future.OnCompletion([this](const firebase::FutureBase& completed_future)
     {
         // We are probably in a different thread right now.
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         QMetaObject::invokeMethod(this, [this, completed_future]() {
+        #endif
             if(completed_future.error() != admob::kAdMobErrorNone) {
                 qWarning() << this << "::load" << "load failed" << "ERROR" << "code:" << completed_future.error() << "message:" << completed_future.error_message();
                 emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
@@ -589,7 +595,9 @@ void QtFirebaseAdMobBase::load()
                 qDebug() << this << "::load loaded";
                 setLoaded(true);
             }
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         });
+        #endif
     });
 }
 
@@ -646,7 +654,9 @@ void QtFirebaseAdMobBannerBase::moveTo(int x, int y)
         future.OnCompletion([this, x, y](const firebase::FutureBase& completed_future)
         {
             // We are probably in a different thread right now.
+            #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
             QMetaObject::invokeMethod(this, [this, completed_future, x, y]() {
+            #endif
                 if(completed_future.error() != admob::kAdMobErrorNone) {
                     qWarning() << this << "::moveTo " << x << " x " << y << " ERROR" << "code:" << completed_future.error() << "message:" << completed_future.error_message();
                     emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
@@ -663,7 +673,9 @@ void QtFirebaseAdMobBannerBase::moveTo(int x, int y)
                     }
                     qDebug() << this << "::moveTo moved to" << x << "," << y;
                 }
+            #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
             });
+            #endif
         });
     }
 }
@@ -679,7 +691,9 @@ void QtFirebaseAdMobBannerBase::moveTo(Position position)
     future.OnCompletion([this, position](const firebase::FutureBase& completed_future)
     {
         // We are probably in a different thread right now.
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         QMetaObject::invokeMethod(this, [this, completed_future, position]() {
+        #endif
             if(completed_future.error() != admob::kAdMobErrorNone) {
                 qWarning() << this << "::moveTo " << position << " ERROR" << "code:" << completed_future.error() << "message:" << completed_future.error_message();
                 emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
@@ -687,7 +701,9 @@ void QtFirebaseAdMobBannerBase::moveTo(Position position)
             else {
                 qDebug() << this << "::moveTo moved to" << position;
             }
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         });
+        #endif
     });
 }
 
@@ -708,7 +724,9 @@ void QtFirebaseAdMobBannerBase::setVisible(bool visible)
         future.OnCompletion([this, visible](const firebase::FutureBase& completed_future)
         {
             // We are probably in a different thread right now.
+            #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
             QMetaObject::invokeMethod(this, [this, completed_future, visible]() {
+            #endif
                 if(completed_future.error() != admob::kAdMobErrorNone) {
                     qDebug() << this << "::setVisible" << visible <<  " ERROR code" << completed_future.error() << "message" << completed_future.error_message();
                     emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
@@ -719,7 +737,9 @@ void QtFirebaseAdMobBannerBase::setVisible(bool visible)
                     _visible = visible;
                     emit visibleChanged();
                 }
+            #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
             });
+            #endif
         });
     }
 }
@@ -904,7 +924,9 @@ firebase::FutureBase QtFirebaseAdMobInterstitial::initInternal()
     future.OnCompletion([this](const firebase::FutureBase& completed_future)
     {
         // We are probably in a different thread right now.
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         QMetaObject::invokeMethod(this, [this, completed_future]() {
+        #endif
             if(completed_future.error() != admob::kAdMobErrorNone) {
                 qDebug() << this << "::init" << "initializing failed." << "ERROR: Action failed with error code and message: " << completed_future.error() << completed_future.error_message();
                 emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
@@ -928,7 +950,9 @@ firebase::FutureBase QtFirebaseAdMobInterstitial::initInternal()
 
                 setReady(true);
             }
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         });
+        #endif
     });
 
     return firebase::FutureBase(); // invalid future because we already handled it
@@ -993,12 +1017,16 @@ void QtFirebaseAdMobInterstitial::show()
     future.OnCompletion([this](const firebase::FutureBase& completed_future)
     {
         // We are probably in a different thread right now.
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         QMetaObject::invokeMethod(this, [this, completed_future]() {
+        #endif
             if(completed_future.error() != admob::kAdMobErrorNone) {
                 qDebug() << this << "::show" << "ERROR: Action failed with error code and message: " << completed_future.error() << completed_future.error_message();
                 emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
             }
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         });
+        #endif
     });
 }
 
@@ -1048,7 +1076,9 @@ firebase::FutureBase QtFirebaseAdMobRewardedVideoAd::initInternal()
     future.OnCompletion([this](const firebase::FutureBase& completed_future)
     {
         // We are probably in a different thread right now.
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         QMetaObject::invokeMethod(this, [this, completed_future]() {
+        #endif
             if(completed_future.error() != admob::kAdMobErrorNone)
             {
                 qDebug() << this << "::init initializing failed." << "ERROR: Action failed with error code and message: " << completed_future.error() << completed_future.error_message();
@@ -1064,7 +1094,9 @@ firebase::FutureBase QtFirebaseAdMobRewardedVideoAd::initInternal()
                 firebase::admob::rewarded_video::SetListener(this);
                 setReady(true);
             }
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         });
+        #endif
     });
 
     return firebase::FutureBase();
@@ -1143,13 +1175,17 @@ void QtFirebaseAdMobRewardedVideoAd::show()
     future.OnCompletion([this](const firebase::FutureBase& completed_future)
     {
         // We are probably in a different thread right now.
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         QMetaObject::invokeMethod(this, [this, completed_future]() {
+        #endif
             if(completed_future.error() != admob::kAdMobErrorNone)
             {
                 qDebug() << this << "::show " << "ERROR: Action failed with error code and message: " << completed_future.error() << completed_future.error_message();
                 emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
             }
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         });
+        #endif
     });
 }
 
