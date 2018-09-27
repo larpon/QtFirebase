@@ -84,7 +84,7 @@ When building QtFirebase for Android targets you need the following extra steps 
 ### General
 
 #### Ensure target device has `Google Services` apk installed
-Make sure you have `Google Services` apk installed and updated on the *target* device. Firebase won't work without it. 
+Make sure you have `Google Services` apk installed and updated on the *target* device. Firebase won't work without it.
 Furthermore the project needs `gradle` and the Android NDK (r10d+) to build on Android.
 
 #### API level
@@ -110,14 +110,14 @@ Include `google-services.json` downloaded from the [Firebase console](https://co
 
 ### Firebase Messaging specific
 **Note**
-*Using Messaging is only possible with Qt 5.9+ due to gradle dependencies that require recent versions of the Android SDK/NDK. Upgrading these will also "force" you to upgrade Qt (because of some bugs in Qt Creator) in order for it all to work*
+*Using Messaging is only possible with Qt 5.9+ due to gradle dependencies that require recent versions of the Android SDK. Upgrading these will also "force" you to upgrade Qt (because of some bugs in Qt Creator) in order for it all to work*
 
 To use Messaging on Android there is some additional setup.
 
 You'll need to have recent versions of the Android SDK/NDK toolchain.
 ```
 Android SDK Build-Tools >= 25.0.0
-Android NDK >= r11c
+Android NDK >= r10e
 ```
 `gradle >= 2.3.3` [like here](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/android/build.gradle#L18)
 
@@ -156,7 +156,7 @@ To use Messaging on iOS there is some additional setup.
 > The following changes can be made permanent with each build from Qt Creator by using various build tool (qmake) tricks.
 It's currently beyond the scope of this documentation to tell you *how* though.
 
-#### XCode 
+#### XCode
 
 In your app's `Capabilities` tab.
 
