@@ -190,8 +190,8 @@ contains(DEFINES,QTFIREBASE_BUILD_ANALYTICS) {
             -framework FirebaseCore \
             -framework FirebaseCoreDiagnostics \
             -framework FirebaseInstanceID \
-            -framework FirebaseNanoPB \
-            -framework GoogleToolboxForMac \
+            -framework GoogleAppMeasurement \
+            -framework GoogleUtilities \
             -framework nanopb \
             \
     }
@@ -245,4 +245,3 @@ contains(DEFINES,QTFIREBASE_BUILD_DATABASE) {
 }
 
 LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -l$${QTFIREBASE_SDK_LIBS_PREFIX}app
-
