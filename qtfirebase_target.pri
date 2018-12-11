@@ -60,7 +60,15 @@ android: {
     # c++:      LLVM libc++ runtime
     # gnustl:   GNU STL
     # stlport:  STLPort runtime
-    QTFIREBASE_STL_VARIANT = c++
+    android-clang {
+        QTFIREBASE_STL_VARIANT = c++
+    }
+
+    isEmpty(QTFIREBASE_STL_VARIANT){
+        QTFIREBASE_STL_VARIANT = gnustl
+    }
+
+    message("Using QTFIREBASE_STL_VARIANT ($$QTFIREBASE_STL_VARIANT)")
     QTFIREBASE_SDK_LIBS_PATH = $$QTFIREBASE_SDK_PATH/libs/android/$$ANDROID_TARGET_ARCH/$$QTFIREBASE_STL_VARIANT
 
     DEPENDPATH += $$QTFIREBASE_SDK_LIBS_PATH
