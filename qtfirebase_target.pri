@@ -56,7 +56,12 @@ android: {
     message("QtFirebase Android base")
     QT += androidextras gui-private
 
-    QTFIREBASE_SDK_LIBS_PATH = $$QTFIREBASE_SDK_PATH/libs/android/$$ANDROID_TARGET_ARCH/gnustl
+    # Specify the STL variant that is to be used in the app .pro file with the $$QTFIREBASE_STL_VARIANT variable
+    # c++:      LLVM libc++ runtime
+    # gnustl:   GNU STL
+    # stlport:  STLPort runtime
+    QTFIREBASE_STL_VARIANT = c++
+    QTFIREBASE_SDK_LIBS_PATH = $$QTFIREBASE_SDK_PATH/libs/android/$$ANDROID_TARGET_ARCH/$$QTFIREBASE_STL_VARIANT
 
     DEPENDPATH += $$QTFIREBASE_SDK_LIBS_PATH
 }
