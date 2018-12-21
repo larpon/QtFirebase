@@ -118,7 +118,6 @@ ios: {
 
     INCLUDEPATH += \
         $$QTFIREBASE_SDK_PATH/include \
-        $$QTFIREBASE_FRAMEWORKS_ROOT/../ \
         $$PWD/src \
         $$PWD/src/ios \
         \
