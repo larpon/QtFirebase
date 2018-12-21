@@ -20,7 +20,7 @@ void* PlatformUtils::getNativeWindow()
     //UIView* view = (__bridge UIView*)reinterpret_cast<void*>(window->winId());
     //qDebug() << "Getting UIView" << view;
 
-    return view;
+    return (__bridge void *)reinterpret_cast<UIView *>(view);
 
     //return QGuiApplication::platformNativeInterface()->nativeResourceForWindow("uiview", QGuiApplication::focusWindow());
 }
