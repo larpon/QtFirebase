@@ -95,6 +95,7 @@ private:
     bool _initializing;
     QVariantMap _parameters;
     long long _cacheExpirationTime;
+    ::firebase::ModuleInitializer _initializer;
 
     QString _appId;
     QByteArray __appIdByteArray;

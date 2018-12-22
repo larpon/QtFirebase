@@ -145,8 +145,7 @@ void QtFirebaseRemoteConfig::init()
     if(!_ready && !_initializing) {
         _initializing = true;
 
-        ::firebase::ModuleInitializer initializer;
-        auto future = initializer.Initialize(qFirebase->firebaseApp(), nullptr, [](::firebase::App* app, void*) {
+        auto future = _initializer.Initialize(qFirebase->firebaseApp(), nullptr, [](::firebase::App* app, void*) {
             // NOTE only write debug output here when developing
             // Causes crash on re-initialization (probably the "self" reference. And "this" can't be used in a lambda)
             //qDebug() << self << "::init" << "try to initialize Remote Config";
@@ -171,7 +170,7 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
 
 void QtFirebaseRemoteConfig::onFutureEventInit(firebase::FutureBase &future)
 {
-    if (future.error() != firebase::kFutureStatusComplete) {
+    if (future.status() != firebase::kFutureStatusComplete) {
         qDebug() << this << "::onFutureEvent" << "initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
         _initializing = false;
         return;
@@ -180,6 +179,7 @@ void QtFirebaseRemoteConfig::onFutureEventInit(firebase::FutureBase &future)
     qDebug() << this << "::onFutureEvent initialized ok";
     _initializing = false;
     setReady(true);
+    future.Release();
 }
 
 void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
