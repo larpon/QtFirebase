@@ -24,7 +24,7 @@ class QtFirebaseRemoteConfig : public QObject
     Q_PROPERTY(long long cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
 
 public:
-    explicit QtFirebaseRemoteConfig(QObject *parent = 0);
+    explicit QtFirebaseRemoteConfig(QObject *parent = nullptr);
     ~QtFirebaseRemoteConfig();
 
     enum FetchFailure
@@ -36,8 +36,8 @@ public:
     Q_ENUM(FetchFailure)
 
     static QtFirebaseRemoteConfig *instance() {
-        if(self == 0) {
-            self = new QtFirebaseRemoteConfig(0);
+        if(self == nullptr) {
+            self = new QtFirebaseRemoteConfig(nullptr);
             qDebug() << self << "::instance" << "singleton";
         }
         return self;

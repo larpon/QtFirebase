@@ -29,13 +29,13 @@ public:
     };
     Q_ENUM(FetchFailure)
 
-    explicit QtFirebaseRemoteConfig(QObject *parent = 0){ Q_UNUSED(parent); }
+    explicit QtFirebaseRemoteConfig(QObject *parent = nullptr){ Q_UNUSED(parent); }
 
     ~QtFirebaseRemoteConfig() {}
 
     static QtFirebaseRemoteConfig *instance() {
-            if(self == 0) {
-                self = new QtFirebaseRemoteConfig(0);
+            if(self == nullptr) {
+                self = new QtFirebaseRemoteConfig(nullptr);
             }
             return self;
         }

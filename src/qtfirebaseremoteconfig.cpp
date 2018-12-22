@@ -2,7 +2,7 @@
 
 namespace remote_config = ::firebase::remote_config;
 
-QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self = 0;
+QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self = nullptr;
 
 QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
     QObject(parent),
@@ -11,9 +11,9 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
     _cacheExpirationTime(firebase::remote_config::kDefaultCacheExpiration*1000), // milliseconds
     __appId(nullptr)
 {
-    __QTFIREBASE_ID = QString().sprintf("%8p", this);
+    __QTFIREBASE_ID = QString().sprintf("%8p", static_cast<void*> (this));
 
-    if(self == 0)
+    if(self == nullptr)
     {
         self = this;
         qDebug() << self << "::QtFirebaseRemoteConfig" << "singleton";
@@ -44,7 +44,7 @@ QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig() {
 
 bool QtFirebaseRemoteConfig::checkInstance(const char *function)
 {
-    bool b = (QtFirebaseRemoteConfig::self != 0);
+    bool b = (QtFirebaseRemoteConfig::self != nullptr);
     if(!b) qWarning("QtFirebaseRemoteConfig::%s:", function);
     return b;
 }
