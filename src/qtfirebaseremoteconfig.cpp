@@ -103,12 +103,12 @@ void QtFirebaseRemoteConfig::setParameters(const QVariantMap &map)
     emit parametersChanged();
 }
 
-long long QtFirebaseRemoteConfig::cacheExpirationTime() const
+quint64 QtFirebaseRemoteConfig::cacheExpirationTime() const
 {
     return _cacheExpirationTime;
 }
 
-void QtFirebaseRemoteConfig::setCacheExpirationTime(long long timeMs)
+void QtFirebaseRemoteConfig::setCacheExpirationTime(quint64 timeMs)
 {
     _cacheExpirationTime = timeMs;
     emit cacheExpirationTimeChanged();
@@ -287,7 +287,7 @@ void QtFirebaseRemoteConfig::fetch()
     fetch(_cacheExpirationTime<1000 ? 0 : _cacheExpirationTime/1000);
 }
 
-void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
+void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
 {
     if(_parameters.size() == 0)
     {

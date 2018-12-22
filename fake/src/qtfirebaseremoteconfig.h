@@ -18,7 +18,7 @@ class QtFirebaseRemoteConfig : public QObject
     Q_OBJECT
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
     Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
-    Q_PROPERTY(long long cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
+    Q_PROPERTY(quint64 cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
 
 public:
     enum FetchFailure
@@ -46,8 +46,8 @@ public:
     QVariantMap parameters() const{return QVariantMap();}
     void setParameters(const QVariantMap& map){Q_UNUSED(map);}
 
-    long long cacheExpirationTime() const{return 0;}
-    void setCacheExpirationTime(long long timeMs){Q_UNUSED(timeMs);}
+    quint64 cacheExpirationTime() const{return 0;}
+    void setCacheExpirationTime(quint64 timeMs){Q_UNUSED(timeMs);}
 
 public slots:
     void addParameter(const QString &name, long long defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
