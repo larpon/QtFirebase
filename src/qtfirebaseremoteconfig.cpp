@@ -2,7 +2,7 @@
 
 namespace remote_config = ::firebase::remote_config;
 
-QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self = 0;
+QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self = nullptr;
 
 QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
     QObject(parent),
@@ -11,9 +11,9 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
     _cacheExpirationTime(firebase::remote_config::kDefaultCacheExpiration*1000), // milliseconds
     __appId(nullptr)
 {
-    __QTFIREBASE_ID = QString().sprintf("%8p", this);
+    __QTFIREBASE_ID = QString().sprintf("%8p", static_cast<void*> (this));
 
-    if(self == 0)
+    if(self == nullptr)
     {
         self = this;
         qDebug() << self << "::QtFirebaseRemoteConfig" << "singleton";
@@ -44,7 +44,7 @@ QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig() {
 
 bool QtFirebaseRemoteConfig::checkInstance(const char *function)
 {
-    bool b = (QtFirebaseRemoteConfig::self != 0);
+    bool b = (QtFirebaseRemoteConfig::self != nullptr);
     if(!b) qWarning("QtFirebaseRemoteConfig::%s:", function);
     return b;
 }
@@ -103,12 +103,12 @@ void QtFirebaseRemoteConfig::setParameters(const QVariantMap &map)
     emit parametersChanged();
 }
 
-long long QtFirebaseRemoteConfig::cacheExpirationTime() const
+quint64 QtFirebaseRemoteConfig::cacheExpirationTime() const
 {
     return _cacheExpirationTime;
 }
 
-void QtFirebaseRemoteConfig::setCacheExpirationTime(long long timeMs)
+void QtFirebaseRemoteConfig::setCacheExpirationTime(quint64 timeMs)
 {
     _cacheExpirationTime = timeMs;
     emit cacheExpirationTimeChanged();
@@ -145,8 +145,7 @@ void QtFirebaseRemoteConfig::init()
     if(!_ready && !_initializing) {
         _initializing = true;
 
-        ::firebase::ModuleInitializer initializer;
-        auto future = initializer.Initialize(qFirebase->firebaseApp(), nullptr, [](::firebase::App* app, void*) {
+        auto future = _initializer.Initialize(qFirebase->firebaseApp(), nullptr, [](::firebase::App* app, void*) {
             // NOTE only write debug output here when developing
             // Causes crash on re-initialization (probably the "self" reference. And "this" can't be used in a lambda)
             //qDebug() << self << "::init" << "try to initialize Remote Config";
@@ -171,7 +170,7 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
 
 void QtFirebaseRemoteConfig::onFutureEventInit(firebase::FutureBase &future)
 {
-    if (future.error() != firebase::kFutureStatusComplete) {
+    if (future.status() != firebase::kFutureStatusComplete) {
         qDebug() << this << "::onFutureEvent" << "initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
         _initializing = false;
         return;
@@ -180,6 +179,7 @@ void QtFirebaseRemoteConfig::onFutureEventInit(firebase::FutureBase &future)
     qDebug() << this << "::onFutureEvent initialized ok";
     _initializing = false;
     setReady(true);
+    future.Release();
 }
 
 void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
@@ -287,7 +287,7 @@ void QtFirebaseRemoteConfig::fetch()
     fetch(_cacheExpirationTime<1000 ? 0 : _cacheExpirationTime/1000);
 }
 
-void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
+void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
 {
     if(_parameters.size() == 0)
     {
@@ -319,36 +319,34 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
                 new remote_config::ConfigKeyValueVariant[filteredMap.size()]);
 
     __defaultsByteArrayList.clear();
-    uint index = 0;
+    size_t index = 0;
     for(QVariantMap::const_iterator it = filteredMap.begin(); it!=filteredMap.end();++it)
     {
+        __defaultsByteArrayList.insert(static_cast<int> (index),
+                                       QByteArray(it.key().toUtf8().data()));
+        const char* key = __defaultsByteArrayList.at(static_cast<int> (index)).constData();
         const QVariant& value = it.value();
 
-        __defaultsByteArrayList.insert(index,QByteArray(it.key().toUtf8().data()));
         if(value.type() == QVariant::Bool)
         {
-            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
-                    value.toBool()};
+            defaults[index] = remote_config::ConfigKeyValueVariant{key, value.toBool()};
         }
         else if(value.type() == QVariant::LongLong)
         {
-            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
-                    value.toLongLong()};
+            defaults[index] = remote_config::ConfigKeyValueVariant{key, value.toLongLong()};
         }
         else if(value.type() == QVariant::Int)
         {
-            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
-                    value.toInt()};
+            defaults[index] = remote_config::ConfigKeyValueVariant{key, value.toInt()};
         }
         else if(value.type() == QVariant::Double)
         {
-            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
-                    value.toDouble()};
+            defaults[index] = remote_config::ConfigKeyValueVariant{key, value.toDouble()};
         }
 
         else if(value.type() == QVariant::String)
         {
-            defaults[index] = remote_config::ConfigKeyValueVariant{__defaultsByteArrayList.at(index).constData(),
+            defaults[index] = remote_config::ConfigKeyValueVariant{key,
                     value.toString().toUtf8().constData()};
 
             //Code for data type
@@ -361,7 +359,7 @@ void QtFirebaseRemoteConfig::fetch(long long cacheExpirationInSeconds)
         index++;
     }
 
-    remote_config::SetDefaults(defaults.get(), filteredMap.size());
+    remote_config::SetDefaults(defaults.get(), static_cast<size_t> (filteredMap.size()));
 
     /*remote_config::SetConfigSetting(remote_config::kConfigSettingDeveloperMode, "1");
     if ((*remote_config::GetConfigSetting(remote_config::kConfigSettingDeveloperMode)
