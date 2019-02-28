@@ -174,8 +174,10 @@ contains(DEFINES,QTFIREBASE_BUILD_MESSAGING) {
     message( "QtFirebase including Messaging" )
 
     ios: {
-        message( "QtFirebase Messaging requires iOS v10.x to build. Setting QMAKE_IOS_DEPLOYMENT_TARGET = 10.0" )
-        QMAKE_IOS_DEPLOYMENT_TARGET = 10.0
+        message( "QtFirebase Messaging requires iOS v10.x+ to build." )
+        message( "Remember to set QMAKE_IOS_DEPLOYMENT_TARGET in your .pro" )
+        # Removed due to Qt 5.12 - see https://github.com/Larpon/QtFirebase/issues/106
+        # QMAKE_IOS_DEPLOYMENT_TARGET = 10.0
 
         LIBS += \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Messaging \
