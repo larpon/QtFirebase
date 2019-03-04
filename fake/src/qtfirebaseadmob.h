@@ -353,6 +353,7 @@ signals:
     void closed();
     void loading();
     void requestChanged();
+    void presentationStateChanged(int state);
 
 public slots:
     void load() {}
