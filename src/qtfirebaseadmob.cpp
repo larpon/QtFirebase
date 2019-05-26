@@ -802,9 +802,14 @@ QtFirebaseAdMobBanner::QtFirebaseAdMobBanner(QObject *parent) : QtFirebaseAdMobB
 QtFirebaseAdMobBanner::~QtFirebaseAdMobBanner()
 {
     if(_ready) {
+        _banner->SetListener(nullptr);
+        delete _bannerViewListener;
+
         _banner->Destroy();
         qFirebase->waitForFutureCompletion(_banner->DestroyLastResult()); // TODO MAYBE move or duplicate to QtFirebaseAdMob with admob::kAdMobError* checking? (Will save ALOT of cycles on errors)
         qDebug() << this << "::~QtFirebaseAdMobBanner" << "Destroyed banner";
+
+        delete _banner;
     }
 }
 
@@ -900,8 +905,11 @@ QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent) : QtFi
 QtFirebaseAdMobInterstitial::~QtFirebaseAdMobInterstitial()
 {
     if(_ready) {
-        qDebug() << this << "::~QtFirebaseAdMobInterstitial" << "Destroyed Interstitial";
-        //delete _interstitial;
+        _interstitial->SetListener(nullptr);
+        delete _interstitialAdListener;
+
+        qDebug() << this << "::~QtFirebaseAdMobInterstitial" << "Destroyed Interstitial";        
+        delete _interstitial;
     }
 
     _initTimer->stop();
