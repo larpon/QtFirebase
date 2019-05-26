@@ -450,6 +450,11 @@ QtFirebaseAdMobBase::~QtFirebaseAdMobBase()
     }
 }
 
+void QtFirebaseAdMobBase::onInitialized()
+{
+
+}
+
 bool QtFirebaseAdMobBase::ready() const {
     return _ready;
 }
@@ -554,6 +559,7 @@ void QtFirebaseAdMobBase::init()
                         qDebug() << this << "::init" << "initialized";
                         _initializing = false;
                         _isFirstInit = false;
+                        onInitialized();
                         setReady(true);
                     }
                 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
@@ -790,6 +796,7 @@ void QtFirebaseAdMobBannerBase::hide()
 
 QtFirebaseAdMobBanner::QtFirebaseAdMobBanner(QObject *parent) : QtFirebaseAdMobBannerBase(parent)
 {
+    _bannerViewListener = nullptr;
 }
 
 QtFirebaseAdMobBanner::~QtFirebaseAdMobBanner()
@@ -804,6 +811,17 @@ QtFirebaseAdMobBanner::~QtFirebaseAdMobBanner()
 firebase::FutureBase QtFirebaseAdMobBanner::setVisibleInternal(bool visible)
 {
     return visible ? _banner->Show() : _banner->Hide();
+}
+
+void QtFirebaseAdMobBanner::onInitialized()
+{
+    // Add listener (can't be done before it's initialized)
+    auto cpy = _bannerViewListener;
+    _bannerViewListener = new QtFirebaseAdMobBannerViewListener(this);
+    _banner->SetListener(_bannerViewListener);
+    if(cpy) {
+        delete cpy;
+    }
 }
 
 firebase::FutureBase QtFirebaseAdMobBanner::setXInternal(int x)
