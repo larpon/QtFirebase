@@ -22,6 +22,8 @@
 #include <QTimer>
 #include <QVariant>
 #include <QDateTime>
+#include <QThread>
+#include <QMetaObject>
 
 /*
  * AdMob (Base singleton object)
@@ -213,6 +215,7 @@ protected:
 
     virtual firebase::FutureBase initInternal() = 0;
     virtual firebase::FutureBase loadInternal() = 0;
+    virtual void onInitialized();
 
 public:
     bool ready() const;
@@ -343,13 +346,41 @@ protected:
  * AdMobBanner
  */
 
+class QtFirebaseAdMobBannerViewListener;
+
 class QtFirebaseAdMobBanner : public QtFirebaseAdMobBannerBase
 {
     Q_OBJECT
+    Q_PROPERTY(QRect boundingBox READ boundingBox NOTIFY boundingBoxChanged)
+    Q_PROPERTY(PresentationState presentationState READ presentationState NOTIFY presentationStateChanged)
 
+    friend class QtFirebaseAdMobBannerViewListener;
 public:
+    enum PresentationState {
+        PresentationStateHidden = 0,
+        PresentationStateVisibleWithoutAd,
+        PresentationStateVisibleWithAd,
+        PresentationStateOpenedPartialOverlay,
+        PresentationStateCoveringUI
+    };
+    Q_ENUM(PresentationState)
+
     QtFirebaseAdMobBanner(QObject* parent = 0);
     ~QtFirebaseAdMobBanner();
+
+    QRect boundingBox() const
+    {
+        return m_boundingBox;
+    }
+
+    PresentationState presentationState() const
+    {
+        return m_presentationState;
+    }
+
+signals:
+    void presentationStateChanged(PresentationState state);
+    void boundingBoxChanged(const QRect& boundingBox);
 
 private:
     firebase::FutureBase initInternal() override;
@@ -362,9 +393,86 @@ private:
     firebase::FutureBase setYInternal(int y) override;
 
     firebase::FutureBase setVisibleInternal(bool visible) override;
+    void onInitialized() override;
+
+    void setBoundingBox(QRect boundingBox)
+    {
+        if (m_boundingBox == boundingBox)
+            return;
+
+        m_boundingBox = boundingBox;
+        emit boundingBoxChanged(m_boundingBox);
+    }
+
+    void setPresentationState(PresentationState presentationState)
+    {
+        if (m_presentationState == presentationState)
+            return;
+
+        m_presentationState = presentationState;
+        emit presentationStateChanged(m_presentationState);
+    }
 
 private:
     firebase::admob::BannerView* _banner;
+    QtFirebaseAdMobBannerViewListener* _bannerViewListener;
+    QRect m_boundingBox;
+    PresentationState m_presentationState;
+};
+
+// A listener class to an BannerView.
+class QtFirebaseAdMobBannerViewListener : public firebase::admob::BannerView::Listener {
+
+    friend class QtFirebaseAdMobBanner;
+
+public:
+    QtFirebaseAdMobBannerViewListener(QtFirebaseAdMobBanner* qtFirebaseAdMobBanner) {
+        _qtFirebaseAdMobBanner = qtFirebaseAdMobBanner;
+    }
+
+    void OnPresentationStateChanged(firebase::admob::BannerView* banner_view, firebase::admob::BannerView::PresentationState state) override {
+        Q_UNUSED(banner_view); // TODO
+        qDebug() << _qtFirebaseAdMobBanner << "::OnPresentationStateChanged";
+        qDebug("BannerView PresentationState has changed to %d.", state);
+
+        switch(state) {
+            case firebase::admob::BannerView::kPresentationStateHidden:
+                qDebug("BannerView PresentationState has changed to kPresentationStateHidden");
+                break;
+            case firebase::admob::BannerView::kPresentationStateVisibleWithoutAd:
+                qDebug("BannerView PresentationState has changed to PresentationStateVisibleWithoutAd");
+                break;
+            case firebase::admob::BannerView::kPresentationStateVisibleWithAd:
+                qDebug("BannerView PresentationState has changed to PresentationStateVisibleWithAd");
+                break;
+            case firebase::admob::BannerView::kPresentationStateOpenedPartialOverlay:
+                qDebug("BannerView PresentationState has changed to PresentationStateOpenedPartialOverlay");
+                break;
+            case firebase::admob::BannerView::kPresentationStateCoveringUI:
+                qDebug("BannerView PresentationState has changed to PresentationStateCoveringUI");
+                break;
+            default:
+                qDebug("BannerView PresentationState has changed to Unknown");
+        }
+
+        QMetaObject::invokeMethod(_qtFirebaseAdMobBanner, [this, state]() {
+            _qtFirebaseAdMobBanner->setPresentationState((QtFirebaseAdMobBanner::PresentationState) state);
+        });
+    }
+
+    void OnBoundingBoxChanged(firebase::admob::BannerView *banner_view, firebase::admob::BoundingBox box) override {
+        Q_UNUSED(banner_view); // TODO
+        qDebug() << _qtFirebaseAdMobBanner << "::OnBoundingBoxChanged";
+        QRect boundingBox(box.x, box.y, box.width, box.height);
+        qDebug() << "BannerView BoundingBox has changed to" << boundingBox;
+
+        QMetaObject::invokeMethod(_qtFirebaseAdMobBanner, [this, boundingBox]() {
+            _qtFirebaseAdMobBanner->setBoundingBox(boundingBox);
+        });
+    }
+
+private:
+    QtFirebaseAdMobBanner* _qtFirebaseAdMobBanner;
 };
 
 /*
