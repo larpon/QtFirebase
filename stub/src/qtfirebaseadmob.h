@@ -3,7 +3,7 @@
 
 #ifdef QTFIREBASE_BUILD_ADMOB
 
-#include <src/qtfirebase.h>
+#include "qtfirebase.h"
 
 #if defined(qFirebaseAdMob)
 #undef qFirebaseAdMob

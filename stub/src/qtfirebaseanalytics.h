@@ -3,7 +3,7 @@
 
 #ifdef QTFIREBASE_BUILD_ANALYTICS
 
-#include <src/qtfirebase.h>
+#include "qtfirebase.h"
 
 #if defined(qFirebaseAnalytics)
 #undef qFirebaseAnalytics

@@ -46,5 +46,5 @@ DISTFILES += \
 android|ios {
     include(qtfirebase_target.pri)
 } else {
-    include(qtfirebase_dummy.pri)
+    include(stub/qtfirebase_stub.pri)
 }

@@ -3,7 +3,7 @@
 #include <QObject>
 
 #ifdef QTFIREBASE_BUILD_AUTH
-#include <src/qtfirebase.h>
+#include "qtfirebase.h"
 #if defined(qFirebaseAuth)
 #undef qFirebaseAuth
 #endif

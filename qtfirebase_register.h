@@ -8,8 +8,8 @@
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_ANALYTICS)
 
-#if defined(QTFIREBASE_FAKE_BUILD)
-#include "fake/src/qtfirebaseanalytics.h"
+#if defined(QTFIREBASE_STUB_BUILD)
+#include "stub/src/qtfirebaseanalytics.h"
 #else
 #include "src/qtfirebaseanalytics.h"
 #endif
@@ -18,8 +18,8 @@
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_MESSAGING)
 
-#if defined(QTFIREBASE_FAKE_BUILD)
-#include "fake/src/qtfirebasemessaging.h"
+#if defined(QTFIREBASE_STUB_BUILD)
+#include "stub/src/qtfirebasemessaging.h"
 #else
 #include "src/qtfirebasemessaging.h"
 #endif
@@ -28,8 +28,8 @@
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_ADMOB)
 
-#if defined(QTFIREBASE_FAKE_BUILD)
-#include "fake/src/qtfirebaseadmob.h"
+#if defined(QTFIREBASE_STUB_BUILD)
+#include "stub/src/qtfirebaseadmob.h"
 #else
 #include "src/qtfirebaseadmob.h"
 #endif
@@ -39,8 +39,8 @@
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
 
-#if defined(QTFIREBASE_FAKE_BUILD)
-#include "fake/src/qtfirebaseremoteconfig.h"
+#if defined(QTFIREBASE_STUB_BUILD)
+#include "stub/src/qtfirebaseremoteconfig.h"
 #else
 #include "src/qtfirebaseremoteconfig.h"
 #endif
@@ -50,8 +50,8 @@
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_AUTH)
 
-#if defined(QTFIREBASE_FAKE_BUILD)
-#include "fake/src/qtfirebaseauth.h"
+#if defined(QTFIREBASE_STUB_BUILD)
+#include "stub/src/qtfirebaseauth.h"
 #else
 #include "src/qtfirebaseauth.h"
 #endif
@@ -61,8 +61,8 @@
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_DATABASE)
 
-#if defined(QTFIREBASE_FAKE_BUILD)
-#include "fake/src/qtfirebasedatabase.h"
+#if defined(QTFIREBASE_STUB_BUILD)
+#include "stub/src/qtfirebasedatabase.h"
 #else
 #include "src/qtfirebasedatabase.h"
 #endif
