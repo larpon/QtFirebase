@@ -30,41 +30,23 @@ Cloud Messaging	          |libmessaging.a         |✓|✓|[Isy](https://github.
 Remote Config             |libremote_config.a     |✓|✓|[greenfield932](https://github.com/greenfield932)
 ~~Cloud Storage~~	        |~~libstorage.a~~       |in progress |:wrench: |[Furkanzmc](https://github.com/Furkanzmc)
 
-Please note that Native Express ads are now deprecated. `QtFirebaseAdMobNativeExpressAd` is therefore removed in commit [4e217cc](https://github.com/Larpon/QtFirebase/commit/4e217cc5ae4270631c8f98d1cce94c8b849b1f08).
-
-## Contributors
-Without [contributions from these good people](https://github.com/Larpon/QtFirebase/pulls?q=is%3Apr+is%3Aclosed) this project would not exist.
-
-[Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder, Base, AdMob, Analytics),
-[greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
-[Isy](https://github.com/isipisi281) (Cloud Messaging, Auth, Misc.),
-[Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.),
-[li3p](https://github.com/li3p) (Bugs, Misc.),
-[morebest](https://github.com/morebest) (Bugs, Misc.)
-[guillaume charbonnier](https://github.com/gcharbonnier) (Auth)
+Please note that Native Express ads are now deprecated.
+`QtFirebaseAdMobNativeExpressAd` is therefore removed in commit [4e217cc](https://github.com/Larpon/QtFirebase/commit/4e217cc5ae4270631c8f98d1cce94c8b849b1f08).
 
 ## Tested Firebase C++ SDK versions
 **Base, AdMob, Analytics**
-Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be8328a063956c2d2139fa9ab7152d955cc2)
-* v2.1.0
-* v2.1.1
-* v2.1.2
+Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be8328a063956c2d2139fa9ab7152d955cc2):
+`v2.1.0`, `v2.1.1`, `v2.1.2`
 
 **Base, AdMob, Analytics, RemoteConfig**
-* v3.1.0
-* v4.0.1
+`v3.1.0`, `v4.0.1`
 
 **Base, AdMob, Analytics, RemoteConfig, Cloud Messaging**
-* v4.0.3
+`v4.0.3`
 
 **Base, AdMob, Analytics, RemoteConfig, Cloud Messaging, Authentication, Realtime Database**
-* v4.1.0
-* v4.2.0
-* v4.5.0 **NOTE** Native Express ads are deprecated from this release
-* v4.5.1
-* v5.0.0
-* v5.1.1
-* v5.3.0
+`v4.1.0`, `v4.2.0`, `v4.5.0` (**NOTE** Native Express ads are deprecated from this release)
+`v4.5.1`, `v5.0.0`, `v5.1.1`, `v5.3.0`
 
 We recommend you build against the latest version of the Firebase C++ SDK.
 
@@ -110,3 +92,14 @@ The following is a list of software that uses QtFirebase
 * Scoreboard Basketball (Scoreboard for basketball, [Android](https://play.google.com/store/apps/details?id=com.alexodus.scorebkfree), [iOS](https://itunes.apple.com/us/app/my-scoreboard-basketball/id1235460810?mt=8))
 * [Pico Islands](https://play.google.com/store/apps/details?id=de.bitspree.pico.islands)
 * \<your awesome project here\>
+
+# Contributors
+Without [contributions from all these good people](https://github.com/Larpon/QtFirebase/pulls?q=is%3Apr+is%3Aclosed) this project would not exist.
+
+[Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder, Base, AdMob, Analytics),
+[greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
+[Isy](https://github.com/isipisi281) (Cloud Messaging, Auth, Misc.),
+[Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.),
+[li3p](https://github.com/li3p) (Bugs, Misc.),
+[morebest](https://github.com/morebest) (Bugs, Misc.)
+[guillaume charbonnier](https://github.com/gcharbonnier) (Auth) ... and many more
