@@ -77,11 +77,11 @@ When you encounter bugs; Please see if they are known issues [here](https://gith
 # Setup
 For a working and up-to-date example please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README.
 
-Please see [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) for instructions on how to set up QtFirebase in your Qt Creator project.
+Please see [SETUP.md](docs/SETUP.md) for instructions on how to set up QtFirebase in your Qt Creator project.
 
 # Examples
 Please look at the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) repository.
-In [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) you will find details on what to add to your project files (gradle.build, Info.plist, etc.).
+In [SETUP.md](docs/SETUP.md) you will find details on what to add to your project files (gradle.build, Info.plist, etc.).
 
 # Documentation
 Please see comments and usecases in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) project
