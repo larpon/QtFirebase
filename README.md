@@ -36,15 +36,19 @@ Please note that Native Express ads are now deprecated.
 ## Tested Firebase C++ SDK versions
 **Base, AdMob, Analytics**
 Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be8328a063956c2d2139fa9ab7152d955cc2):
+
 `v2.1.0`, `v2.1.1`, `v2.1.2`
 
 **Base, AdMob, Analytics, RemoteConfig**
+
 `v3.1.0`, `v4.0.1`
 
 **Base, AdMob, Analytics, RemoteConfig, Cloud Messaging**
+
 `v4.0.3`
 
 **Base, AdMob, Analytics, RemoteConfig, Cloud Messaging, Authentication, Realtime Database**
+
 `v4.1.0`, `v4.2.0`, `v4.5.0` (**NOTE** Native Express ads are deprecated from this release)
 `v4.5.1`, `v5.0.0`, `v5.1.1`, `v5.3.0`
 
