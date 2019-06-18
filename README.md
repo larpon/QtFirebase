@@ -24,7 +24,6 @@ AdMob                     |libadmob.a             |✓|✓|[Lars Pontoppidan](ht
 Analytics                 |libanalytics.a         |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
 Authentication	          |libauth.a              |Partial |Partial |[Isy](https://github.com/isipisi281)
 Realtime Database	        |libdatabase.a          |Partial |Partial |[greenfield932](https://github.com/greenfield932)
-~~Invites~~               |~~libinvites.a~~       | | |
 ~~Dynamic Links~~       	|~~libdynamic_links.a~~ | | |
 Cloud Messaging	          |libmessaging.a         |✓|✓|[Isy](https://github.com/isipisi281)
 Remote Config             |libremote_config.a     |✓|✓|[greenfield932](https://github.com/greenfield932)
@@ -49,10 +48,13 @@ Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be832
 
 **Base, AdMob, Analytics, RemoteConfig, Cloud Messaging, Authentication, Realtime Database**
 
-`v4.1.0`, `v4.2.0`, `v4.5.0` (**NOTE** Native Express ads are deprecated from this release)
-`v4.5.1`, `v5.0.0`, `v5.1.1`, `v5.3.0`, `6.1.0`
+`v4.1.0`, `v4.2.0`, `v4.5.0`, `v4.5.1`, `v5.0.0`, `v5.1.1`, `v5.3.0`, `6.1.0`
 
 We recommend you build against the latest version of the Firebase C++ SDK.
+
+Version notes
+* `v4.5.0` (**NOTE** Native Express ads are deprecated and removed)
+* `v6.0.0` (**NOTE** Invites are removed)
 
 ## Stability
 The Firebase C++ SDK has (or has had) a lot of stability issues - which QtFirebase does its best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
