@@ -50,7 +50,7 @@ Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be832
 **Base, AdMob, Analytics, RemoteConfig, Cloud Messaging, Authentication, Realtime Database**
 
 `v4.1.0`, `v4.2.0`, `v4.5.0` (**NOTE** Native Express ads are deprecated from this release)
-`v4.5.1`, `v5.0.0`, `v5.1.1`, `v5.3.0`
+`v4.5.1`, `v5.0.0`, `v5.1.1`, `v5.3.0`, `6.1.0`
 
 We recommend you build against the latest version of the Firebase C++ SDK.
 
