@@ -182,7 +182,7 @@ QVariant QtFirebaseService::fromFirebaseVariant(const firebase::Variant &v)
         case firebase::Variant::kTypeNull:
             return QVariant();
         case firebase::Variant::kTypeInt64:
-            return QVariant(v.int64_value());
+            return QVariant(static_cast<qint64> (v.int64_value()));
         case firebase::Variant::kTypeDouble:
             return QVariant(v.double_value());
         case firebase::Variant::kTypeBool:
