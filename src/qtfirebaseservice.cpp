@@ -7,7 +7,7 @@ using namespace std;
 //For debug purposes
 bool simpleQtType(const QVariant& v)
 {
-    QSet<int> simpleTypes;
+    QSet<QVariant::Type> simpleTypes;
     simpleTypes<<QVariant::Bool<<QVariant::Int<<QVariant::UInt<<QVariant::LongLong<<QVariant::ULongLong
              <<QVariant::Double<<QVariant::String<<QVariant::ByteArray;
     return simpleTypes.contains(v.type());
@@ -167,7 +167,7 @@ QtFirebaseService::QtFirebaseService(QObject* parent):
     _ready(false),
     _initializing(false)
 {
-    __QTFIREBASE_ID = QString().sprintf("%8p", this);
+    __QTFIREBASE_ID = QString().sprintf("%8p", static_cast<void*> (this));
 }
 
 bool QtFirebaseService::ready() const
