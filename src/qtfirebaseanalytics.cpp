@@ -148,9 +148,9 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap &bundl
     }
 
     qDebug() << this << "::logEvent" << "logging" << "bundle" << name;
-    analytics::LogEvent(name.toUtf8().constData(), parameters, bundle.size());
+    analytics::LogEvent(name.toUtf8().constData(), parameters, static_cast<size_t>(bundle.size()));
     delete[] parameters;
-    parameters = 0;
+    parameters = nullptr;
 }
 
 QVariantList QtFirebaseAnalytics::userProperties() const
@@ -233,7 +233,7 @@ void QtFirebaseAnalytics::unsetUserId()
 
     if(!_userId.isEmpty()) {
         _userId.clear();
-        analytics::SetUserId(NULL);
+        analytics::SetUserId(nullptr);
         emit userIdChanged();
     }
 }
