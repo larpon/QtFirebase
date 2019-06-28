@@ -223,11 +223,11 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
             }
             else if(value.type() == QVariant::LongLong)
             {
-                updatedParameters[it.key()] = remote_config::GetLong(it.key().toUtf8().constData());
+                updatedParameters[it.key()] = static_cast<qint64> ( remote_config::GetLong(it.key().toUtf8().constData()) );
             }
             else if(value.type() == QVariant::Int)
             {
-                updatedParameters[it.key()] = remote_config::GetLong(it.key().toUtf8().constData());
+                updatedParameters[it.key()] = static_cast<qint64> ( remote_config::GetLong(it.key().toUtf8().constData()) );
             }
             else if(value.type() == QVariant::Double)
             {
@@ -333,7 +333,7 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
         }
         else if(value.type() == QVariant::LongLong)
         {
-            defaults[index] = remote_config::ConfigKeyValueVariant{key, value.toLongLong()};
+            defaults[index] = remote_config::ConfigKeyValueVariant{key, static_cast<int64_t> (value.toLongLong() ) };
         }
         else if(value.type() == QVariant::Int)
         {

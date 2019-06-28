@@ -16,7 +16,7 @@ bool simpleQtType(const QVariant& v)
 //For debug purposes
 bool simpleFbType(const firebase::Variant& v)
 {
-    QSet<int> simpleTypes;
+    QSet<firebase::Variant::Type> simpleTypes;
     simpleTypes<<firebase::Variant::kTypeBool
                <<firebase::Variant::kTypeDouble
                <<firebase::Variant::kTypeInt64
