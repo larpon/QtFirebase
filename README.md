@@ -29,8 +29,6 @@ Cloud Messaging	          |libmessaging.a         |✓|✓|[Isy](https://github.
 Remote Config             |libremote_config.a     |✓|✓|[greenfield932](https://github.com/greenfield932)
 ~~Cloud Storage~~	        |~~libstorage.a~~       |in progress |:wrench: |[Furkanzmc](https://github.com/Furkanzmc)
 
-Please note that Native Express ads are now deprecated.
-`QtFirebaseAdMobNativeExpressAd` is therefore removed in commit [4e217cc](https://github.com/Larpon/QtFirebase/commit/4e217cc5ae4270631c8f98d1cce94c8b849b1f08).
 
 ## Tested Firebase C++ SDK versions
 **Base, AdMob, Analytics**
@@ -52,14 +50,7 @@ Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be832
 
 We recommend you build against the latest version of the Firebase C++ SDK.
 
-Version notes
-* `v4.5.0` (**NOTE** Native Express ads are deprecated and removed)
-* `v6.0.0` (**NOTE** Invites are removed)
-
-## Stability
-The Firebase C++ SDK has (or has had) a lot of stability issues - which QtFirebase does its best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
-Please use the latest SDK version to get the latest fixes.
-
+# Bugs
 When you encounter bugs; Please see if they are known issues [here](https://github.com/firebase/quickstart-cpp/issues) or [here](https://github.com/Larpon/QtFirebase/issues) - before reporting
 
 # Setup
@@ -88,6 +79,21 @@ Possible ways of giving support
 Possible ways of being really awesome
 * Open source your own Qt/QML projects
 * Be nice (it's really that simple)
+
+# Notes
+
+## Stability
+The Firebase C++ SDK has (or has had) a lot of stability issues - which QtFirebase does its best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
+Please use the latest SDK version to get the latest fixes.
+
+## Versions
+
+Version `v4.5.0`:
+Native Express ads are deprecated and removed from Firebase in this release and forward.
+Therefore `QtFirebaseAdMobNativeExpressAd` is removed in commit [4e217cc](https://github.com/Larpon/QtFirebase/commit/4e217cc5ae4270631c8f98d1cce94c8b849b1f08).
+
+Version `v6.0.0`:
+Invites are removed from Firebase.
 
 # In the wild
 The following is a list of software that uses QtFirebase
