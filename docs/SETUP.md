@@ -85,7 +85,7 @@ include(/path/to/QtFirebase/qtfirebase.pri)
 ([Example](https://github.com/Larpon/QtFirebaseExample/blob/cc190b/App/App.pro#L93-L94))
 
 ## Note on building
-If you're planing on compiling QtFirebase as part of a library in your project, please be aware that QtFirebase in this case will **omit** registering of it's QML types. This is due to how [Q_COREAPP_STARTUP_FUNCTION](https://doc.qt.io/qt-5/qcoreapplication.html#Q_COREAPP_STARTUP_FUNCTION) works. So for auto registering of QML QtFirebase need to be build as an app. Otherwise you must [register the types manually](https://github.com/Larpon/QtFirebase/blob/2ba1c1e4d7cf174aad2108bcdf19c29acdcf6610/qtfirebase_register.h#L79-L113)
+If you're planing on compiling QtFirebase as part of a library in your project, please be aware that QtFirebase in this case will **omit** registering of it's QML types. This is due to how [Q_COREAPP_STARTUP_FUNCTION](https://doc.qt.io/qt-5/qcoreapplication.html#Q_COREAPP_STARTUP_FUNCTION) works. So for auto registering of QML QtFirebase need to be [build as an app](https://github.com/Larpon/QtFirebaseExample/blob/ada77a8b0cde17f8da8df89015bf111ae2c1f328/App/App.pro#L1). Otherwise you must [register the types manually](https://github.com/Larpon/QtFirebase/blob/2ba1c1e4d7cf174aad2108bcdf19c29acdcf6610/qtfirebase_register.h#L79-L113)
 
 ## Desktop specific setup
 Currently we haven't tested the parts of Firebase C++ SDK that have desktop support.
