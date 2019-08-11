@@ -1,4 +1,4 @@
-<img src="logo.png" align="right" />
+<img src="docs/img/logo.png" align="right" />
 
 # QtFirebase
 An effort to bring the Firebase C++ API to Qt 5
@@ -24,57 +24,43 @@ AdMob                     |libadmob.a             |✓|✓|[Lars Pontoppidan](ht
 Analytics                 |libanalytics.a         |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
 Authentication	          |libauth.a              |Partial |Partial |[Isy](https://github.com/isipisi281)
 Realtime Database	        |libdatabase.a          |Partial |Partial |[greenfield932](https://github.com/greenfield932)
-~~Invites~~               |~~libinvites.a~~       | | |
 ~~Dynamic Links~~       	|~~libdynamic_links.a~~ | | |
 Cloud Messaging	          |libmessaging.a         |✓|✓|[Isy](https://github.com/isipisi281)
 Remote Config             |libremote_config.a     |✓|✓|[greenfield932](https://github.com/greenfield932)
 ~~Cloud Storage~~	        |~~libstorage.a~~       |in progress |:wrench: |[Furkanzmc](https://github.com/Furkanzmc)
 
-## Contributors
-Without [contributions](https://github.com/Larpon/QtFirebase/pulls?q=is%3Apr+is%3Aclosed) from these good people this project would not exist.
-
-[Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder, Base, AdMob, Analytics),
-[greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
-[Isy](https://github.com/isipisi281) (Cloud Messaging, Auth, Misc.),
-[Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.),
-[li3p](https://github.com/li3p) (Bugs, Misc.),
-[morebest](https://github.com/morebest) (Bugs, Misc.)
-[guillaume charbonnier](https://github.com/gcharbonnier) (Auth)
 
 ## Tested Firebase C++ SDK versions
 **Base, AdMob, Analytics**
-Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be8328a063956c2d2139fa9ab7152d955cc2)
-* v2.1.0
-* v2.1.1
-* v2.1.2
+Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be8328a063956c2d2139fa9ab7152d955cc2):
+
+`v2.1.0`, `v2.1.1`, `v2.1.2`
 
 **Base, AdMob, Analytics, RemoteConfig**
-* v3.1.0
-* v4.0.1
+
+`v3.1.0`, `v4.0.1`
 
 **Base, AdMob, Analytics, RemoteConfig, Cloud Messaging**
-* v4.0.3
+
+`v4.0.3`
 
 **Base, AdMob, Analytics, RemoteConfig, Cloud Messaging, Authentication, Realtime Database**
-* v4.1.0
-* v4.2.0
+
+`v4.1.0`, `v4.2.0`, `v4.5.0`, `v4.5.1`, `v5.0.0`, `v5.1.1`, `v5.3.0`, `6.1.0`
 
 We recommend you build against the latest version of the Firebase C++ SDK.
 
-## Stability
-The Firebase C++ SDK has (or has had) a lot of stability issues - which QtFirebase does its best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
-Please use the latest SDK version to get the latest fixes.
-
+# Bugs
 When you encounter bugs; Please see if they are known issues [here](https://github.com/firebase/quickstart-cpp/issues) or [here](https://github.com/Larpon/QtFirebase/issues) - before reporting
 
 # Setup
 For a working and up-to-date example please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README.
 
-Please see [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) for instructions on how to set up QtFirebase in your Qt Creator project.
+Please see [SETUP.md](docs/SETUP.md) for instructions on how to set up QtFirebase in your Qt Creator project.
 
 # Examples
 Please look at the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) repository.
-In [SETUP.md](https://github.com/Larpon/QtFirebase/blob/master/SETUP.md) you will find details on what to add to your project files (gradle.build, Info.plist, etc.).
+In [SETUP.md](docs/SETUP.md) you will find details on what to add to your project files (gradle.build, Info.plist, etc.).
 
 # Documentation
 Please see comments and usecases in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) project
@@ -94,6 +80,21 @@ Possible ways of being really awesome
 * Open source your own Qt/QML projects
 * Be nice (it's really that simple)
 
+# Notes
+
+## Stability
+The Firebase C++ SDK has (or has had) a lot of stability issues - which QtFirebase does its best to work around by wrapping the API into more Qt/C++ friendly classes that prevent some of the bugs and crashes found so far.
+Please use the latest SDK version to get the latest fixes.
+
+## Versions
+
+Version `v4.5.0`:
+Native Express ads are deprecated and removed from Firebase in this release and forward.
+Therefore `QtFirebaseAdMobNativeExpressAd` is removed in commit [4e217cc](https://github.com/Larpon/QtFirebase/commit/4e217cc5ae4270631c8f98d1cce94c8b849b1f08).
+
+Version `v6.0.0`:
+Invites are removed from Firebase.
+
 # In the wild
 The following is a list of software that uses QtFirebase
 * [Hammer Bees](http://blackgrain.dk/games/hammerbees/) (Casual game, [Android](https://play.google.com/store/apps/details?id=com.bitkompot.android.hammerbees.ad), [iOS](https://itunes.apple.com/us/app/hammer-bees-free/id1164069527?ls=1&mt=8))
@@ -101,4 +102,16 @@ The following is a list of software that uses QtFirebase
 * [Spin The Wall](https://play.google.com/store/apps/details?id=com.iceball.spinthewall)
 * [CrackWord](https://play.google.com/store/apps/details?id=com.reddeer.crackword)
 * Scoreboard Basketball (Scoreboard for basketball, [Android](https://play.google.com/store/apps/details?id=com.alexodus.scorebkfree), [iOS](https://itunes.apple.com/us/app/my-scoreboard-basketball/id1235460810?mt=8))
+* [Pico Islands](https://play.google.com/store/apps/details?id=de.bitspree.pico.islands)
 * \<your awesome project here\>
+
+# Contributors
+Without [contributions from all these good people](https://github.com/Larpon/QtFirebase/pulls?q=is%3Apr+is%3Aclosed) this project would not exist.
+
+[Lars Pontoppidan](https://github.com/Larpon) (Maintainer, project founder, Base, AdMob, Analytics),
+[greenfield932](https://github.com/greenfield932) (Remote Config, Misc.),
+[Isy](https://github.com/isipisi281) (Cloud Messaging, Auth, Misc.),
+[Andrew Dolby (adolby)](https://github.com/adolby) (Cloud Messaging, Misc.),
+[li3p](https://github.com/li3p) (Bugs, Misc.),
+[morebest](https://github.com/morebest) (Bugs, Misc.)
+[guillaume charbonnier](https://github.com/gcharbonnier) (Auth) ... and many more

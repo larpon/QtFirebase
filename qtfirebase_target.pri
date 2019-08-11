@@ -7,6 +7,8 @@ isEmpty(QTFIREBASE_SDK_PATH){
     message("Using QTFIREBASE_SDK_PATH ($$QTFIREBASE_SDK_PATH)")
 }
 
+QTFIREBASE_SDK_LIBS_PREFIX = "firebase_"
+
 QML_IMPORT_PATH += $$PWD
 
 INCLUDEPATH += $$PWD
@@ -54,7 +56,20 @@ android: {
     message("QtFirebase Android base")
     QT += androidextras gui-private
 
-    QTFIREBASE_SDK_LIBS_PATH = $$QTFIREBASE_SDK_PATH/libs/android/$$ANDROID_TARGET_ARCH/gnustl
+    # Specify the STL variant that is to be used in the app .pro file with the $$QTFIREBASE_STL_VARIANT variable
+    # c++:      LLVM libc++ runtime
+    # gnustl:   GNU STL
+    # stlport:  STLPort runtime
+    android-clang {
+        QTFIREBASE_STL_VARIANT = c++
+    }
+
+    isEmpty(QTFIREBASE_STL_VARIANT){
+        QTFIREBASE_STL_VARIANT = gnustl
+    }
+
+    message("Using QTFIREBASE_STL_VARIANT ($$QTFIREBASE_STL_VARIANT)")
+    QTFIREBASE_SDK_LIBS_PATH = $$QTFIREBASE_SDK_PATH/libs/android/$$ANDROID_TARGET_ARCH/$$QTFIREBASE_STL_VARIANT
 
     DEPENDPATH += $$QTFIREBASE_SDK_LIBS_PATH
 }
@@ -103,6 +118,7 @@ ios: {
 
     INCLUDEPATH += \
         $$QTFIREBASE_SDK_PATH/include \
+        $$QTFIREBASE_FRAMEWORKS_ROOT/../ \
         $$PWD/src \
         $$PWD/src/ios \
         \
@@ -110,8 +126,8 @@ ios: {
 
 # NOTE the order of linking is important!
 
-PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/libapp.a
-LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lapp
+PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/lib$${QTFIREBASE_SDK_LIBS_PREFIX}app.a
+LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -l$${QTFIREBASE_SDK_LIBS_PREFIX}app
 
 # AdMob
 contains(DEFINES,QTFIREBASE_BUILD_ADMOB) {
@@ -129,8 +145,8 @@ contains(DEFINES,QTFIREBASE_BUILD_ADMOB) {
     HEADERS += $$PWD/src/qtfirebaseadmob.h
     SOURCES += $$PWD/src/qtfirebaseadmob.cpp
 
-    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/libadmob.a
-    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -ladmob
+    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/lib$${QTFIREBASE_SDK_LIBS_PREFIX}admob.a
+    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -l$${QTFIREBASE_SDK_LIBS_PREFIX}admob
 }
 
 # Remote Config
@@ -149,8 +165,8 @@ contains(DEFINES,QTFIREBASE_BUILD_REMOTE_CONFIG) {
     HEADERS += $$PWD/src/qtfirebaseremoteconfig.h
     SOURCES += $$PWD/src/qtfirebaseremoteconfig.cpp
 
-    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/libremote_config.a
-    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lremote_config
+    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/lib$${QTFIREBASE_SDK_LIBS_PREFIX}remote_config.a
+    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -l$${QTFIREBASE_SDK_LIBS_PREFIX}remote_config
 }
 
 # Messaging
@@ -158,8 +174,10 @@ contains(DEFINES,QTFIREBASE_BUILD_MESSAGING) {
     message( "QtFirebase including Messaging" )
 
     ios: {
-        message( "QtFirebase Messaging requires iOS v10.x to build. Setting QMAKE_IOS_DEPLOYMENT_TARGET = 10.0" )
-        QMAKE_IOS_DEPLOYMENT_TARGET = 10.0
+        message( "QtFirebase Messaging requires iOS v10.x+ to build." )
+        message( "Remember to set QMAKE_IOS_DEPLOYMENT_TARGET in your .pro" )
+        # Removed due to Qt 5.12 - see https://github.com/Larpon/QtFirebase/issues/106
+        # QMAKE_IOS_DEPLOYMENT_TARGET = 10.0
 
         LIBS += \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Messaging \
@@ -172,8 +190,8 @@ contains(DEFINES,QTFIREBASE_BUILD_MESSAGING) {
     HEADERS += $$PWD/src/qtfirebasemessaging.h
     SOURCES += $$PWD/src/qtfirebasemessaging.cpp
 
-    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/libmessaging.a
-    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lmessaging
+    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/lib$${QTFIREBASE_SDK_LIBS_PREFIX}messaging.a
+    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -l$${QTFIREBASE_SDK_LIBS_PREFIX}messaging
 }
 
 # Analytics
@@ -182,13 +200,14 @@ contains(DEFINES,QTFIREBASE_BUILD_ANALYTICS) {
 
     ios: {
         LIBS += \
+            -framework StoreKit \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Analytics \
             -framework FirebaseAnalytics \
             -framework FirebaseCore \
             -framework FirebaseCoreDiagnostics \
             -framework FirebaseInstanceID \
-            -framework FirebaseNanoPB \
-            -framework GoogleToolboxForMac \
+            -framework GoogleAppMeasurement \
+            -framework GoogleUtilities \
             -framework nanopb \
             \
     }
@@ -196,8 +215,8 @@ contains(DEFINES,QTFIREBASE_BUILD_ANALYTICS) {
     HEADERS += $$PWD/src/qtfirebaseanalytics.h
     SOURCES += $$PWD/src/qtfirebaseanalytics.cpp
 
-    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/libanalytics.a
-    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lanalytics
+    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/lib$${QTFIREBASE_SDK_LIBS_PREFIX}analytics.a
+    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -l$${QTFIREBASE_SDK_LIBS_PREFIX}analytics
 }
 
 # Auth
@@ -216,8 +235,8 @@ contains(DEFINES,QTFIREBASE_BUILD_AUTH) {
     HEADERS += $$PWD/src/qtfirebaseauth.h
     SOURCES += $$PWD/src/qtfirebaseauth.cpp
 
-    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/libauth.a
-    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lauth
+    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/lib$${QTFIREBASE_SDK_LIBS_PREFIX}auth.a
+    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -l$${QTFIREBASE_SDK_LIBS_PREFIX}auth
 }
 
 
@@ -237,9 +256,8 @@ contains(DEFINES,QTFIREBASE_BUILD_DATABASE) {
     HEADERS += $$PWD/src/qtfirebasedatabase.h
     SOURCES += $$PWD/src/qtfirebasedatabase.cpp
 
-    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/libdatabase.a
-    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -ldatabase
+    PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/lib$${QTFIREBASE_SDK_LIBS_PREFIX}database.a
+    LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -l$${QTFIREBASE_SDK_LIBS_PREFIX}database
 }
 
-LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -lapp
-
+LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -l$${QTFIREBASE_SDK_LIBS_PREFIX}app

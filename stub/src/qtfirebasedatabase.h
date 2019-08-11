@@ -4,15 +4,15 @@
 #include <QVariant>
 
 #ifdef QTFIREBASE_BUILD_DATABASE
-#include <src/qtfirebase.h>
-#include <src/qtfirebaseservice.h>
+#include "qtfirebase.h"
+#include "qtfirebaseservice.h"
 #if defined(qFirebaseDatabase)
 #undef qFirebaseDatabase
 #endif
 #define qFirebaseDatabase (static_cast<QtFirebaseDatabase*>(QtFirebaseDatabase::instance()))
 
 class QtFirebaseDatabaseRequest;
-class QtFirebaseDatabase : public QObject
+class QtFirebaseDatabase : public QtFirebaseService
 {
     Q_OBJECT
     typedef QSharedPointer<QtFirebaseDatabase> Ptr;

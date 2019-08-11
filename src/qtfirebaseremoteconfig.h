@@ -21,10 +21,10 @@ class QtFirebaseRemoteConfig : public QObject
     Q_OBJECT
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
     Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
-    Q_PROPERTY(long long cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
+    Q_PROPERTY(quint64 cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
 
 public:
-    explicit QtFirebaseRemoteConfig(QObject *parent = 0);
+    explicit QtFirebaseRemoteConfig(QObject *parent = nullptr);
     ~QtFirebaseRemoteConfig();
 
     enum FetchFailure
@@ -36,8 +36,8 @@ public:
     Q_ENUM(FetchFailure)
 
     static QtFirebaseRemoteConfig *instance() {
-        if(self == 0) {
-            self = new QtFirebaseRemoteConfig(0);
+        if(self == nullptr) {
+            self = new QtFirebaseRemoteConfig(nullptr);
             qDebug() << self << "::instance" << "singleton";
         }
         return self;
@@ -49,8 +49,8 @@ public:
     QVariantMap parameters() const;
     void setParameters(const QVariantMap& map);
 
-    long long cacheExpirationTime() const;
-    void setCacheExpirationTime(long long timeMs);
+    quint64 cacheExpirationTime() const;
+    void setCacheExpirationTime(quint64 timeMs);
 
 public slots:
     void addParameter(const QString &name, long long defaultValue);
@@ -84,7 +84,7 @@ private slots:
 
 private:
     void setReady(bool ready);
-    void fetch(long long cacheExpirationInSeconds);
+    void fetch(quint64 cacheExpirationInSeconds);
 
     static QtFirebaseRemoteConfig *self;
     Q_DISABLE_COPY(QtFirebaseRemoteConfig)
@@ -94,7 +94,8 @@ private:
     bool _ready;
     bool _initializing;
     QVariantMap _parameters;
-    long long _cacheExpirationTime;
+    quint64 _cacheExpirationTime;
+    ::firebase::ModuleInitializer _initializer;
 
     QString _appId;
     QByteArray __appIdByteArray;

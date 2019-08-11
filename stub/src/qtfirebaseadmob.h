@@ -3,7 +3,7 @@
 
 #ifdef QTFIREBASE_BUILD_ADMOB
 
-#include <src/qtfirebase.h>
+#include "qtfirebase.h"
 
 #if defined(qFirebaseAdMob)
 #undef qFirebaseAdMob
@@ -135,10 +135,10 @@ signals:
 };
 
 /*
- * AdMobBanner
+ * AdMobBase
  */
 
-class QtFirebaseAdMobBanner : public QObject
+class QtFirebaseAdMobBase : public QObject
 {
     Q_OBJECT
 
@@ -149,12 +149,55 @@ class QtFirebaseAdMobBanner : public QObject
 
     Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
 
+    Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
+
+protected:
+    QtFirebaseAdMobBase(QObject* parent = 0)  { Q_UNUSED(parent); }
+    virtual ~QtFirebaseAdMobBase(){}
+
+public:
+    bool ready() { return false; }
+    void setReady(bool ready) { Q_UNUSED(ready); }
+
+    bool loaded() { return false; }
+    void setLoaded(bool loaded) { Q_UNUSED(loaded); }
+
+    QString adUnitId() { return QStringLiteral(""); }
+    void setAdUnitId(const QString &adUnitId) { Q_UNUSED(adUnitId); }
+
+    bool visible() { return false; }
+    void setVisible(bool visible) { Q_UNUSED(visible); }
+
+    QtFirebaseAdMobRequest* request()  { return 0; }
+    void setRequest(QtFirebaseAdMobRequest *request) { Q_UNUSED(request); }
+
+signals:
+    void adUnitIdChanged();
+    void error(int code, QString message);
+    void loadedChanged();
+    void loading();
+    void readyChanged();
+    void requestChanged();
+    void visibleChanged();
+
+public slots:
+    virtual void load() {}
+    virtual void show() {}
+
+};
+
+/*
+ * AdMobBanner
+ */
+
+class QtFirebaseAdMobBanner : public QtFirebaseAdMobBase
+{
+    Q_OBJECT
+
     Q_PROPERTY(int x READ getX WRITE setX NOTIFY xChanged)
     Q_PROPERTY(int y READ getY WRITE setY NOTIFY yChanged)
     Q_PROPERTY(int width READ getWidth WRITE setWidth NOTIFY widthChanged)
     Q_PROPERTY(int height READ getHeight WRITE setHeight NOTIFY heightChanged)
-
-    Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 public:
     enum Position
@@ -171,18 +214,6 @@ public:
     QtFirebaseAdMobBanner(QObject* parent = 0) { Q_UNUSED(parent); }
     ~QtFirebaseAdMobBanner() {}
 
-    bool ready() { return false; }
-    void setReady(bool ready) { Q_UNUSED(ready); }
-
-    bool loaded() { return false; }
-    void setLoaded(bool loaded) { Q_UNUSED(loaded); }
-
-    QString adUnitId() { return QStringLiteral(""); }
-    void setAdUnitId(const QString &adUnitId) { Q_UNUSED(adUnitId); }
-
-    bool visible() { return false; }
-    void setVisible(bool visible) { Q_UNUSED(visible); }
-
     int getX() { return 0; }
     void setX(const int &x) { Q_UNUSED(x); }
 
@@ -195,184 +226,49 @@ public:
     int getHeight() { return 0; }
     void setHeight(const int &height) { Q_UNUSED(height); }
 
-    QtFirebaseAdMobRequest* request()  { return 0; }
-    void setRequest(QtFirebaseAdMobRequest *request) { Q_UNUSED(request); }
-
 signals:
-    void readyChanged();
-    void loadedChanged();
-    void adUnitIdChanged();
-
-    void visibleChanged();
     void xChanged();
     void yChanged();
     void widthChanged();
     void heightChanged();
-    void requestChanged();
-
-    void loading();
-
-    void error(int code);
 
 public slots:
-    void load() {}
-    void show() {}
     void hide() {}
     void moveTo(int x, int y) { Q_UNUSED(x); Q_UNUSED(y); }
     void moveTo(int position) { Q_UNUSED(position); }
-};
-
-/*
- * AdMobNativeExpressAd
- */
-class QtFirebaseAdMobNativeExpressAd : public QObject
-{
-    Q_OBJECT
-
-    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
-    Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
-
-    Q_PROPERTY(QString adUnitId READ adUnitId WRITE setAdUnitId NOTIFY adUnitIdChanged)
-
-    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
-
-    Q_PROPERTY(int x READ getX WRITE setX NOTIFY xChanged)
-    Q_PROPERTY(int y READ getY WRITE setY NOTIFY yChanged)
-    Q_PROPERTY(int width READ getWidth WRITE setWidth NOTIFY widthChanged)
-    Q_PROPERTY(int height READ getHeight WRITE setHeight NOTIFY heightChanged)
-
-    Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
-
-public:
-    enum Position
-    {
-        PositionTopCenter,
-        PositionTopLeft,
-        PositionTopRight,
-        PositionBottomCenter,
-        PositionBottomLeft,
-        PositionBottomRight
-    };
-    Q_ENUM(Position)
-
-    QtFirebaseAdMobNativeExpressAd(QObject* parent = 0) { Q_UNUSED(parent); }
-    ~QtFirebaseAdMobNativeExpressAd() {}
-
-    bool ready() { return false; }
-    void setReady(bool ready) { Q_UNUSED(ready); }
-
-    bool loaded() { return false; }
-    void setLoaded(bool loaded) { Q_UNUSED(loaded); }
-
-    QString adUnitId() { return QString(); }
-    void setAdUnitId(const QString &adUnitId) { Q_UNUSED(adUnitId); }
-
-    bool visible() { return false; }
-    void setVisible(bool visible) { Q_UNUSED(visible); }
-
-    int getX() { return 0; }
-    void setX(const int &x) { Q_UNUSED(x); }
-
-    int getY() { return 0; }
-    void setY(const int &y) { Q_UNUSED(y); }
-
-    int getWidth() {return 0; }
-    void setWidth(const int &width) { Q_UNUSED(width); }
-
-    int getHeight() { return 0; }
-    void setHeight(const int &height) { Q_UNUSED(height); }
-
-    QtFirebaseAdMobRequest* request()  { return 0; }
-    void setRequest(QtFirebaseAdMobRequest *request) { Q_UNUSED(request); }
-
-signals:
-    void readyChanged();
-    void loadedChanged();
-    void adUnitIdChanged();
-
-    void visibleChanged();
-    void xChanged();
-    void yChanged();
-    void widthChanged();
-    void heightChanged();
-    void requestChanged();
-
-    void loading();
-
-    void error(int code);
-
-public slots:
-    void load() {}
-    void show() {}
-    void hide() {}
-    void moveTo(int x, int y) { Q_UNUSED(x); Q_UNUSED(y); }
-    void moveTo(int position) { Q_UNUSED(position); }
-
 };
 
 /*
  * AdMobInterstitial
  */
 
-class QtFirebaseAdMobInterstitial : public QObject
+class QtFirebaseAdMobInterstitial : public QtFirebaseAdMobBase
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
-    Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
-
-    Q_PROPERTY(QString adUnitId READ adUnitId WRITE setAdUnitId NOTIFY adUnitIdChanged)
-
-    Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
-
 public:
-    QtFirebaseAdMobInterstitial(QObject* parent = 0) { Q_UNUSED(parent); }
+    enum PresentationState
+    {
+        PresentationStateHidden,
+        PresentationStateCoveringUI
+    };
+    Q_ENUM(PresentationState)
+
+    QtFirebaseAdMobInterstitial(QObject* parent = 0){Q_UNUSED(parent);}
     ~QtFirebaseAdMobInterstitial() {}
 
-    bool ready() { return false; }
-    void setReady(bool ready) { Q_UNUSED(ready); }
-
-    bool loaded() { return false; }
-    void setLoaded(bool loaded) { Q_UNUSED(loaded); }
-
-    QString adUnitId() { return QStringLiteral(""); }
-    void setAdUnitId(const QString &adUnitId) { Q_UNUSED(adUnitId); }
-
-    bool visible() { return false; }
-    void setVisible(bool visible) { Q_UNUSED(visible); }
-
-    QtFirebaseAdMobRequest* request()  { return 0; }
-    void setRequest(QtFirebaseAdMobRequest *request) { Q_UNUSED(request); }
-
 signals:
-    void readyChanged();
-    void loadedChanged();
-    void adUnitIdChanged();
-    void visibleChanged();
-    void error(int code);
     void closed();
-    void loading();
-    void requestChanged();
     void presentationStateChanged(int state);
-
-public slots:
-    void load() {}
-    void show() {}
 };
 
 /*
  * AdMobRewardedVideoAd
  */
 
-class QtFirebaseAdMobRewardedVideoAd : public QObject
+class QtFirebaseAdMobRewardedVideoAd : public QtFirebaseAdMobBase
 {
     Q_OBJECT
-
-    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
-    Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
-    Q_PROPERTY(QString adUnitId READ adUnitId WRITE setAdUnitId NOTIFY adUnitIdChanged)
-    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
-    Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 public:
     enum PresentationState
@@ -385,36 +281,11 @@ public:
     QtFirebaseAdMobRewardedVideoAd(QObject* parent = 0){Q_UNUSED(parent);}
     ~QtFirebaseAdMobRewardedVideoAd(){}
 
-    bool ready()const {return false;}
-    void setReady(bool ready){Q_UNUSED(ready);}
-
-    bool loaded()const {return false;}
-    void setLoaded(bool loaded){Q_UNUSED(loaded);}
-
-    QString adUnitId()const {return QString();}
-    void setAdUnitId(const QString &adUnitId){Q_UNUSED(adUnitId);}
-
-    bool visible() const{return false;}
-    void setVisible(bool visible){Q_UNUSED(visible);}
-
-    QtFirebaseAdMobRequest* request() const{return nullptr;}
-    void setRequest(QtFirebaseAdMobRequest *request){Q_UNUSED(request);}
-
 signals:
-    void readyChanged();
-    void loadedChanged();
-    void adUnitIdChanged();
-    void requestChanged();
-    void loading();
-    void error(int code, QString message);
     void closed();
     void visibleChanged();
     void presentationStateChanged(int state);
     void rewarded(QString type, float value);
-
-public slots:
-    void load(){}
-    void show(){}
 };
 
 #endif // QTFIREBASE_BUILD_ADMOB

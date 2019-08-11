@@ -15,12 +15,12 @@ class QtFirebase : public QObject
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
 
 public:
-    explicit QtFirebase(QObject* parent = 0) { Q_UNUSED(parent); }
+    explicit QtFirebase(QObject* parent = nullptr) { Q_UNUSED(parent); }
     ~QtFirebase() {}
 
     static QtFirebase *instance() {
-        if(self == 0)
-            self = new QtFirebase(0);
+        if(!self)
+            self = new QtFirebase();
         return self;
     }
 

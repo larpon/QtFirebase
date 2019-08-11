@@ -33,15 +33,15 @@ class QtFirebaseMessaging: public QObject, public QQmlParserStatus
     Q_PROPERTY(QString token READ token NOTIFY tokenChanged)
 
 public:
-    explicit QtFirebaseMessaging(QObject* parent = 0);
+    explicit QtFirebaseMessaging(QObject* parent = nullptr);
     ~QtFirebaseMessaging();
 
     void classBegin() override;
     void componentComplete() override;
 
     static QtFirebaseMessaging *instance() {
-        if(self == 0) {
-            self = new QtFirebaseMessaging(0);
+        if(!self) {
+            self = new QtFirebaseMessaging();
             qDebug() << self << "::instance" << "singleton";
         }
         return self;
@@ -53,14 +53,14 @@ public:
     void setReady(bool ready);
 
     QVariantMap data();
-    void setData(QVariantMap data);
+    void setData(const QVariantMap &data);
 
     QString token();
-    void setToken(QString token);
+    void setToken(const QString &token);
 
 private slots:
     void init();
-    void onFutureEvent(QString eventId, firebase::FutureBase future);
+    void onFutureEvent(const QString &eventId, const firebase::FutureBase &future);
     void getMessage();
     void getToken();
 
@@ -94,10 +94,10 @@ public:
     virtual void OnTokenReceived(const char* token) override;
 
     QVariantMap data();
-    void setData(QVariantMap data);
+    void setData(const QVariantMap &data);
 
     QString token();
-    void setToken(QString token);
+    void setToken(const QString &token);
 
 protected:
     void connectNotify(const QMetaMethod &signal) override;

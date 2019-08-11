@@ -3,7 +3,7 @@
 
 #ifdef QTFIREBASE_BUILD_ANALYTICS
 
-#include <src/qtfirebase.h>
+#include "qtfirebase.h"
 
 #if defined(qFirebaseAnalytics)
 #undef qFirebaseAnalytics
@@ -27,12 +27,12 @@ class QtFirebaseAnalytics : public QObject
     Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
     Q_PROPERTY(QVariantList userProperties READ userProperties WRITE setUserProperties NOTIFY userPropertiesChanged)
 public:
-    explicit QtFirebaseAnalytics(QObject* parent = 0) { Q_UNUSED(parent); }
+    explicit QtFirebaseAnalytics(QObject* parent = nullptr) { Q_UNUSED(parent); }
     ~QtFirebaseAnalytics() {}
 
     static QtFirebaseAnalytics *instance() {
-        if(self == 0) {
-            self = new QtFirebaseAnalytics(0);
+        if(!self) {
+            self = new QtFirebaseAnalytics();
         }
         return self;
     }

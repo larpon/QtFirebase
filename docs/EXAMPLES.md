@@ -1,5 +1,5 @@
 # Examples
-The following document assumes that you have a working [QtFirebase setup](https://github.com/Larpon/QtFirebase/SETUP.md)
+The following document assumes that you have a working [QtFirebase setup](SETUP.md)
 
 ## Analytics
 

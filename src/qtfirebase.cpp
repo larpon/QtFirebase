@@ -3,7 +3,7 @@
 #include <QMutableMapIterator>
 #include <QThread>
 
-QtFirebase *QtFirebase::self = 0;
+QtFirebase *QtFirebase::self = nullptr;
 
 QtFirebase::QtFirebase(QObject* parent) : QObject(parent)
 {
@@ -30,13 +30,13 @@ QtFirebase::QtFirebase(QObject* parent) : QObject(parent)
 
 QtFirebase::~QtFirebase()
 {
-    self = 0;
+    self = nullptr;
     //delete _firebaseApp;
 }
 
 bool QtFirebase::checkInstance(const char *function)
 {
-    bool b = (QtFirebase::self != 0);
+    bool b = (QtFirebase::self != nullptr);
     if (!b)
         qWarning("QtFirebase::%s: Please instantiate the QtFirebase object first", function);
     return b;

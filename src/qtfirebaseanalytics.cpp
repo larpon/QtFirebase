@@ -4,11 +4,11 @@
 
 namespace analytics = ::firebase::analytics;
 
-QtFirebaseAnalytics *QtFirebaseAnalytics::self = 0;
+QtFirebaseAnalytics *QtFirebaseAnalytics::self = nullptr;
 
 QtFirebaseAnalytics::QtFirebaseAnalytics(QObject* parent) : QObject(parent)
 {
-    if(self == 0) {
+    if(!self) {
         self = this;
         qDebug() << self << "::QtFirebaseAnalytics" << "singleton";
     }
@@ -30,13 +30,13 @@ QtFirebaseAnalytics::~QtFirebaseAnalytics()
         qDebug() << self << "::~QtFirebaseAnalytics" << "shutting down";
         analytics::Terminate();
         _ready = false;
-        self = 0;
+        self = nullptr;
     }
 }
 
 bool QtFirebaseAnalytics::checkInstance(const char *function)
 {
-    bool b = (QtFirebaseAnalytics::self != 0);
+    bool b = (QtFirebaseAnalytics::self != nullptr);
     if (!b)
         qWarning("QtFirebaseAnalytics::%s: Please instantiate the QtFirebaseAnalytics object first", function);
     return b;
@@ -108,7 +108,7 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QString &parameter
     analytics::LogEvent(name.toUtf8().constData(), parameterName.toUtf8().constData(),parameterValue);
 }
 
-void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap bundle)
+void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap &bundle)
 {
     if(!_ready) {
         qDebug() << this << "::logEvent native part not ready";
@@ -125,7 +125,7 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap bundle
     while (i.hasNext()) {
         i.next();
 
-        keys.append(i.key().toLatin1());
+        keys.append(i.key().toUtf8());
         QString eventKey = i.key();
         QVariant variant = i.value();
 
@@ -136,7 +136,7 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap bundle
             parameters[index] = analytics::Parameter(keys.at(index).constData(),variant.toDouble());
             qDebug() << this << "::logEvent" << "bundle parameter" << eventKey << ":" << variant.toDouble();
         } else if(variant.type() == QVariant::Type(QMetaType::QString)) {
-            strings.append(variant.toString().toLatin1());
+            strings.append(variant.toString().toUtf8());
             parameters[index] = analytics::Parameter(keys.at(index).constData(), strings.at(strings.size()-1).constData());
             qDebug() << this << "::logEvent" << "bundle parameter" << eventKey << ":" << strings.at(strings.size()-1);
         } else {
@@ -148,9 +148,9 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap bundle
     }
 
     qDebug() << this << "::logEvent" << "logging" << "bundle" << name;
-    analytics::LogEvent(name.toUtf8().constData(), parameters, bundle.size());
+    analytics::LogEvent(name.toUtf8().constData(), parameters, static_cast<size_t>(bundle.size()));
     delete[] parameters;
-    parameters = 0;
+    parameters = nullptr;
 }
 
 QVariantList QtFirebaseAnalytics::userProperties() const
@@ -233,7 +233,7 @@ void QtFirebaseAnalytics::unsetUserId()
 
     if(!_userId.isEmpty()) {
         _userId.clear();
-        analytics::SetUserId(NULL);
+        analytics::SetUserId(nullptr);
         emit userIdChanged();
     }
 }
