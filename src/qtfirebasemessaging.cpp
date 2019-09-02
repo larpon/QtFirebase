@@ -146,6 +146,34 @@ void QtFirebaseMessaging::setToken(const QString &token)
     }
 }
 
+void QtFirebaseMessaging::subscribe(const QString &topic)
+{
+    // TODO queue these futures so repeated calls don't get lost
+    auto result = firebase::messaging::Subscribe(topic.toUtf8());
+
+    result.OnCompletion([this, topic](const firebase::FutureBase &completed_future){
+        if(completed_future.error() == firebase::messaging::kErrorNone) {
+            emit subscribed(topic);
+        } else {
+            emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
+        }
+    });
+}
+
+void QtFirebaseMessaging::unsubscribe(const QString &topic)
+{
+    // TODO queue these futures so repeated calls don't get lost
+    auto result = firebase::messaging::Unsubscribe(topic.toUtf8());
+
+    result.OnCompletion([this, topic](const firebase::FutureBase &completed_future){
+        if(completed_future.error() == firebase::messaging::kErrorNone) {
+            emit unsubscribed(topic);
+        } else {
+            emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
+        }
+    });
+}
+
 MessageListener::MessageListener(QObject* parent)
     : QObject(parent)
 {

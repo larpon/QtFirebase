@@ -44,11 +44,21 @@ public:
     QString token() { return QString(); }
     void setToken(QString token) { Q_UNUSED(token); }
 
+    Q_INVOKABLE void subscribe(const QString &topic) { Q_UNUSED(topic); }
+    Q_INVOKABLE void unsubscribe(const QString &topic) { Q_UNUSED(topic); }
+
 signals:
     void readyChanged();
     void dataChanged();
     void tokenChanged();
     void messageReceived();
+
+    void error(int code, QString message);
+
+    // Topic signals
+    void subscribed(const QString &topic);
+    void unsubscribed(const QString &topic);
+
 
 private:
     static QtFirebaseMessaging *self;

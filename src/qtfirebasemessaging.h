@@ -33,6 +33,16 @@ class QtFirebaseMessaging: public QObject, public QQmlParserStatus
     Q_PROPERTY(QString token READ token NOTIFY tokenChanged)
 
 public:
+    enum Error
+    {
+        ErrorNone = firebase::messaging::kErrorNone,
+        ErrorFailedToRegisterForRemoteNotifications = firebase::messaging::kErrorFailedToRegisterForRemoteNotifications,
+        ErrorInvalidTopicName = firebase::messaging::kErrorInvalidTopicName,
+        ErrorNoRegistrationToken = firebase::messaging::kErrorNoRegistrationToken,
+        ErrorUnknown = firebase::messaging::kErrorUnknown
+    };
+    Q_ENUM(Error)
+
     explicit QtFirebaseMessaging(QObject* parent = nullptr);
     ~QtFirebaseMessaging() override;
 
@@ -58,6 +68,10 @@ public:
     QString token();
     void setToken(const QString &token);
 
+    // Topic
+    Q_INVOKABLE void subscribe(const QString &topic);
+    Q_INVOKABLE void unsubscribe(const QString &topic);
+
 private slots:
     void init();
     void onFutureEvent(const QString &eventId, const firebase::FutureBase &future);
@@ -69,6 +83,13 @@ signals:
     void dataChanged();
     void tokenChanged();
     void messageReceived();
+
+    void error(int code, QString message);
+
+    // Topic signals
+    // Valid topic regex: [a-zA-Z0-9-_.~%]{1,900}
+    void subscribed(const QString &topic);
+    void unsubscribed(const QString &topic);
 
 private:
     static QtFirebaseMessaging *self;
