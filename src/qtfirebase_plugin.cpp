@@ -32,7 +32,7 @@ static QObject *QtFirebaseDatabaseProvider(QQmlEngine *engine, QJSEngine *script
 {
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)
-    return qFirebaseDb;
+    return qFirebaseDatabase;
 }
 #endif
 
