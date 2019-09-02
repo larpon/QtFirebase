@@ -75,12 +75,12 @@ public:
     };
     Q_ENUM(ChildDirectedTreatment)
 
-    explicit QtFirebaseAdMob(QObject* parent = 0);
+    explicit QtFirebaseAdMob(QObject* parent = nullptr);
     ~QtFirebaseAdMob();
 
     static QtFirebaseAdMob *instance() {
-        if(self == 0) {
-            self = new QtFirebaseAdMob(0);
+        if(self == nullptr) {
+            self = new QtFirebaseAdMob(nullptr);
             qDebug() << self << "::instance" << "singleton";
         }
         return self;
@@ -138,7 +138,7 @@ class QtFirebaseAdMobRequest : public QObject
     Q_PROPERTY(QVariantList testDevices READ testDevices WRITE setTestDevices NOTIFY testDevicesChanged)
 
 public:
-    QtFirebaseAdMobRequest(QObject* parent = 0);
+    QtFirebaseAdMobRequest(QObject* parent = nullptr);
 
     int gender() const;
     void setGender(int gender);
@@ -210,7 +210,7 @@ class QtFirebaseAdMobBase : public QObject
     Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 protected:
-    QtFirebaseAdMobBase(QObject* parent = 0);
+    QtFirebaseAdMobBase(QObject* parent = nullptr);
     ~QtFirebaseAdMobBase();
 
     virtual firebase::FutureBase initInternal() = 0;
@@ -493,7 +493,7 @@ public:
     };
     Q_ENUM(PresentationState)
 
-    QtFirebaseAdMobInterstitial(QObject* parent = 0);
+    QtFirebaseAdMobInterstitial(QObject* parent = nullptr);
     ~QtFirebaseAdMobInterstitial();
 
     void setVisible(bool visible) override;
@@ -591,8 +591,8 @@ public:
     };
     Q_ENUM(PresentationState)
 
-    QtFirebaseAdMobRewardedVideoAd(QObject* parent = 0);
-    ~QtFirebaseAdMobRewardedVideoAd();
+    QtFirebaseAdMobRewardedVideoAd(QObject* parent = nullptr);
+    ~QtFirebaseAdMobRewardedVideoAd() override;
 
     void setVisible(bool visible) override;
 
