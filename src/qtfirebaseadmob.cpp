@@ -899,6 +899,7 @@ firebase::FutureBase QtFirebaseAdMobBanner::moveToInternal(Position position)
 QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent) : QtFirebaseAdMobBase(parent)
 {
     _interstitialAdListener = nullptr;
+    connect(this, &QtFirebaseAdMobInterstitial::presentationStateChanged, this, &QtFirebaseAdMobInterstitial::onPresentationStateChanged);
 }
 
 QtFirebaseAdMobInterstitial::~QtFirebaseAdMobInterstitial()
@@ -1063,6 +1064,7 @@ void QtFirebaseAdMobInterstitial::show()
 QtFirebaseAdMobRewardedVideoAd::QtFirebaseAdMobRewardedVideoAd(QObject* parent):
     QtFirebaseAdMobBase(parent)
 {
+    connect(this, &QtFirebaseAdMobRewardedVideoAd::presentationStateChanged, this, &QtFirebaseAdMobRewardedVideoAd::onPresentationStateChanged);
 }
 
 QtFirebaseAdMobRewardedVideoAd::~QtFirebaseAdMobRewardedVideoAd()
@@ -1236,13 +1238,21 @@ void QtFirebaseAdMobRewardedVideoAd::OnPresentationStateChanged(firebase::admob:
     {
         qDebug() << this << "kPresentationStateVideoHasStarted";
     }
+    else if(state == firebase::admob::rewarded_video::kPresentationStateVideoHasCompleted)
+    {
+        qDebug() << this << "kPresentationStateVideoHasCompleted";
+    }
 
     int pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
 
     if(state == firebase::admob::rewarded_video::kPresentationStateHidden) {
-        pState = QtFirebaseAdMobInterstitial::PresentationStateHidden;
+        pState = QtFirebaseAdMobRewardedVideoAd::PresentationStateHidden;
     } else if(state == firebase::admob::rewarded_video::kPresentationStateCoveringUI) {
-        pState = QtFirebaseAdMobInterstitial::PresentationStateCoveringUI;
+        pState = QtFirebaseAdMobRewardedVideoAd::PresentationStateCoveringUI;
+    } else if(state == firebase::admob::rewarded_video::kPresentationStateVideoHasStarted) {
+        pState = QtFirebaseAdMobRewardedVideoAd::PresentationStateVideoHasStarted;
+    } else if(state == firebase::admob::rewarded_video::kPresentationStateVideoHasCompleted) {
+        pState = QtFirebaseAdMobRewardedVideoAd::PresentationStateVideoHasCompleted;
     }
     emit presentationStateChanged(pState);
 }

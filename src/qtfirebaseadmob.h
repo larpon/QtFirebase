@@ -494,7 +494,7 @@ public:
     Q_ENUM(PresentationState)
 
     QtFirebaseAdMobInterstitial(QObject* parent = nullptr);
-    ~QtFirebaseAdMobInterstitial();
+    ~QtFirebaseAdMobInterstitial() override;
 
     void setVisible(bool visible) override;
 
@@ -541,7 +541,7 @@ public:
         } else if(state == firebase::admob::InterstitialAd::PresentationState::kPresentationStateCoveringUI) {
              pState = QtFirebaseAdMobInterstitial::PresentationStateCoveringUI;
         }
-        _qtFirebaseAdMobInterstitial->presentationStateChanged(pState);
+        emit _qtFirebaseAdMobInterstitial->presentationStateChanged(pState);
     }
 
 private:
@@ -587,7 +587,9 @@ public:
     enum PresentationState
     {
         PresentationStateHidden,
-        PresentationStateCoveringUI
+        PresentationStateCoveringUI,
+        PresentationStateVideoHasStarted,
+        PresentationStateVideoHasCompleted
     };
     Q_ENUM(PresentationState)
 
