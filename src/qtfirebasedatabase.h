@@ -19,8 +19,8 @@ class QtFirebaseDatabase : public QtFirebaseService
     typedef QSharedPointer<QtFirebaseDatabase> Ptr;
 public:
     static QtFirebaseDatabase* instance() {
-        if(self == 0) {
-            self = new QtFirebaseDatabase(0);
+        if(self == nullptr) {
+            self = new QtFirebaseDatabase(nullptr);
             qDebug() << self << "::instance" << "singleton";
         }
         return self;
@@ -50,7 +50,7 @@ public:
     //(not important to write/read data for now but useful for extended control)
     //https://firebase.google.com/docs/reference/cpp/class/firebase/database/database
 private:
-    explicit QtFirebaseDatabase(QObject *parent = 0);
+    explicit QtFirebaseDatabase(QObject *parent = nullptr);
     void init() override;
     void onFutureEvent(QString eventId, firebase::FutureBase future) override;
 

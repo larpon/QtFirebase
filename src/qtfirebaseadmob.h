@@ -293,7 +293,7 @@ public:
     };
     Q_ENUM(Position)
 
-    explicit QtFirebaseAdMobBannerBase(QObject *parent = 0);
+    explicit QtFirebaseAdMobBannerBase(QObject *parent = nullptr);
 
 
     virtual int getX() const;
@@ -357,16 +357,16 @@ class QtFirebaseAdMobBanner : public QtFirebaseAdMobBannerBase
     friend class QtFirebaseAdMobBannerViewListener;
 public:
     enum PresentationState {
-        PresentationStateHidden = 0,
-        PresentationStateVisibleWithoutAd,
-        PresentationStateVisibleWithAd,
-        PresentationStateOpenedPartialOverlay,
-        PresentationStateCoveringUI
+        PresentationStateHidden = firebase::admob::BannerView::kPresentationStateHidden,
+        PresentationStateVisibleWithoutAd = firebase::admob::BannerView::kPresentationStateVisibleWithoutAd,
+        PresentationStateVisibleWithAd = firebase::admob::BannerView::kPresentationStateVisibleWithAd,
+        PresentationStateOpenedPartialOverlay = firebase::admob::BannerView::kPresentationStateOpenedPartialOverlay,
+        PresentationStateCoveringUI = firebase::admob::BannerView::kPresentationStateCoveringUI
     };
     Q_ENUM(PresentationState)
 
-    QtFirebaseAdMobBanner(QObject* parent = 0);
-    ~QtFirebaseAdMobBanner();
+    QtFirebaseAdMobBanner(QObject* parent = nullptr);
+    ~QtFirebaseAdMobBanner() override;
 
     QRect boundingBox() const
     {
@@ -451,12 +451,10 @@ public:
             case firebase::admob::BannerView::kPresentationStateCoveringUI:
                 qDebug("BannerView PresentationState has changed to PresentationStateCoveringUI");
                 break;
-            default:
-                qDebug("BannerView PresentationState has changed to Unknown");
         }
 
         QMetaObject::invokeMethod(_qtFirebaseAdMobBanner, [this, state]() {
-            _qtFirebaseAdMobBanner->setPresentationState((QtFirebaseAdMobBanner::PresentationState) state);
+            _qtFirebaseAdMobBanner->setPresentationState( static_cast<QtFirebaseAdMobBanner::PresentationState>(state) );
         });
     }
 
@@ -488,8 +486,8 @@ class QtFirebaseAdMobInterstitial : public QtFirebaseAdMobBase
 public:
     enum PresentationState
     {
-        PresentationStateHidden,
-        PresentationStateCoveringUI
+        PresentationStateHidden = firebase::admob::InterstitialAd::kPresentationStateHidden,
+        PresentationStateCoveringUI  = firebase::admob::InterstitialAd::kPresentationStateCoveringUI
     };
     Q_ENUM(PresentationState)
 
@@ -586,10 +584,10 @@ class QtFirebaseAdMobRewardedVideoAd : public QtFirebaseAdMobBase, public fireba
 public:
     enum PresentationState
     {
-        PresentationStateHidden,
-        PresentationStateCoveringUI,
-        PresentationStateVideoHasStarted,
-        PresentationStateVideoHasCompleted
+        PresentationStateHidden = firebase::admob::rewarded_video::kPresentationStateHidden,
+        PresentationStateCoveringUI = firebase::admob::rewarded_video::kPresentationStateCoveringUI,
+        PresentationStateVideoHasStarted = firebase::admob::rewarded_video::kPresentationStateVideoHasStarted,
+        PresentationStateVideoHasCompleted = firebase::admob::rewarded_video::kPresentationStateVideoHasCompleted
     };
     Q_ENUM(PresentationState)
 

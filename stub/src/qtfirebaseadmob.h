@@ -58,11 +58,11 @@ public:
     };
     Q_ENUM(ChildDirectedTreatment)
 
-    explicit QtFirebaseAdMob(QObject* parent = 0) { Q_UNUSED(parent); }
+    explicit QtFirebaseAdMob(QObject* parent = nullptr) { Q_UNUSED(parent); }
 
     static QtFirebaseAdMob *instance() {
-        if(self == 0) {
-            self = new QtFirebaseAdMob(0);
+        if(self == nullptr) {
+            self = new QtFirebaseAdMob(nullptr);
         }
         return self;
     }
@@ -104,7 +104,7 @@ class QtFirebaseAdMobRequest : public QObject
     Q_PROPERTY(QVariantList testDevices READ testDevices WRITE setTestDevices NOTIFY testDevicesChanged)
 
 public:
-    QtFirebaseAdMobRequest(QObject* parent = 0) { Q_UNUSED(parent); }
+    QtFirebaseAdMobRequest(QObject* parent = nullptr) { Q_UNUSED(parent); }
     ~QtFirebaseAdMobRequest() {}
 
     int gender() const { return 0; }
@@ -152,7 +152,7 @@ class QtFirebaseAdMobBase : public QObject
     Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 protected:
-    QtFirebaseAdMobBase(QObject* parent = 0)  { Q_UNUSED(parent); }
+    QtFirebaseAdMobBase(QObject* parent = nullptr)  { Q_UNUSED(parent); }
     virtual ~QtFirebaseAdMobBase(){}
 
 public:
@@ -168,7 +168,7 @@ public:
     bool visible() { return false; }
     void setVisible(bool visible) { Q_UNUSED(visible); }
 
-    QtFirebaseAdMobRequest* request()  { return 0; }
+    QtFirebaseAdMobRequest* request()  { return nullptr; }
     void setRequest(QtFirebaseAdMobRequest *request) { Q_UNUSED(request); }
 
 signals:
@@ -211,7 +211,7 @@ public:
     };
     Q_ENUM(Position)
 
-    QtFirebaseAdMobBanner(QObject* parent = 0) { Q_UNUSED(parent); }
+    QtFirebaseAdMobBanner(QObject* parent = nullptr) { Q_UNUSED(parent); }
     ~QtFirebaseAdMobBanner() {}
 
     int getX() { return 0; }
@@ -254,7 +254,7 @@ public:
     };
     Q_ENUM(PresentationState)
 
-    QtFirebaseAdMobInterstitial(QObject* parent = 0){Q_UNUSED(parent);}
+    QtFirebaseAdMobInterstitial(QObject* parent = nullptr){Q_UNUSED(parent);}
     ~QtFirebaseAdMobInterstitial() {}
 
 signals:
@@ -278,7 +278,7 @@ public:
     };
     Q_ENUM(PresentationState)
 
-    QtFirebaseAdMobRewardedVideoAd(QObject* parent = 0){Q_UNUSED(parent);}
+    QtFirebaseAdMobRewardedVideoAd(QObject* parent = nullptr){Q_UNUSED(parent);}
     ~QtFirebaseAdMobRewardedVideoAd(){}
 
 signals:
