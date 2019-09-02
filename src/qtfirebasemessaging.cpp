@@ -17,7 +17,7 @@ QtFirebaseMessaging::QtFirebaseMessaging(QObject* parent)
     : QObject(parent)
     , g_listener(new MessageListener())
 {
-    __QTFIREBASE_ID = QString().sprintf("%8p", this);
+    __QTFIREBASE_ID = QString().sprintf("%8p", static_cast<void*> (this));
 
     if(!self) {
         self = this;

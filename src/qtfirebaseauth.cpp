@@ -2,7 +2,7 @@
 
 namespace auth = ::firebase::auth;
 
-QtFirebaseAuth *QtFirebaseAuth::self = 0;
+QtFirebaseAuth *QtFirebaseAuth::self = nullptr;
 
 QtFirebaseAuth::QtFirebaseAuth(QObject *parent) : QtFirebaseService(parent),
     m_auth(nullptr)
@@ -11,7 +11,7 @@ QtFirebaseAuth::QtFirebaseAuth(QObject *parent) : QtFirebaseService(parent),
     ,m_errId(ErrorNone)
     ,m_action(ActionSignIn)
 {
-    if(self == 0)
+    if(self == nullptr)
     {
         self = this;
         qDebug() << self << "::QtFirebaseAuth" << "singleton";
@@ -21,7 +21,7 @@ QtFirebaseAuth::QtFirebaseAuth(QObject *parent) : QtFirebaseService(parent),
 
 QtFirebaseAuth::~QtFirebaseAuth()
 {
-    self = 0;
+    self = nullptr;
 }
 
 void QtFirebaseAuth::clearError()

@@ -3,7 +3,7 @@
 #include <QJsonObject>
 namespace db = ::firebase::database;
 
-QtFirebaseDatabase* QtFirebaseDatabase::self = 0;
+QtFirebaseDatabase* QtFirebaseDatabase::self = nullptr;
 
 QtFirebaseDatabase::QtFirebaseDatabase(QObject *parent) : QtFirebaseService(parent),
     m_db(nullptr)

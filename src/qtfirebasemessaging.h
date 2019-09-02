@@ -34,7 +34,7 @@ class QtFirebaseMessaging: public QObject, public QQmlParserStatus
 
 public:
     explicit QtFirebaseMessaging(QObject* parent = nullptr);
-    ~QtFirebaseMessaging();
+    ~QtFirebaseMessaging() override;
 
     void classBegin() override;
     void componentComplete() override;

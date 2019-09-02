@@ -21,13 +21,12 @@ public:
     {
         if(self == nullptr)
         {
-            self = new QtFirebaseAuth(0);
+            self = new QtFirebaseAuth(nullptr);
             qDebug() << self << "::instance" << "singleton";
         }
         return self;
     }
-
-    ~QtFirebaseAuth();
+    ~QtFirebaseAuth() override;
 
     enum Error
     {
@@ -76,7 +75,7 @@ signals:
     void passwordResetEmailSent();
 
 protected:
-    explicit QtFirebaseAuth(QObject *parent = 0);
+    explicit QtFirebaseAuth(QObject *parent = nullptr);
 
 private:
     void clearError();
