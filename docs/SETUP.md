@@ -3,6 +3,18 @@ How to set up QtFirebase for inclusion and to utilize Firebase modules in your p
 
 For a working and up-to-date example that can be compiled in Qt Creator please follow the **Quick start** section found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample) README. (The example app links back here in some places - but not all). It's strongly adviced to see how the example app is setup in-order to avoid any missing entries.
 
+## Prerequisities
+QtFirebase rely on a relativly large software stack. Many common errors people encounter with QtFirebase is due to little or no knownledge of the complete stack of technology used. It's therefore stongly adviced that developers, as a minimum, know or familiarize themselves with the following software in general before diving into the project.
+
+In general
+[Firebase](https://firebase.google.com/docs), [Firebase C++ SDK](https://firebase.google.com/docs/cpp/setup), [Qt](https://qt.io), [QML](https://doc.qt.io/qt-5/qmlapplications.html), [QMake](https://doc.qt.io/qt-5/qmake-manual.html)
+
+Android specific
+[Gradle](https://gradle.org/), [Android SDK](https://developer.android.com/studio/releases/sdk-tools), [Android NDK](https://developer.android.com/ndk/), [Java](https://www.oracle.com/technetwork/java/index.html)
+
+iOS specific
+[XCode](https://developer.apple.com/xcode/), [Firebase iOS SDK](https://firebase.google.com/download/ios)
+
 ## Base setup
 
 ### Clone the [QtFirebase](https://github.com/Larpon/QtFirebase) project
@@ -72,6 +84,8 @@ include(/path/to/QtFirebase/qtfirebase.pri)
 ```
 ([Example](https://github.com/Larpon/QtFirebaseExample/blob/cc190b/App/App.pro#L93-L94))
 
+## Note on building
+If you're planing on compiling QtFirebase as part of a library in your project, please be aware that QtFirebase in this case will **omit** registering of it's QML types. This is due to how [Q_COREAPP_STARTUP_FUNCTION](https://doc.qt.io/qt-5/qcoreapplication.html#Q_COREAPP_STARTUP_FUNCTION) works. So for auto registering of QML to work - QtFirebase need to be [built as an app](https://github.com/Larpon/QtFirebaseExample/blob/ada77a8b0cde17f8da8df89015bf111ae2c1f328/App/App.pro#L1). Otherwise you must [register the types manually](https://github.com/Larpon/QtFirebase/blob/2ba1c1e4d7cf174aad2108bcdf19c29acdcf6610/qtfirebase_register.h#L79-L113).
 
 ## Desktop specific setup
 Currently we haven't tested the parts of Firebase C++ SDK that have desktop support.
