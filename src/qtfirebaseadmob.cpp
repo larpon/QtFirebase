@@ -11,11 +11,11 @@ namespace admob = ::firebase::admob;
  * (Base AdMob Object)
  */
 
-QtFirebaseAdMob *QtFirebaseAdMob::self = 0;
+QtFirebaseAdMob *QtFirebaseAdMob::self = nullptr;
 
 QtFirebaseAdMob::QtFirebaseAdMob(QObject* parent) : QObject(parent)
 {
-    if(self == 0) {
+    if(self == nullptr) {
         self = this;
         qDebug() << self << "::QtFirebaseAdMob" << "singleton";
     }
@@ -23,7 +23,7 @@ QtFirebaseAdMob::QtFirebaseAdMob(QObject* parent) : QObject(parent)
     _ready = false;
     _initializing = false;
 
-    __testDevices = 0;
+    __testDevices = nullptr;
 
     if(!qFirebase->ready()) {
         connect(qFirebase,&QtFirebase::readyChanged, this, &QtFirebaseAdMob::init);
@@ -38,13 +38,13 @@ QtFirebaseAdMob::~QtFirebaseAdMob()
         setReady(false);
         emit shutdown();
         //admob::Terminate(); // TODO causes crash see https://github.com/firebase/quickstart-cpp/issues/19
-        self = 0;
+        self = nullptr;
     }
 }
 
 bool QtFirebaseAdMob::checkInstance(const char *function) const
 {
-    bool b = (QtFirebaseAdMob::self != 0);
+    bool b = (QtFirebaseAdMob::self != nullptr);
     if(!b)
         qWarning("QtFirebaseAdMob::%s: Please instantiate the QtFirebaseAdMob object first", function);
     return b;
@@ -92,7 +92,7 @@ void QtFirebaseAdMob::setTestDevices(const QVariantList &testDevices)
 
         __testDevicesByteArrayList.clear();
 
-        if(__testDevices == 0)
+        if(__testDevices == nullptr)
             __testDevices = new const char*[_testDevices.size()];
         else {
             qDebug() << this << "::setTestDevices" << "potential crash - not tested";
@@ -101,7 +101,7 @@ void QtFirebaseAdMob::setTestDevices(const QVariantList &testDevices)
             qDebug() << this << "::setTestDevices" << "survived potential crash!";
         }
 
-        unsigned index = 0;
+        int index = 0;
         for (QVariantList::iterator j = _testDevices.begin(); j != _testDevices.end(); j++)
         {
             //QByteArray ba = QByteArray((*j).toString().toLatin1().data());
@@ -167,9 +167,9 @@ QtFirebaseAdMobRequest::QtFirebaseAdMobRequest(QObject *parent) : QObject(parent
 {
     _gender = QtFirebaseAdMob::GenderUnknown;
     _childDirectedTreatment = QtFirebaseAdMob::ChildDirectedTreatmentTagged;
-    __keywords = 0;
-    __testDevices = 0;
-    __extras = 0;
+    __keywords = nullptr;
+    __testDevices = nullptr;
+    __extras = nullptr;
 }
 
 int QtFirebaseAdMobRequest::gender() const
@@ -223,7 +223,7 @@ void QtFirebaseAdMobRequest::setKeywords(const QVariantList &keywords)
 
         __keywordsByteArrayList.clear();
 
-        if(__keywords == 0)
+        if(__keywords == nullptr)
             __keywords = new const char*[_keywords.size()];
         else {
             qDebug() << this << "::setKeywords" << "potential crash - not tested";
@@ -232,7 +232,7 @@ void QtFirebaseAdMobRequest::setKeywords(const QVariantList &keywords)
             qDebug() << this << "::setKeywords" << "survived potential crash!";
         }
 
-        unsigned index = 0;
+        int index = 0;
         for (QVariantList::iterator j = _keywords.begin(); j != _keywords.end(); j++)
         {
             //QByteArray ba = QByteArray((*j).toString().toLatin1().data());
@@ -261,7 +261,7 @@ void QtFirebaseAdMobRequest::setExtras(const QVariantList &extras)
 
         __extrasList.clear();
 
-        if(__extras == 0)
+        if(__extras == nullptr)
             __extras = new firebase::admob::KeyValuePair[_extras.size()];
         else {
             qDebug() << this << "::setExtras" << "potential crash - not tested";
@@ -270,9 +270,8 @@ void QtFirebaseAdMobRequest::setExtras(const QVariantList &extras)
             qDebug() << this << "::setExtras" << "survived potential crash!";
         }
 
-        unsigned index = 0;
-        for (QVariantList::iterator j = _extras.begin(); j != _extras.end(); j++)
-        {
+        int index = 0;
+        for (QVariantList::iterator j = _extras.begin(); j != _extras.end(); j++) {
             if((*j).canConvert<QVariantMap>()) {
 
                 QVariantMap map = (*j).toMap();
@@ -308,7 +307,7 @@ void QtFirebaseAdMobRequest::setTestDevices(QVariantList &testDevices)
 
         __testDevicesByteArrayList.clear();
 
-        if(__testDevices == 0)
+        if(__testDevices == nullptr)
             __testDevices = new const char*[_testDevices.size()];
         else {
             qDebug() << this << "::setTestDevices" << "potential crash - not tested";
@@ -317,7 +316,7 @@ void QtFirebaseAdMobRequest::setTestDevices(QVariantList &testDevices)
             qDebug() << this << "::setTestDevices" << "survived potential crash!";
         }
 
-        unsigned index = 0;
+        int index = 0;
         for (QVariantList::iterator j = _testDevices.begin(); j != _testDevices.end(); j++)
         {
             //QByteArray ba = QByteArray((*j).toString().toLatin1().data());
@@ -386,12 +385,12 @@ admob::AdRequest QtFirebaseAdMobRequest::asAdMobRequest()
     }
 
     if(!_keywords.isEmpty()) {
-        _admobRequest.keyword_count = _keywords.size();
+        _admobRequest.keyword_count = static_cast<unsigned int>(_keywords.size());
         _admobRequest.keywords = __keywords;
     }
 
     if(!_extras.isEmpty()) {
-        _admobRequest.extras_count = _extras.size();
+        _admobRequest.extras_count = static_cast<unsigned int>(_extras.size());
         _admobRequest.extras = __extras;
 
         // To debug actual extra key:value pairs
@@ -407,12 +406,12 @@ admob::AdRequest QtFirebaseAdMobRequest::asAdMobRequest()
     // NOTE if no test devices are provided - use list from QtFirebaseAdMob singleton if not empty
     if(!_testDevices.isEmpty()) {
         qDebug() << this << "::asAdMobRequest" << "TestDevices" << _testDevices;
-        _admobRequest.test_device_id_count = __testDevicesByteArrayList.size();
+        _admobRequest.test_device_id_count = static_cast<unsigned int>(__testDevicesByteArrayList.size());
         _admobRequest.test_device_ids = __testDevices;
     } else {
         if(qFirebaseAdMob->ready()) {
             qDebug() << this << "::asAdMobRequest" << "TestDevices ( from" << qFirebaseAdMob << ")" << qFirebaseAdMob->testDevices();
-            _admobRequest.test_device_id_count = qFirebaseAdMob->__testDevicesByteArrayList.size();
+            _admobRequest.test_device_id_count = static_cast<unsigned int>(qFirebaseAdMob->__testDevicesByteArrayList.size());
             _admobRequest.test_device_ids = qFirebaseAdMob->__testDevices;
         }
     }
@@ -430,11 +429,11 @@ QtFirebaseAdMobBase::QtFirebaseAdMobBase(QObject *parent) : QObject(parent) {
     _ready = false;
     _loaded = false;
     _initializing = false;
-    _nativeUIElement = 0;
+    _nativeUIElement = nullptr;
     _isFirstInit = true;
 
     _visible = false;
-    _request = 0;
+    _request = nullptr;
     //connect(this,&QtFirebaseAdMobBase::visibleChanged, this, &QtFirebaseAdMobBase::onVisibleChanged);
 
     _initTimer = new QTimer(this);
@@ -577,7 +576,7 @@ void QtFirebaseAdMobBase::load()
         return;
     }
 
-    if(_request == 0) {
+    if(_request == nullptr) {
         qDebug() << this << "::load() no request data sat. Not loading";
         return;
     }
@@ -899,7 +898,7 @@ firebase::FutureBase QtFirebaseAdMobBanner::moveToInternal(Position position)
 
 QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent) : QtFirebaseAdMobBase(parent)
 {
-    _interstitialAdListener = NULL;
+    _interstitialAdListener = nullptr;
 }
 
 QtFirebaseAdMobInterstitial::~QtFirebaseAdMobInterstitial()
