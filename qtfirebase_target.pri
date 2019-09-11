@@ -206,6 +206,8 @@ contains(DEFINES,QTFIREBASE_BUILD_ANALYTICS) {
             -framework FirebaseCore \
             -framework FirebaseCoreDiagnostics \
             -framework FirebaseInstanceID \
+            -framework GoogleDataTransport \
+            -framework GoogleDataTransportCCTSupport \
             -framework GoogleAppMeasurement \
             -framework GoogleUtilities \
             -framework nanopb \

@@ -22,4 +22,9 @@
     return YES;
 }
 
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    Q_UNUSED(application);
+    UIApplication.sharedApplication.applicationIconBadgeNumber = 0;
+}
+
 @end
