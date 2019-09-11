@@ -124,7 +124,7 @@ void QtFirebase::requestInit()
         #else // Q_OS_ANDROID
 
         // Create the Firebase app.
-        _firebaseApp = firebase::App::Create(firebase::AppOptions());
+        _firebaseApp = firebase::App::Create();
 
         #endif
 
