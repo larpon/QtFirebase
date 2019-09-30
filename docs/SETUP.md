@@ -94,11 +94,11 @@ QtFirebase provides stub implementations ("empty shells" or "placeholders") for 
 
 ## Android specific setup
 When building QtFirebase for Android targets a few extra steps is needed.
-Please see [SETUP_ANDROID](https://github.com/Larpon/QtFirebase/docs/SETUP_ANDROID.md).
+Please see [SETUP_ANDROID](https://github.com/Larpon/QtFirebase/blob/master/docs/SETUP_ANDROID.md).
 
 ## iOS specific setup
 When building QtFirebase for iOS targets a few extra steps is needed.
-Please see [SETUP_IOS](https://github.com/Larpon/QtFirebase/docs/SETUP_IOS.md).
+Please see [SETUP_IOS](https://github.com/Larpon/QtFirebase/blob/master/docs/SETUP_IOS.md).
 
 ## What to do next
 
