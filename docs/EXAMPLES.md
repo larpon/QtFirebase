@@ -1,6 +1,9 @@
 # Examples
 The following document assumes that you have a working [QtFirebase setup](SETUP.md)
 
+More up-to-date and working QML examples can be found in the [QtFirebaseExample](https://github.com/Larpon/QtFirebaseExample/tree/3f19bf9/App/qml/pages) project.
+
+
 ## Analytics
 
 ### QML
