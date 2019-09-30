@@ -8,8 +8,10 @@ Make sure you have `Google Services` apk installed and updated on the *target* d
 Furthermore the project needs `gradle` and the Android NDK (>= r10d) to build on Android.
 
 ### API level
-Make sure you set your `Android build SDK` to **API level 23** in your Qt Creator project settings.
+Make sure you set your `Android build SDK` to, at least, **API level 23** in your Qt Creator project settings.
 Firebase still work on devices from API level 14 [according to this source](https://firebase.googleblog.com/2016/11/google-play-services-and-firebase-for-android-will-support-api-level-14-at-minimum.html) - but it apparently need to be build with a higher target API.
+
+> **NOTE** Your project's API level might need to be higher than we suggest here due to Qt or Google Play requirements.
 
 ### Gradle setup
 Enable gradle in your Qt Creator build options.
@@ -29,8 +31,8 @@ If you're using `qmake` you can use [ANDROID_PACKAGE_SOURCE_DIR](https://github.
 Include `google-services.json` downloaded from the [Firebase console](https://console.firebase.google.com/). ([Example](https://github.com/Larpon/QtFirebaseExample/blob/cc190b/App/App.pro#L42))
 
 ## Firebase Messaging specific
-**Note**
-*Using Messaging is only possible with Qt 5.9+ due to gradle dependencies that require more recent versions of the Android SDK. Upgrading these will also "force" you to upgrade Qt (because of some bugs in Qt Creator) in order for it all to just work™*
+
+> **Note** *Using Messaging is only possible with Qt 5.9+ due to gradle dependencies that require more recent versions of the Android SDK. Upgrading these will also "force" you to upgrade Qt (because of some bugs in Qt Creator) in order for it all to just work™*
 
 To use Messaging on Android there is some additional setup.
 
@@ -40,6 +42,8 @@ Android SDK Build-Tools >= 25.0.0
 Android NDK >= r10e
 ```
 `gradle >= 2.3.3` [like here](https://github.com/Larpon/QtFirebaseExample/blob/cc190b/App/platforms/android/build.gradle#L19)
+
+> **NOTE** Qt usually require or advice higher versions than stated here. Go with whatever Qt requires!
 
 ### Services
 Add Messaging specific services to your AndroidManifest.xml file. ([Example](https://github.com/Larpon/QtFirebaseExample/blob/cc190b/App/platforms/android/AndroidManifest.xml#L47-L63)).
