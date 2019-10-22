@@ -292,13 +292,14 @@ unsigned int QtFirebaseAnalytics::minimumSessionDuration()
 
 void QtFirebaseAnalytics::setMinimumSessionDuration(unsigned int minimumSessionDuration)
 {
+    qWarning() << this << "::setMinimumSessionDuration is deprecated and no longer functional!";
+
     if(!_ready) {
         qDebug() << this << "::setMinimumSessionDuration native part not ready";
         return;
     }
 
     if (_minimumSessionDuration != minimumSessionDuration) {
-        analytics::SetMinimumSessionDuration(minimumSessionDuration);
         _minimumSessionDuration = minimumSessionDuration;
         qDebug() << self << "::setMinimumSessionDuration" << minimumSessionDuration;
         emit minimumSessionDurationChanged();
