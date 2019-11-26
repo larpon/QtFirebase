@@ -248,6 +248,10 @@ void QtFirebaseAnalytics::setSessionTimeout(unsigned int sessionTimeout)
     if(_sessionTimeout != sessionTimeout) {
         _sessionTimeout = sessionTimeout;
         emit sessionTimeoutChanged();
+
+        if(_ready) {
+            analytics::SetSessionTimeoutDuration(_sessionTimeout);
+        }
     }
 }
 
@@ -320,5 +324,8 @@ void QtFirebaseAnalytics::init()
         qDebug() << self << "::init" << "native initialized";
         _initializing = false;
         setReady(true);
+
+        // Set current session duration timeout if it was set up already
+        analytics::SetSessionTimeoutDuration(_sessionTimeout);
     }
 }
