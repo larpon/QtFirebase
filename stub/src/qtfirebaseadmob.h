@@ -42,22 +42,6 @@ public:
     };
     Q_ENUM(Error)
 
-    enum Gender
-    {
-        GenderUnknown,
-        GenderFemale,
-        GenderMale
-    };
-    Q_ENUM(Gender)
-
-    enum ChildDirectedTreatment
-    {
-        ChildDirectedTreatmentUnknown,
-        ChildDirectedTreatmentTagged,
-        ChildDirectedTreatmentNotTagged
-    };
-    Q_ENUM(ChildDirectedTreatment)
-
     explicit QtFirebaseAdMob(QObject* parent = nullptr) { Q_UNUSED(parent) }
 
     static QtFirebaseAdMob *instance() {
@@ -104,6 +88,23 @@ class QtFirebaseAdMobRequest : public QObject
     Q_PROPERTY(QVariantList testDevices READ testDevices WRITE setTestDevices NOTIFY testDevicesChanged)
 
 public:
+
+    enum Gender
+    {
+        GenderUnknown,
+        GenderFemale,
+        GenderMale
+    };
+    Q_ENUM(Gender)
+
+    enum ChildDirectedTreatment
+    {
+        ChildDirectedTreatmentUnknown,
+        ChildDirectedTreatmentTagged,
+        ChildDirectedTreatmentNotTagged
+    };
+    Q_ENUM(ChildDirectedTreatment)
+
     QtFirebaseAdMobRequest(QObject* parent = nullptr) { Q_UNUSED(parent) }
     ~QtFirebaseAdMobRequest() {}
 
