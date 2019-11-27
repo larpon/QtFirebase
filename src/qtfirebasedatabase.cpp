@@ -5,8 +5,11 @@ namespace db = ::firebase::database;
 
 QtFirebaseDatabase* QtFirebaseDatabase::self = nullptr;
 
-QtFirebaseDatabase::QtFirebaseDatabase(QObject *parent) : QtFirebaseService(parent),
-    m_db(nullptr)
+QtFirebaseDatabase::QtFirebaseDatabase(QObject *parent)
+    : QtFirebaseService(parent)
+    , m_db(nullptr)
+    , m_requests()
+    , m_futureMutex()
 {
     startInit();
 }

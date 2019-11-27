@@ -59,6 +59,7 @@ private:
     void addFuture(QString requestId, QtFirebaseDatabaseRequest* request, firebase::FutureBase future);
     void unregisterRequest(QtFirebaseDatabaseRequest* request);
     QString prefix() const;
+
 private:
     static QtFirebaseDatabase* self;
     Q_DISABLE_COPY(QtFirebaseDatabase)
