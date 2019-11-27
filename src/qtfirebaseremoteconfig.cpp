@@ -4,15 +4,18 @@ namespace remote_config = ::firebase::remote_config;
 
 QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self = nullptr;
 
-QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent) :
-    QObject(parent),
-    _ready(false),
-    _initializing(false),
-    _cacheExpirationTime(firebase::remote_config::kDefaultCacheExpiration*1000), // milliseconds
-    __appId(nullptr)
+QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent)
+    : QObject(parent)
+    , __QTFIREBASE_ID(QString().sprintf("%8p", static_cast<void*> (this)))
+    , _ready(false)
+    , _initializing(false)
+    , _parameters()
+    , _cacheExpirationTime(firebase::remote_config::kDefaultCacheExpiration*1000) // milliseconds
+    , _appId()
+    , __appIdByteArray()
+    , __defaultsByteArrayList()
+    , __appId(nullptr)
 {
-    __QTFIREBASE_ID = QString().sprintf("%8p", static_cast<void*> (this));
-
     if(self == nullptr)
     {
         self = this;
