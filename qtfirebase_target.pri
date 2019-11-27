@@ -142,8 +142,25 @@ contains(DEFINES,QTFIREBASE_BUILD_ADMOB) {
             \
     }
 
-    HEADERS += $$PWD/src/qtfirebaseadmob.h
-    SOURCES += $$PWD/src/qtfirebaseadmob.cpp
+    HEADERS += \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmobtestdevices.h \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmob.h \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmobrequest.h \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmobbase.h \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmobbanner.h \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmobinterstitial.h \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmobrewardedvideoad.h \
+        \
+
+    SOURCES += \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmobtestdevices.cpp \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmob.cpp \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmobrequest.cpp \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmobbase.cpp \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmobbanner.cpp \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmobinterstitial.cpp \
+        $$PWD/src/qtfirebaseadmob/qtfirebaseadmobrewardedvideoad.cpp \
+        \
 
     PRE_TARGETDEPS += $$QTFIREBASE_SDK_LIBS_PATH/lib$${QTFIREBASE_SDK_LIBS_PREFIX}admob.a
     LIBS += -L$$QTFIREBASE_SDK_LIBS_PATH -l$${QTFIREBASE_SDK_LIBS_PREFIX}admob

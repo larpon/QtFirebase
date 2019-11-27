@@ -31,7 +31,11 @@
 #if defined(QTFIREBASE_STUB_BUILD)
 #include "stub/src/qtfirebaseadmob.h"
 #else
-#include "src/qtfirebaseadmob.h"
+#include "src/qtfirebaseadmob/qtfirebaseadmob.h"
+#include "src/qtfirebaseadmob/qtfirebaseadmobrequest.h"
+#include "src/qtfirebaseadmob/qtfirebaseadmobbanner.h"
+#include "src/qtfirebaseadmob/qtfirebaseadmobinterstitial.h"
+#include "src/qtfirebaseadmob/qtfirebaseadmobrewardedvideoad.h"
 #endif
 
 # endif // QTFIREBASE_BUILD_ADMOB

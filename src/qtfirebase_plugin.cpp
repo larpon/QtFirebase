@@ -10,7 +10,7 @@
 
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_ADMOB)
-#include "src/qtfirebaseadmob.h"
+#include "src/qtfirebaseadmob/qtfirebaseadmob.h"
 # endif // QTFIREBASE_BUILD_ADMOB
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_REMOTE_CONFIG)
