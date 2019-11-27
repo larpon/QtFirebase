@@ -425,7 +425,7 @@ admob::AdRequest QtFirebaseAdMobRequest::asAdMobRequest()
  */
 
 QtFirebaseAdMobBase::QtFirebaseAdMobBase(QObject *parent) : QObject(parent) {
-    __QTFIREBASE_ID = QString().sprintf("%8p", this);
+    __QTFIREBASE_ID = QString().sprintf("%8p", static_cast<void*>(this));
     _ready = false;
     _loaded = false;
     _initializing = false;
@@ -1219,7 +1219,7 @@ void QtFirebaseAdMobRewardedVideoAd::show()
 void QtFirebaseAdMobRewardedVideoAd::OnRewarded(firebase::admob::rewarded_video::RewardItem reward)
 {
     QString type = QString::fromStdString(reward.reward_type);
-    qDebug() << this << QString(QStringLiteral("Rewarding user of %1 with amount %2")).arg(type).arg(QString::number(reward.amount));
+    qDebug() << this << QString(QStringLiteral("Rewarding user of %1 with amount %2")).arg(type).arg(QString::number(static_cast<double>(reward.amount)));
 
     emit rewarded(type, reward.amount);
 }
