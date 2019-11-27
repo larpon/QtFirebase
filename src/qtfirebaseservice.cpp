@@ -162,12 +162,13 @@ void printFbVariant(const firebase::Variant& v, const QString& tab)
     }
 }
 
-QtFirebaseService::QtFirebaseService(QObject* parent):
-    QObject(parent),
-    _ready(false),
-    _initializing(false)
+QtFirebaseService::QtFirebaseService(QObject* parent)
+    : QObject(parent)
+    ,  __QTFIREBASE_ID(QString().sprintf("%8p", static_cast<void*> (this)))
+    , _ready(false)
+    , _initializing(false)
 {
-    __QTFIREBASE_ID = QString().sprintf("%8p", static_cast<void*> (this));
+
 }
 
 bool QtFirebaseService::ready() const
