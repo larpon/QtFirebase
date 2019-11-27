@@ -180,12 +180,9 @@ void QtFirebaseAdMobBannerBase::hide()
     setVisible(false);
 }
 
-
 /*
  * AdMobBanner
- *
  */
-
 QtFirebaseAdMobBanner::QtFirebaseAdMobBanner(QObject *parent)
     : QtFirebaseAdMobBannerBase(parent)
     , _banner(nullptr)

@@ -68,7 +68,7 @@ public:
 
     void OnPresentationStateChanged(firebase::admob::InterstitialAd* interstitial_ad,
         firebase::admob::InterstitialAd::PresentationState state) override {
-        Q_UNUSED(interstitial_ad) // TODO
+        Q_UNUSED(interstitial_ad)
         qDebug() << _qtFirebaseAdMobInterstitial << "::OnPresentationStateChanged";
         qDebug("InterstitialAd PresentationState has changed to %d.", state);
 

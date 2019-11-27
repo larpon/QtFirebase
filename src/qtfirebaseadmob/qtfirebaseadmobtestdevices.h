@@ -17,13 +17,10 @@
  */
 class QtFirebaseAdMobTestDevices : public QObject
 {
-    // friend classes so they can read the __testDevices
+    // friend class so it can read the __testDevices directly
     friend class QtFirebaseAdMobRequest;
-    friend class QtFirebaseAdMobBanner;
-    friend class QtFirebaseAdMobInterstitial;
 
     Q_OBJECT
-
 
     Q_PROPERTY(QVariantList testDevices READ testDevices WRITE setTestDevices NOTIFY testDevicesChanged)
 

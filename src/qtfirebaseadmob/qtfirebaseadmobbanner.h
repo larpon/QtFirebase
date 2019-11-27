@@ -169,7 +169,8 @@ public:
     }
 
     void OnPresentationStateChanged(firebase::admob::BannerView* banner_view, firebase::admob::BannerView::PresentationState state) override {
-        Q_UNUSED(banner_view) // TODO
+        Q_UNUSED(banner_view)
+
         qDebug() << _qtFirebaseAdMobBanner << "::OnPresentationStateChanged";
         qDebug("BannerView PresentationState has changed to %d.", state);
 
@@ -197,7 +198,7 @@ public:
     }
 
     void OnBoundingBoxChanged(firebase::admob::BannerView *banner_view, firebase::admob::BoundingBox box) override {
-        Q_UNUSED(banner_view) // TODO
+        Q_UNUSED(banner_view)
         qDebug() << _qtFirebaseAdMobBanner << "::OnBoundingBoxChanged";
         QRect boundingBox(box.x, box.y, box.width, box.height);
         qDebug() << "BannerView BoundingBox has changed to" << boundingBox;

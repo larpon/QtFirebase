@@ -1,8 +1,10 @@
 #include "qtfirebaseadmobinterstitial.h"
 
-QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent) : QtFirebaseAdMobBase(parent)
+QtFirebaseAdMobInterstitial::QtFirebaseAdMobInterstitial(QObject* parent)
+    : QtFirebaseAdMobBase(parent)
+    , _interstitial(nullptr)
+    , _interstitialAdListener(nullptr)
 {
-    _interstitialAdListener = nullptr;
     connect(this, &QtFirebaseAdMobInterstitial::presentationStateChanged, this, &QtFirebaseAdMobInterstitial::onPresentationStateChanged);
 }
 

@@ -1,12 +1,14 @@
 #include "qtfirebaseadmobrequest.h"
 
-QtFirebaseAdMobRequest::QtFirebaseAdMobRequest(QObject *parent) : QObject(parent)
+QtFirebaseAdMobRequest::QtFirebaseAdMobRequest(QObject *parent)
+    : QObject(parent)
+    , _gender(GenderUnknown)
+    , _childDirectedTreatment(ChildDirectedTreatmentTagged)
+    , __keywords(nullptr)
+    , __extras(nullptr)
+    , __testDevices(nullptr)
 {
-    _gender = QtFirebaseAdMobRequest::GenderUnknown;
-    _childDirectedTreatment = QtFirebaseAdMobRequest::ChildDirectedTreatmentTagged;
-    __keywords = nullptr;
-    __testDevices = nullptr;
-    __extras = nullptr;
+
 }
 
 int QtFirebaseAdMobRequest::gender() const
