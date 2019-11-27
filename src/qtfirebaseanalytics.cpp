@@ -6,15 +6,20 @@ namespace analytics = ::firebase::analytics;
 
 QtFirebaseAnalytics *QtFirebaseAnalytics::self = nullptr;
 
-QtFirebaseAnalytics::QtFirebaseAnalytics(QObject* parent) : QObject(parent)
+QtFirebaseAnalytics::QtFirebaseAnalytics(QObject* parent)
+    : QObject(parent)
+    , _ready(false)
+    , _initializing(false)
+    , _enabled(false)
+    , _minimumSessionDuration(0) // Depricated
+    , _sessionTimeout(1800000)
+    , _userId()
+    , _userProperties()
 {
     if(!self) {
         self = this;
         qDebug() << self << "::QtFirebaseAnalytics" << "singleton";
     }
-
-    _ready = false;
-    _initializing = false;
 
     if(qFirebase->ready())
         init();
