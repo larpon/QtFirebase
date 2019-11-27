@@ -21,7 +21,6 @@
 /*
  * AdMob (Base singleton object)
  */
-
 class QtFirebaseAdMob : public QObject
 {
     Q_OBJECT

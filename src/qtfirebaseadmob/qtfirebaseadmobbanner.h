@@ -79,11 +79,9 @@ protected:
 
 };
 
-
 /*
  * AdMobBanner
  */
-
 class QtFirebaseAdMobBannerViewListener;
 
 class QtFirebaseAdMobBanner : public QtFirebaseAdMobBannerBase
