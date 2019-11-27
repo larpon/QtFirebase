@@ -15,17 +15,17 @@ QtFirebaseMessaging *QtFirebaseMessaging::self = nullptr;
 
 QtFirebaseMessaging::QtFirebaseMessaging(QObject* parent)
     : QObject(parent)
+    , _ready(false)
+    , _initializing(false)
+    , __QTFIREBASE_ID(QString().sprintf("%8p", static_cast<void*> (this)))
     , g_listener(new MessageListener())
+    , _data()
+    , _token()
 {
-    __QTFIREBASE_ID = QString().sprintf("%8p", static_cast<void*> (this));
-
     if(!self) {
         self = this;
         qDebug() << self << "::QtFirebaseMessaging" << "singleton";
     }
-
-    _ready = false;
-    _initializing = false;
 
     if(qFirebase->ready()) {
         //Call init outside of constructor, otherwise signal readyChanged not emited
@@ -84,7 +84,7 @@ void QtFirebaseMessaging::onFutureEvent(const QString &eventId, const firebase::
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
 
-    qDebug() << self << "::onFutureEvent" << eventId;;
+    qDebug() << self << "::onFutureEvent" << eventId;
 
     if(future.status() != firebase::kFutureStatusComplete)
     {
