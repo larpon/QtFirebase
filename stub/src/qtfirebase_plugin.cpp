@@ -11,6 +11,10 @@
 
 #if defined(QTFIREBASE_BUILD_ALL) || defined(QTFIREBASE_BUILD_ADMOB)
 #include <src/qtfirebaseadmob/qtfirebaseadmob.h>
+#include <src/qtfirebaseadmob/qtfirebaseadmobrequest.h>
+#include <src/qtfirebaseadmob/qtfirebaseadmobbanner.h>
+#include <src/qtfirebaseadmob/qtfirebaseadmobinterstitial.h>
+#include <src/qtfirebaseadmob/qtfirebaseadmobrewardedvideoad.h>
 # endif // QTFIREBASE_BUILD_ADMOB
 
 
@@ -53,7 +57,6 @@ void QtFirebasePlugin::registerTypes(const char *uri)
     qmlRegisterType<QtFirebaseAdMob>(uri, 1, 0, "AdMob");
     qmlRegisterType<QtFirebaseAdMobRequest>(uri, 1, 0, "AdMobRequest");
     qmlRegisterType<QtFirebaseAdMobBanner>(uri, 1, 0, "AdMobBanner");
-    qmlRegisterType<QtFirebaseAdMobNativeExpressAd>(uri, 1, 0, "AdMobNativeExpressAd");
     qmlRegisterType<QtFirebaseAdMobInterstitial>(uri, 1, 0, "AdMobInterstitial");
     qmlRegisterType<QtFirebaseAdMobRewardedVideoAd>(uri, 1, 0, "AdMobRewardedVideoAd");
 #endif

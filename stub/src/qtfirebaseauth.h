@@ -19,7 +19,7 @@ public:
     {
         if(self == nullptr)
         {
-            self = new QtFirebaseAuth(0);
+            self = new QtFirebaseAuth(nullptr);
         }
         return self;
     }
@@ -42,10 +42,10 @@ public:
 
 public slots:
     //Control
-    void registerUser(const QString& email, const QString& pass){Q_UNUSED(email); Q_UNUSED(pass);}
-    void signIn(const QString& email, const QString& pass){Q_UNUSED(email); Q_UNUSED(pass);}
+    void registerUser(const QString& email, const QString& pass){ Q_UNUSED(email) Q_UNUSED(pass) }
+    void signIn(const QString& email, const QString& pass){ Q_UNUSED(email) Q_UNUSED(pass) }
     void signOut(){}
-    void sendPasswordResetEmail(const QString& email){Q_UNUSED(email);}
+    void sendPasswordResetEmail(const QString& email){ Q_UNUSED(email) }
     void deleteUser(){}
 
     //Status
@@ -68,7 +68,7 @@ signals:
 
 protected:
     static QtFirebaseAuth *self;
-    explicit QtFirebaseAuth(QObject *parent = 0){Q_UNUSED(parent);}
+    explicit QtFirebaseAuth(QObject *parent = nullptr){ Q_UNUSED(parent) }
     Q_DISABLE_COPY(QtFirebaseAuth)
 
 };

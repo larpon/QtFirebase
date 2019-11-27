@@ -29,7 +29,7 @@ public:
     };
     Q_ENUM(FetchFailure)
 
-    explicit QtFirebaseRemoteConfig(QObject *parent = nullptr){ Q_UNUSED(parent); }
+    explicit QtFirebaseRemoteConfig(QObject *parent = nullptr){ Q_UNUSED(parent) }
 
     ~QtFirebaseRemoteConfig() {}
 
@@ -44,16 +44,16 @@ public:
     bool ready(){return false;}
 
     QVariantMap parameters() const{return QVariantMap();}
-    void setParameters(const QVariantMap& map){Q_UNUSED(map);}
+    void setParameters(const QVariantMap& map){ Q_UNUSED(map) }
 
     quint64 cacheExpirationTime() const{return 0;}
-    void setCacheExpirationTime(quint64 timeMs){Q_UNUSED(timeMs);}
+    void setCacheExpirationTime(quint64 timeMs){ Q_UNUSED(timeMs) }
 
 public slots:
-    void addParameter(const QString &name, long long defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
-    void addParameter(const QString &name, double defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
-    void addParameter(const QString &name, const QString& defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
-    void addParameter(const QString &name, bool defaultValue){Q_UNUSED(name); Q_UNUSED(defaultValue);}
+    void addParameter(const QString &name, long long defaultValue){ Q_UNUSED(name) Q_UNUSED(defaultValue) }
+    void addParameter(const QString &name, double defaultValue){ Q_UNUSED(name) Q_UNUSED(defaultValue) }
+    void addParameter(const QString &name, const QString& defaultValue){ Q_UNUSED(name) Q_UNUSED(defaultValue) }
+    void addParameter(const QString &name, bool defaultValue){ Q_UNUSED(name) Q_UNUSED(defaultValue) }
     QVariant getParameterValue(const QString) const{ return QString(); }
 
     void fetch(){}

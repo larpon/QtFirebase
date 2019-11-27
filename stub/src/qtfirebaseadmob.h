@@ -58,7 +58,7 @@ public:
     };
     Q_ENUM(ChildDirectedTreatment)
 
-    explicit QtFirebaseAdMob(QObject* parent = nullptr) { Q_UNUSED(parent); }
+    explicit QtFirebaseAdMob(QObject* parent = nullptr) { Q_UNUSED(parent) }
 
     static QtFirebaseAdMob *instance() {
         if(self == nullptr) {
@@ -66,16 +66,16 @@ public:
         }
         return self;
     }
-    bool checkInstance(const char *function) {  Q_UNUSED(function); return false; }
+    bool checkInstance(const char *function) {  Q_UNUSED(function) return false; }
 
     bool ready() { return false; }
-    void setReady(bool ready) { Q_UNUSED(ready); }
+    void setReady(bool ready) { Q_UNUSED(ready) }
 
     QString appId() { return QStringLiteral(""); }
-    void setAppId(const QString &appId) { Q_UNUSED(appId); }
+    void setAppId(const QString &appId) { Q_UNUSED(appId) }
 
     QVariantList testDevices() { return QVariantList(); }
-    void setTestDevices(QVariantList testDevices) { Q_UNUSED(testDevices); }
+    void setTestDevices(QVariantList testDevices) { Q_UNUSED(testDevices) }
 
 signals:
     void readyChanged();
@@ -104,26 +104,26 @@ class QtFirebaseAdMobRequest : public QObject
     Q_PROPERTY(QVariantList testDevices READ testDevices WRITE setTestDevices NOTIFY testDevicesChanged)
 
 public:
-    QtFirebaseAdMobRequest(QObject* parent = nullptr) { Q_UNUSED(parent); }
+    QtFirebaseAdMobRequest(QObject* parent = nullptr) { Q_UNUSED(parent) }
     ~QtFirebaseAdMobRequest() {}
 
     int gender() const { return 0; }
-    void setGender(int gender) {Q_UNUSED(gender);}
+    void setGender(int gender) { Q_UNUSED(gender) }
 
     int childDirectedTreatment() const { return 0; }
-    void setChildDirectedTreatment(int childDirectedTreatment) {Q_UNUSED(childDirectedTreatment);}
+    void setChildDirectedTreatment(int childDirectedTreatment) { Q_UNUSED(childDirectedTreatment) }
 
     QDateTime birthday() const { return QDateTime(); }
-    void setBirthday(const QDateTime &birthday) {Q_UNUSED(birthday);}
+    void setBirthday(const QDateTime &birthday) { Q_UNUSED(birthday) }
 
     QVariantList keywords() const { return QVariantList(); }
-    void setKeywords(const QVariantList &keywords) {Q_UNUSED(keywords);}
+    void setKeywords(const QVariantList &keywords) { Q_UNUSED(keywords) }
 
     QVariantList extras() const { return QVariantList(); }
-    void setExtras(const QVariantList &extras) {Q_UNUSED(extras);}
+    void setExtras(const QVariantList &extras) { Q_UNUSED(extras) }
 
     QVariantList testDevices() { return QVariantList(); }
-    void setTestDevices(QVariantList &testDevices) {Q_UNUSED(testDevices);}
+    void setTestDevices(QVariantList &testDevices) { Q_UNUSED(testDevices) }
 
 signals:
     void genderChanged();
@@ -152,24 +152,24 @@ class QtFirebaseAdMobBase : public QObject
     Q_PROPERTY(QtFirebaseAdMobRequest* request READ request WRITE setRequest NOTIFY requestChanged)
 
 protected:
-    QtFirebaseAdMobBase(QObject* parent = nullptr)  { Q_UNUSED(parent); }
+    QtFirebaseAdMobBase(QObject* parent = nullptr)  { Q_UNUSED(parent) }
     virtual ~QtFirebaseAdMobBase(){}
 
 public:
     bool ready() { return false; }
-    void setReady(bool ready) { Q_UNUSED(ready); }
+    void setReady(bool ready) { Q_UNUSED(ready) }
 
     bool loaded() { return false; }
-    void setLoaded(bool loaded) { Q_UNUSED(loaded); }
+    void setLoaded(bool loaded) { Q_UNUSED(loaded) }
 
     QString adUnitId() { return QStringLiteral(""); }
-    void setAdUnitId(const QString &adUnitId) { Q_UNUSED(adUnitId); }
+    void setAdUnitId(const QString &adUnitId) { Q_UNUSED(adUnitId) }
 
     bool visible() { return false; }
-    void setVisible(bool visible) { Q_UNUSED(visible); }
+    void setVisible(bool visible) { Q_UNUSED(visible) }
 
     QtFirebaseAdMobRequest* request()  { return nullptr; }
-    void setRequest(QtFirebaseAdMobRequest *request) { Q_UNUSED(request); }
+    void setRequest(QtFirebaseAdMobRequest *request) { Q_UNUSED(request) }
 
 signals:
     void adUnitIdChanged();
@@ -211,20 +211,20 @@ public:
     };
     Q_ENUM(Position)
 
-    QtFirebaseAdMobBanner(QObject* parent = nullptr) { Q_UNUSED(parent); }
+    QtFirebaseAdMobBanner(QObject* parent = nullptr) { Q_UNUSED(parent) }
     ~QtFirebaseAdMobBanner() {}
 
     int getX() { return 0; }
-    void setX(const int &x) { Q_UNUSED(x); }
+    void setX(const int &x) { Q_UNUSED(x) }
 
     int getY() { return 0; }
-    void setY(const int &y) { Q_UNUSED(y); }
+    void setY(const int &y) { Q_UNUSED(y) }
 
     int getWidth() {return 0; }
-    void setWidth(const int &width) { Q_UNUSED(width); }
+    void setWidth(const int &width) { Q_UNUSED(width) }
 
     int getHeight() { return 0; }
-    void setHeight(const int &height) { Q_UNUSED(height); }
+    void setHeight(const int &height) { Q_UNUSED(height) }
 
 signals:
     void xChanged();
@@ -234,8 +234,8 @@ signals:
 
 public slots:
     void hide() {}
-    void moveTo(int x, int y) { Q_UNUSED(x); Q_UNUSED(y); }
-    void moveTo(int position) { Q_UNUSED(position); }
+    void moveTo(int x, int y) { Q_UNUSED(x) Q_UNUSED(y) }
+    void moveTo(int position) { Q_UNUSED(position) }
 };
 
 /*
@@ -254,7 +254,7 @@ public:
     };
     Q_ENUM(PresentationState)
 
-    QtFirebaseAdMobInterstitial(QObject* parent = nullptr){Q_UNUSED(parent);}
+    QtFirebaseAdMobInterstitial(QObject* parent = nullptr){ Q_UNUSED(parent) }
     ~QtFirebaseAdMobInterstitial() {}
 
 signals:
@@ -278,7 +278,7 @@ public:
     };
     Q_ENUM(PresentationState)
 
-    QtFirebaseAdMobRewardedVideoAd(QObject* parent = nullptr){Q_UNUSED(parent);}
+    QtFirebaseAdMobRewardedVideoAd(QObject* parent = nullptr){ Q_UNUSED(parent) }
     ~QtFirebaseAdMobRewardedVideoAd(){}
 
 signals:

@@ -18,7 +18,7 @@ class QtFirebaseService: public QObject
     Q_OBJECT
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
 public:
-    explicit QtFirebaseService(QObject* parent = nullptr) { Q_UNUSED(parent); }
+    explicit QtFirebaseService(QObject* parent = nullptr) { Q_UNUSED(parent) }
     ~QtFirebaseService() {}
     bool ready() const { return true; }
     static QVariant fromFirebaseVariant(const QVariant& v) { return v; }

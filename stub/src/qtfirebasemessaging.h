@@ -23,7 +23,7 @@ class QtFirebaseMessaging : public QObject
     Q_PROPERTY(QString token READ token NOTIFY tokenChanged)
 
 public:
-    explicit QtFirebaseMessaging(QObject* parent = nullptr) { Q_UNUSED(parent); }
+    explicit QtFirebaseMessaging(QObject* parent = nullptr) { Q_UNUSED(parent) }
     ~QtFirebaseMessaging() {}
 
     static QtFirebaseMessaging *instance() {
@@ -33,19 +33,19 @@ public:
         return self;
     }
 
-    bool checkInstance(const char *function) { Q_UNUSED(function); return false; }
+    bool checkInstance(const char *function) { Q_UNUSED(function) return false; }
 
     bool ready() { return false; }
-    void setReady(bool ready) { Q_UNUSED(ready); }
+    void setReady(bool ready) { Q_UNUSED(ready) }
 
     QVariantMap data() { return QVariantMap(); }
-    void setData(QVariantMap data) { Q_UNUSED(data); }
+    void setData(QVariantMap data) { Q_UNUSED(data) }
 
     QString token() { return QString(); }
-    void setToken(QString token) { Q_UNUSED(token); }
+    void setToken(QString token) { Q_UNUSED(token) }
 
-    Q_INVOKABLE void subscribe(const QString &topic) { Q_UNUSED(topic); }
-    Q_INVOKABLE void unsubscribe(const QString &topic) { Q_UNUSED(topic); }
+    Q_INVOKABLE void subscribe(const QString &topic) { Q_UNUSED(topic) }
+    Q_INVOKABLE void unsubscribe(const QString &topic) { Q_UNUSED(topic) }
 
 signals:
     void readyChanged();

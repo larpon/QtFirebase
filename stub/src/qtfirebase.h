@@ -15,7 +15,7 @@ class QtFirebase : public QObject
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
 
 public:
-    explicit QtFirebase(QObject* parent = nullptr) { Q_UNUSED(parent); }
+    explicit QtFirebase(QObject* parent = nullptr) { Q_UNUSED(parent) }
     ~QtFirebase() {}
 
     static QtFirebase *instance() {
@@ -26,7 +26,7 @@ public:
 
     bool ready() { return false; }
 
-    bool checkInstance(const char *function) { Q_UNUSED(function); return false; }
+    bool checkInstance(const char *function) { Q_UNUSED(function) return false; }
 
 signals:
     void readyChanged();

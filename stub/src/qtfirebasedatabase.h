@@ -18,8 +18,8 @@ class QtFirebaseDatabase : public QtFirebaseService
     typedef QSharedPointer<QtFirebaseDatabase> Ptr;
 public:
     static QtFirebaseDatabase* instance() {
-        if(self == 0) {
-            self = new QtFirebaseDatabase(0);
+        if(self == nullptr) {
+            self = new QtFirebaseDatabase(nullptr);
         }
         return self;
     }
@@ -44,14 +44,14 @@ public:
     };
     Q_ENUM(Error)
 
-    void setReady(bool value) { Q_UNUSED(value); }
+    void setReady(bool value) { Q_UNUSED(value) }
     bool initializing() const { return false; }
-    void setInitializing(bool value) { Q_UNUSED(value); }
+    void setInitializing(bool value) { Q_UNUSED(value) }
     void init() { }
-    void onFutureEvent(QString eventId, int future) { Q_UNUSED(eventId); Q_UNUSED(future); }
+    void onFutureEvent(QString eventId, int future) { Q_UNUSED(eventId) Q_UNUSED(future) }
 
 private:
-    explicit QtFirebaseDatabase(QObject *parent = 0){Q_UNUSED(parent);}
+    explicit QtFirebaseDatabase(QObject *parent = nullptr){ Q_UNUSED(parent) }
     static QtFirebaseDatabase* self;
     Q_DISABLE_COPY(QtFirebaseDatabase)
     friend class QtFirebaseDatabaseRequest;
@@ -80,16 +80,16 @@ public:
 public slots:
     QtFirebaseDatabaseQuery* orderByKey(){return nullptr;}
     QtFirebaseDatabaseQuery* orderByValue(){return nullptr;}
-    QtFirebaseDatabaseQuery* orderByChild(const QString& path){Q_UNUSED(path); return nullptr;}
+    QtFirebaseDatabaseQuery* orderByChild(const QString& path){ Q_UNUSED(path) return nullptr;}
     QtFirebaseDatabaseQuery* orderByPriority(){return nullptr;}
-    QtFirebaseDatabaseQuery* startAt(QVariant order_value){Q_UNUSED(order_value); return nullptr;}
-    QtFirebaseDatabaseQuery* startAt(QVariant order_value, const QString& child_key){Q_UNUSED(order_value); Q_UNUSED(child_key); return nullptr;}
-    QtFirebaseDatabaseQuery* endAt(QVariant order_value){Q_UNUSED(order_value); return nullptr;}
-    QtFirebaseDatabaseQuery* endAt(QVariant order_value, const QString& child_key){Q_UNUSED(order_value); Q_UNUSED(child_key); return nullptr;}
-    QtFirebaseDatabaseQuery* equalTo(QVariant order_value){Q_UNUSED(order_value); return nullptr;}
-    QtFirebaseDatabaseQuery* equalTo(QVariant order_value, const QString& child_key){Q_UNUSED(order_value); Q_UNUSED(child_key); return nullptr;}
-    QtFirebaseDatabaseQuery* limitToFirst(size_t limit){Q_UNUSED(limit); return nullptr;}
-    QtFirebaseDatabaseQuery* limitToLast(size_t limit){Q_UNUSED(limit); return nullptr;}
+    QtFirebaseDatabaseQuery* startAt(QVariant order_value){ Q_UNUSED(order_value) return nullptr;}
+    QtFirebaseDatabaseQuery* startAt(QVariant order_value, const QString& child_key){ Q_UNUSED(order_value) Q_UNUSED(child_key) return nullptr; }
+    QtFirebaseDatabaseQuery* endAt(QVariant order_value){ Q_UNUSED(order_value) return nullptr;}
+    QtFirebaseDatabaseQuery* endAt(QVariant order_value, const QString& child_key){ Q_UNUSED(order_value) Q_UNUSED(child_key) return nullptr; }
+    QtFirebaseDatabaseQuery* equalTo(QVariant order_value){ Q_UNUSED(order_value) return nullptr;}
+    QtFirebaseDatabaseQuery* equalTo(QVariant order_value, const QString& child_key){ Q_UNUSED(order_value) Q_UNUSED(child_key) return nullptr; }
+    QtFirebaseDatabaseQuery* limitToFirst(size_t limit){ Q_UNUSED(limit) return nullptr; }
+    QtFirebaseDatabaseQuery* limitToLast(size_t limit){ Q_UNUSED(limit) return nullptr; }
     void exec(){}
 };
 
@@ -100,26 +100,26 @@ class QtFirebaseDatabaseRequest: public QObject
     Q_PROPERTY(QtFirebaseDataSnapshot* snapshot READ snapshot NOTIFY snapshotChanged)
 public slots:
     //Data request
-    QtFirebaseDatabaseRequest* child(const QString& path = QString()){Q_UNUSED(path); return nullptr;}
+    QtFirebaseDatabaseRequest* child(const QString& path = QString()){ Q_UNUSED(path) return nullptr;}
     QtFirebaseDatabaseRequest* pushChild(){return nullptr;}
-    void setValue(const QVariant& value){Q_UNUSED(value);}
+    void setValue(const QVariant& value){ Q_UNUSED(value) }
     void requestValue(){}
-    void updateTree(const QVariant& tree){Q_UNUSED(tree);}
+    void updateTree(const QVariant& tree){ Q_UNUSED(tree) }
     void remove(){}
 
     //Filters
     QtFirebaseDatabaseQuery* orderByKey(){return nullptr;}
     QtFirebaseDatabaseQuery* orderByValue(){return nullptr;}
-    QtFirebaseDatabaseQuery* orderByChild(const QString& path){Q_UNUSED(path);return nullptr;}
+    QtFirebaseDatabaseQuery* orderByChild(const QString& path){ Q_UNUSED(path) return nullptr;}
     QtFirebaseDatabaseQuery* orderByPriority(){return nullptr;}
-    QtFirebaseDatabaseQuery* startAt(QVariant order_value){Q_UNUSED(order_value); return nullptr;}
-    QtFirebaseDatabaseQuery* startAt(QVariant order_value, const QString& child_key){Q_UNUSED(order_value); Q_UNUSED(child_key); return nullptr;}
-    QtFirebaseDatabaseQuery* endAt(QVariant order_value){Q_UNUSED(order_value); return nullptr;}
-    QtFirebaseDatabaseQuery* endAt(QVariant order_value, const QString& child_key){Q_UNUSED(order_value); Q_UNUSED(child_key); return nullptr;}
-    QtFirebaseDatabaseQuery* equalTo(QVariant order_value){Q_UNUSED(order_value); return nullptr;}
-    QtFirebaseDatabaseQuery* equalTo(QVariant order_value, const QString& child_key){Q_UNUSED(order_value); Q_UNUSED(child_key); return nullptr;}
-    QtFirebaseDatabaseQuery* limitToFirst(size_t limit){Q_UNUSED(limit); return nullptr;}
-    QtFirebaseDatabaseQuery* limitToLast(size_t limit){Q_UNUSED(limit); return nullptr;}
+    QtFirebaseDatabaseQuery* startAt(QVariant order_value){ Q_UNUSED(order_value) return nullptr;}
+    QtFirebaseDatabaseQuery* startAt(QVariant order_value, const QString& child_key){ Q_UNUSED(order_value) Q_UNUSED(child_key) return nullptr;}
+    QtFirebaseDatabaseQuery* endAt(QVariant order_value){ Q_UNUSED(order_value) return nullptr;}
+    QtFirebaseDatabaseQuery* endAt(QVariant order_value, const QString& child_key){ Q_UNUSED(order_value) Q_UNUSED(child_key) return nullptr;}
+    QtFirebaseDatabaseQuery* equalTo(QVariant order_value){ Q_UNUSED(order_value) return nullptr;}
+    QtFirebaseDatabaseQuery* equalTo(QVariant order_value, const QString& child_key){ Q_UNUSED(order_value) Q_UNUSED(child_key) return nullptr;}
+    QtFirebaseDatabaseQuery* limitToFirst(size_t limit){ Q_UNUSED(limit) return nullptr;}
+    QtFirebaseDatabaseQuery* limitToLast(size_t limit){ Q_UNUSED(limit) return nullptr;}
 
     //State
     bool running() const{return false;}
