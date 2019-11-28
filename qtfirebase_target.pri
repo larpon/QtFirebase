@@ -216,15 +216,16 @@ contains(DEFINES,QTFIREBASE_BUILD_ANALYTICS) {
     message( "QtFirebase including Analytics" )
 
     ios: {
+        # -framework FirebaseCoreDiagnostics \
+        # -framework GoogleDataTransport \
+        #-framework GoogleDataTransportCCTSupport \
+
         LIBS += \
             -framework StoreKit \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/Analytics \
             -framework FirebaseAnalytics \
-            -framework FirebaseCore \
-            -framework FirebaseCoreDiagnostics \
+            -framework FirebaseCore \            
             -framework FirebaseInstanceID \
-            -framework GoogleDataTransport \
-            -framework GoogleDataTransportCCTSupport \
             -framework GoogleAppMeasurement \
             -framework GoogleUtilities \
             -framework nanopb \
