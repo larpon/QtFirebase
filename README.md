@@ -46,7 +46,7 @@ Up until commit [cb52be83](https://github.com/Larpon/QtFirebase/commit/cb52be832
 
 **Base, AdMob, Analytics, RemoteConfig, Cloud Messaging, Authentication, Realtime Database**
 
-`v4.1.0`, `v4.2.0`, `v4.5.0`, `v4.5.1`, `v5.0.0`, `v5.1.1`, `v5.3.0`, `6.1.0`
+`v4.1.0`, `v4.2.0`, `v4.5.0`, `v4.5.1`, `v5.0.0`, `v5.1.1`, `v5.3.0`, `6.1.0`, `6.7.0`
 
 In most cases you'll be able to build against the latest version of the Firebase C++ SDK - but we've experienced times when developers got lost in the woods for doing so. In that case we recommend you build against one of the latest tested versions of the Firebase C++ SDK as listed above.
 
