@@ -15,6 +15,10 @@ jobs:
       run: |
         echo Add other actions to build,
         echo test, and deploy your project.
+    
+    - name: Setup ENV
+      run: |
+        export WORK="$(readlink -f "$(pwd)")"
         
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.1.0
@@ -30,23 +34,23 @@ jobs:
 
     - name: Install QtFirebase
       run: |
-        git clone https://github.com/Larpon/QtFirebase.git qtfb
+        git clone https://github.com/Larpon/QtFirebase.git
 
     - name: Install QtFirebaseExample
       run: |
-        git clone https://github.com/Larpon/QtFirebaseExample.git qtfbex
+        git clone https://github.com/Larpon/QtFirebaseExample.git
 
     - name: Setup
       run: |
-        ln -s "$(readlink -f firebase_cpp_sdk)" "$(readlink -f qtfb)"/firebase_cpp_sdk
-        ln -s "$(readlink -f QtFirebase) "$(readlink -f qtfbex)"/extensions/QtFirebase
+        ln -s "${WORK}/firebase_cpp_sdk" "${WORK}/qtfb/firebase_cpp_sdk"
+        ln -s "${WORK}/QtFirebase" "${WORK}/QtFirebaseExample/extensions/QtFirebase"
 
     - name: Run QMake
       run: |
-        cd qtfbex
+        cd "${WORK}/QtFirebaseExample/"
         ${Qt5_Dir}/Qt/5.12.6/android_armv7/bin/qmake
         
     - name: Run Make
       run: |
-        cd qtfbex
+        cd "${WORK}/QtFirebaseExample/"
         make
