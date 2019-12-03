@@ -3,7 +3,8 @@ name: CI
 on: [push]
 
 jobs:
-  build:
+  
+  build-linux-android:
 
     runs-on: ubuntu-latest
 
@@ -92,6 +93,61 @@ jobs:
         #echo "::set-env name=ANDROID_NDK_TOOLCHAIN_PREFIX::arm-linux-androideabi"
         #echo "::set-env name=ANDROID_NDK_TOOLCHAIN_VERSION::4.9"
         #echo "::set-env name=ANDROID_NDK_TOOLS_PREFIX::arm-linux-androideabi"
+        
+    - name: Run QMake
+      run: |
+        cd ..
+        echo "--- Run QMake ---"
+        cd "QtFirebaseExample/"
+        mkdir build && cd build
+        ${Qt5_Dir}/bin/qmake ../
+        
+    - name: Run Make
+      run: |
+        cd ..
+        cd QtFirebaseExample/build
+        make
+  
+  build-linux-desktop:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    
+    - name: Setup
+      run: |
+        cd ..
+        WROOT=$(readlink -f .)
+        echo "::set-env name=WORK::${WROOT}"
+    
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2.1.0
+      with:
+        version: 5.12.6
+        target: desktop
+
+    - name: Install Firebase C++ SDK
+      run: |
+        cd ..
+        curl -L https://firebase.google.com/download/cpp -o firebase_cpp_sdk.zip
+        unzip firebase_cpp_sdk.zip
+
+    #- name: Install QtFirebase
+    #  run: |
+    #    cd ..
+    #    git clone https://github.com/Larpon/QtFirebase.git
+
+    - name: Install QtFirebaseExample
+      run: |
+        cd ..
+        git clone https://github.com/Larpon/QtFirebaseExample.git
+
+    - name: Connect projects
+      run: |
+        cd ..
+        ln -s ${WORK}/firebase_cpp_sdk ${WORK}/QtFirebase/firebase_cpp_sdk
+        ln -s ${WORK}/QtFirebase ${WORK}/QtFirebaseExample/extensions/QtFirebase
         
     - name: Run QMake
       run: |
