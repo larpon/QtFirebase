@@ -17,9 +17,9 @@ jobs:
         target: android
         arch: android_armv7 
 
-    - name: 1UP
-      run: |
-        cd ..
+#    - name: 1UP
+#      run: |
+#        cd ..
 #        export WORK="$(readlink -f "${RUNNER_WORKSPACE}/..")"
 #        echo "---"
 #        echo "Work dir: ${WORK}"
@@ -39,7 +39,7 @@ jobs:
         
     - name: Install Firebase C++ SDK
       run: |
-        ls -al
+        cd ..
         curl -L https://firebase.google.com/download/cpp -o firebase_cpp_sdk.zip
         unzip firebase_cpp_sdk.zip
 
@@ -49,7 +49,7 @@ jobs:
 
     - name: Install QtFirebaseExample
       run: |
-        ls -al
+        cd ..
         git clone https://github.com/Larpon/QtFirebaseExample.git
 
     - name: Setup
