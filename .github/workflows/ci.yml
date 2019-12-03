@@ -39,6 +39,7 @@ jobs:
         
     - name: Install Firebase C++ SDK
       run: |
+        ls -al
         curl -L https://firebase.google.com/download/cpp -o firebase_cpp_sdk.zip
         unzip firebase_cpp_sdk.zip
 
@@ -48,10 +49,13 @@ jobs:
 
     - name: Install QtFirebaseExample
       run: |
+        ls -al
         git clone https://github.com/Larpon/QtFirebaseExample.git
 
     - name: Setup
       run: |
+        ls -al
+        ls -al ..
         export WORK="$(readlink -f "${RUNNER_WORKSPACE}/..")"
         ln -s ${WORK}/firebase_cpp_sdk ${WORK}/QtFirebase/firebase_cpp_sdk
         ln -s ${WORK}/QtFirebase ${WORK}/QtFirebaseExample/extensions/QtFirebase
