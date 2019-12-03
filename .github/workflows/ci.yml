@@ -88,12 +88,19 @@ jobs:
         
         ln -s ${WORK}/firebase_cpp_sdk ${WORK}/QtFirebase/firebase_cpp_sdk
         ln -s ${WORK}/QtFirebase ${WORK}/QtFirebaseExample/extensions/QtFirebase
-
+        ls -al ${WORK}/QtFirebase/firebase_cpp_sdk
+        ls -al ${WORK}/QtFirebaseExample/extensions/QtFirebase
+        
+        ls -al .
+        
     - name: Run QMake
       run: |
         cd ..
         echo "--- Setup PATH ---"
         export WORK="$(readlink -f .)"
+        ls -al .
+        las -al ${WORK}
+        
         PATH=${PATH}:${WORK}/gradle/bin:${WORK}/ndk
         echo "${PATH}"
         echo "--- Set ANDROID ENV ---"
