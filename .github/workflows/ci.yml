@@ -20,9 +20,9 @@ jobs:
     - name: 1UP
       run: |
         cd ..
-        export WORK="$(readlink -f "${RUNNER_WORKSPACE}/..")"
-        echo "---"
-        echo "Work dir: ${WORK}"
+#        export WORK="$(readlink -f "${RUNNER_WORKSPACE}/..")"
+#        echo "---"
+#        echo "Work dir: ${WORK}"
 #        echo "---"
 #        ls -al ./Qt/5.12.6/android_armv7/bin
 #        echo "---"
@@ -52,6 +52,7 @@ jobs:
 
     - name: Setup
       run: |
+        export WORK="$(readlink -f "${RUNNER_WORKSPACE}/..")"
         ln -s ${WORK}/firebase_cpp_sdk ${WORK}/QtFirebase/firebase_cpp_sdk
         ln -s ${WORK}/QtFirebase ${WORK}/QtFirebaseExample/extensions/QtFirebase
 
