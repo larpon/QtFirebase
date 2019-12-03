@@ -19,8 +19,8 @@ jobs:
         echo "::set-env name=ANDROID_NDK_HOME::${WROOT}/ndk"
         echo "::set-env name=ANDROID_NDK_VERSION::r20b"
         echo "::set-env name=ANDROID_VERSION::28"
-        echo "::set-env name=ANDROID_BUILD_TOOLS_VERSION::28.0.3
-        echo "::set-env name=GRADLE_VERSION::4.10.3
+        echo "::set-env name=ANDROID_BUILD_TOOLS_VERSION::28.0.3"
+        echo "::set-env name=GRADLE_VERSION::4.10.3"
     
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.1.0
@@ -39,8 +39,6 @@ jobs:
     - name: Install Android SDK
       run: |
         cd ..
-        echo "SDK HOME: ${WORK}"
-        echo "SDK HOME: ${ANDROID_SDK_HOME}"
         curl -L https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip -o sdk.zip
         unzip sdk.zip
         yes | ./tools/bin/sdkmanager --licenses --sdk_root=${ANDROID_SDK_HOME}
