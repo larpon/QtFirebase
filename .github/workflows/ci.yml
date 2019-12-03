@@ -50,8 +50,8 @@ jobs:
 
     - name: Setup
       run: |
-        ln -s ${WORK}/firebase_cpp_sdk ${WORK}/QtFirebase/firebase_cpp_sdk
-        ln -s ${WORK}/QtFirebase ${WORK}/QtFirebaseExample/extensions/QtFirebase
+        ln -s ${RUNNER_WORKSPACE}/firebase_cpp_sdk ${RUNNER_WORKSPACE}/QtFirebase/firebase_cpp_sdk
+        ln -s ${RUNNER_WORKSPACE}/QtFirebase ${RUNNER_WORKSPACE}/QtFirebaseExample/extensions/QtFirebase
 
     - name: Run QMake
       run: |
