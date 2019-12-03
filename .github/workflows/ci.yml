@@ -52,26 +52,6 @@ jobs:
         unzip gradle.zip
         mv gradle-${GRADLE_VERSION} gradle
 
-#    - name: 1UP
-#      run: |
-#        cd ..
-#        export WORK="$(readlink -f "${RUNNER_WORKSPACE}/..")"
-#        echo "---"
-#        echo "Work dir: ${WORK}"
-#        echo "---"
-#        ls -al ./Qt/5.12.6/android_armv7/bin
-#        echo "---"
-#        echo "$(readlink -f ./Qt)"
-#        echo "---"
-#        echo "$(readlink -f "${Qt5_Dir}")"
-
-#        echo "---"
-#        ls -al
-#        echo "---"
-#        ls -al ./Qt
-#        echo "---"
-#        ls -al ./Qt/5.12.6
-        
     - name: Install Firebase C++ SDK
       run: |
         cd ..
@@ -80,6 +60,7 @@ jobs:
 
     #- name: Install QtFirebase
     #  run: |
+    #    cd ..
     #    git clone https://github.com/Larpon/QtFirebase.git
 
     - name: Install QtFirebaseExample
@@ -90,28 +71,31 @@ jobs:
     - name: Connect projects
       run: |
         cd ..
-        echo "---"
-        echo "Work dir: ${WORK}"
-        
         ln -s ${WORK}/firebase_cpp_sdk ${WORK}/QtFirebase/firebase_cpp_sdk
         ln -s ${WORK}/QtFirebase ${WORK}/QtFirebaseExample/extensions/QtFirebase
+        
+    - name: Setup ENV
+      run: |
+        echo "--- Setup PATH ---"
+        PATH=${PATH}:${WORK}/gradle/bin:${WORK}/ndk
+        echo "::set-env name=PATH::${PATH}"
+        echo "PATH: ${PATH}"
+        
+        echo "--- Set ANDROID ENV ---"
+        
+        echo "::set-env name=ANDROID_HOME::${ANDROID_SDK_HOME}"
+        echo "::set-env name=ANDROID_SDK_ROOT::${ANDROID_SDK_HOME}"
+        echo "::set-env name=ANDROID_NDK_ROOT::${ANDROID_NDK_HOME}"
+        echo "${ANDROID_NDK_ROOT}"
+        #echo "::set-env name=ANDROID_NDK_HOST::linux-x86_64"
+        #echo "::set-env name=ANDROID_NDK_PLATFORM::android-28"
+        #echo "::set-env name=ANDROID_NDK_TOOLCHAIN_PREFIX::arm-linux-androideabi"
+        #echo "::set-env name=ANDROID_NDK_TOOLCHAIN_VERSION::4.9"
+        #echo "::set-env name=ANDROID_NDK_TOOLS_PREFIX::arm-linux-androideabi"
         
     - name: Run QMake
       run: |
         cd ..
-        echo "--- Setup PATH ---"
-        PATH=${PATH}:${WORK}/gradle/bin:${WORK}/ndk
-        echo "${PATH}"
-        echo "--- Set ANDROID ENV ---"
-        export ANDROID_HOME=${ANDROID_SDK_HOME}
-        export ANDROID_NDK_HOST=linux-x86_64
-        export ANDROID_NDK_PLATFORM=android-28
-        export ANDROID_NDK_ROOT=${ANDROID_NDK_HOME}
-        export ANDROID_NDK_TOOLCHAIN_PREFIX=arm-linux-androideabi
-        export ANDROID_NDK_TOOLCHAIN_VERSION=4.9
-        export ANDROID_NDK_TOOLS_PREFIX=arm-linux-androideabi
-        export ANDROID_SDK_ROOT=${ANDROID_SDK_HOME}
-        echo "${ANDROID_NDK_ROOT}"
         echo "--- Run QMake ---"
         cd "QtFirebaseExample/"
         mkdir build && cd build
@@ -120,19 +104,5 @@ jobs:
     - name: Run Make
       run: |
         cd ..
-        echo "--- Setup PATH ---"
-        PATH=${PATH}:${WORK}/gradle/bin:${WORK}/ndk
-        echo "${PATH}"
-        echo "--- Set ANDROID ENV ---"
-        export ANDROID_HOME=${ANDROID_SDK_HOME}
-        export ANDROID_NDK_HOST=linux-x86_64
-        export ANDROID_NDK_PLATFORM=android-28
-        export ANDROID_NDK_ROOT=${ANDROID_NDK_HOME}
-        export ANDROID_NDK_TOOLCHAIN_PREFIX=arm-linux-androideabi
-        export ANDROID_NDK_TOOLCHAIN_VERSION=4.9
-        export ANDROID_NDK_TOOLS_PREFIX=arm-linux-androideabi
-        export ANDROID_SDK_ROOT=${ANDROID_SDK_HOME}
-        echo "${ANDROID_NDK_ROOT}"
-        
         cd QtFirebaseExample/build
         make
