@@ -32,9 +32,9 @@ jobs:
         curl -L https://firebase.google.com/download/cpp -o firebase_cpp_sdk.zip
         unzip firebase_cpp_sdk.zip
 
-    - name: Install QtFirebase
-      run: |
-        git clone https://github.com/Larpon/QtFirebase.git
+    #- name: Install QtFirebase
+    #  run: |
+    #    git clone https://github.com/Larpon/QtFirebase.git
 
     - name: Install QtFirebaseExample
       run: |
@@ -42,15 +42,16 @@ jobs:
 
     - name: Setup
       run: |
-        ln -s "${WORK}/firebase_cpp_sdk" "${WORK}/qtfb/firebase_cpp_sdk"
+        ln -s "${WORK}/firebase_cpp_sdk" "${WORK}/QtFirebase/firebase_cpp_sdk"
         ln -s "${WORK}/QtFirebase" "${WORK}/QtFirebaseExample/extensions/QtFirebase"
 
     - name: Run QMake
       run: |
         cd "${WORK}/QtFirebaseExample/"
-        ${Qt5_Dir}/Qt/5.12.6/android_armv7/bin/qmake
+        mkdir build && cd build
+        ${Qt5_Dir}/Qt/5.12.6/android_armv7/bin/qmake ../
         
     - name: Run Make
       run: |
-        cd "${WORK}/QtFirebaseExample/"
+        cd "${WORK}/QtFirebaseExample/build"
         make
