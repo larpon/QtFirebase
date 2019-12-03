@@ -21,37 +21,40 @@ jobs:
       run: |
         cd ..
         echo "---"
-        ls -al
-        echo "---"
-        ls -al ./Qt
-        echo "---"
-        ls -al ./Qt/5.12.6/
+        ls -al ./Qt/5.12.6/android_armv7/
+
+#        echo "---"
+#        ls -al
+#        echo "---"
+#        ls -al ./Qt
+#        echo "---"
+#        ls -al ./Qt/5.12.6
         
-    - name: Install Firebase C++ SDK
-      run: |
-        curl -L https://firebase.google.com/download/cpp -o firebase_cpp_sdk.zip
-        unzip firebase_cpp_sdk.zip
+#    - name: Install Firebase C++ SDK
+#      run: |
+#        curl -L https://firebase.google.com/download/cpp -o firebase_cpp_sdk.zip
+#        unzip firebase_cpp_sdk.zip
 
     #- name: Install QtFirebase
     #  run: |
     #    git clone https://github.com/Larpon/QtFirebase.git
 
-    - name: Install QtFirebaseExample
-      run: |
-        git clone https://github.com/Larpon/QtFirebaseExample.git
+#    - name: Install QtFirebaseExample
+ #     run: |
+  #      git clone https://github.com/Larpon/QtFirebaseExample.git
 
-    - name: Setup
-      run: |
-        ls -al
-        ln -s firebase_cpp_sdk QtFirebase/firebase_cpp_sdk
-        ln -s QtFirebase QtFirebaseExample/extensions/QtFirebase
+   # - name: Setup
+    #  run: |
+     #   ls -al
+      #  ln -s firebase_cpp_sdk QtFirebase/firebase_cpp_sdk
+       # ln -s QtFirebase QtFirebaseExample/extensions/QtFirebase
 
-    - name: Run QMake
-      run: |
-        cd "QtFirebaseExample/"
-        mkdir build && cd build
-        ${Qt5_Dir}/Qt/5.12.6/android_armv7/bin/qmake ../
+#    - name: Run QMake
+ #     run: |
+  #      cd "QtFirebaseExample/"
+   #     mkdir build && cd build
+    #    ${Qt5_Dir}/Qt/5.12.6/android_armv7/bin/qmake ../
         
-    - name: Run Make
-      run: |
-        make
+#    - name: Run Make
+ #     run: |
+  #      make
