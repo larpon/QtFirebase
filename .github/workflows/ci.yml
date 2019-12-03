@@ -124,5 +124,24 @@ jobs:
     - name: Run Make
       run: |
         cd ..
+        
+        echo "--- Setup PATH ---"
+        export WORK="$(readlink -f .)"
+        ls -al .
+        echo "---"
+        ls -al ${WORK}
+        echo "---"
+        PATH=${PATH}:${WORK}/gradle/bin:${WORK}/ndk
+        echo "${PATH}"
+        echo "--- Set ANDROID ENV ---"
+        export ANDROID_HOME=${WORK}/sdk
+        export ANDROID_NDK_HOST=linux-x86_64
+        export ANDROID_NDK_PLATFORM=android-28
+        export ANDROID_NDK_ROOT=${WORK}/ndk
+        export ANDROID_NDK_TOOLCHAIN_PREFIX=arm-linux-androideabi
+        export ANDROID_NDK_TOOLCHAIN_VERSION=4.9
+        export ANDROID_NDK_TOOLS_PREFIX=arm-linux-androideabi
+        export ANDROID_SDK_ROOT=${WORK}/sdk
+        
         cd QtFirebaseExample/build
         make
