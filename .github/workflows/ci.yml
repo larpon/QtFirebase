@@ -9,12 +9,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Run a one-line script
-      run: echo Hello, world!
-    - name: Run a multi-line script
-      run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
     
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.1.0
@@ -23,6 +17,16 @@ jobs:
         target: android
         arch: android_armv7 
 
+    - name: 1UP
+      run: |
+        cd ..
+        echo "---"
+        ls -al
+        echo "---"
+        ls -al ./Qt
+        echo "---"
+        ls -al ./Qt/5.12.6/
+        
     - name: Install Firebase C++ SDK
       run: |
         curl -L https://firebase.google.com/download/cpp -o firebase_cpp_sdk.zip
