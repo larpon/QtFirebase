@@ -10,6 +10,18 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     
+    - name: Setup
+      run: |
+        cd ..
+        WROOT=$(readlink -f .)
+        echo "::set-env name=WORK::${WROOT}"
+        echo "::set-env name=ANDROID_SDK_HOME::${WROOT}/sdk"
+        echo "::set-env name=ANDROID_NDK_HOME::${WROOT}/ndk"
+        echo "::set-env name=ANDROID_NDK_VERSION::r20b"
+        echo "::set-env name=ANDROID_VERSION::28"
+        echo "::set-env name=ANDROID_BUILD_TOOLS_VERSION::28.0.3
+        echo "::set-env name=GRADLE_VERSION::4.10.3
+    
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.1.0
       with:
@@ -20,30 +32,27 @@ jobs:
     - name: Install Android NDK
       run: |
         cd ..
-        curl -L https://dl.google.com/android/repository/android-ndk-r20b-linux-x86_64.zip -o ndk.zip
+        curl -L https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip -o ndk.zip
         unzip ndk.zip
-        mv android-ndk-r20b ndk
+        mv android-ndk-${ANDROID_NDK_VERSION} ndk
         
     - name: Install Android SDK
       run: |
         cd ..
-        echo "---"
-        export WORK="$(readlink -f .)"
-        echo "${WORK}"
-        ls -al "${WORK}"
-        echo "---"
+        echo "SDK HOME: ${WORK}"
+        echo "SDK HOME: ${ANDROID_SDK_HOME}"
         curl -L https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip -o sdk.zip
         unzip sdk.zip
-        yes | ./tools/bin/sdkmanager --licenses --sdk_root=${WORK}
+        yes | ./tools/bin/sdkmanager --licenses --sdk_root=${ANDROID_SDK_HOME}
         ./tools/bin/sdkmanager --update
-        yes | ./tools/bin/sdkmanager "build-tools;28.0.3" "platforms;android-28" "platform-tools" --sdk_root=${WORK}
+        yes | ./tools/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" "platforms;android-${ANDROID_VERSION}" "platform-tools" --sdk_root=${ANDROID_SDK_HOME}
 
     - name: Install Gradle
       run: |
         cd ..
-        curl -L https://services.gradle.org/distributions/gradle-4.10.3-all.zip -o gradle.zip
+        curl -L https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-all.zip -o gradle.zip
         unzip gradle.zip
-        mv gradle-4.10.3 gradle
+        mv gradle-${GRADLE_VERSION} gradle
 
 #    - name: 1UP
 #      run: |
@@ -80,42 +89,31 @@ jobs:
         cd ..
         git clone https://github.com/Larpon/QtFirebaseExample.git
 
-    - name: Setup
+    - name: Connect projects
       run: |
         cd ..
         echo "---"
-        export WORK="$(readlink -f .)"
-        echo "${WORK}"
+        echo "Work dir: ${WORK}"
         
         ln -s ${WORK}/firebase_cpp_sdk ${WORK}/QtFirebase/firebase_cpp_sdk
         ln -s ${WORK}/QtFirebase ${WORK}/QtFirebaseExample/extensions/QtFirebase
-        ls -al ${WORK}/QtFirebase/firebase_cpp_sdk
-        ls -al ${WORK}/QtFirebaseExample/extensions/QtFirebase
-        
-        ls -al .
         
     - name: Run QMake
       run: |
         cd ..
         echo "--- Setup PATH ---"
-        export WORK="$(readlink -f .)"
-        ls -al .
-        echo "---"
-        ls -al ${WORK}
-        echo "---"
         PATH=${PATH}:${WORK}/gradle/bin:${WORK}/ndk
         echo "${PATH}"
         echo "--- Set ANDROID ENV ---"
-        export ANDROID_HOME=${WORK}/sdk
+        export ANDROID_HOME=${ANDROID_SDK_HOME}
         export ANDROID_NDK_HOST=linux-x86_64
         export ANDROID_NDK_PLATFORM=android-28
-        export ANDROID_NDK_ROOT=${WORK}/ndk
+        export ANDROID_NDK_ROOT=${ANDROID_NDK_HOME}
         export ANDROID_NDK_TOOLCHAIN_PREFIX=arm-linux-androideabi
         export ANDROID_NDK_TOOLCHAIN_VERSION=4.9
         export ANDROID_NDK_TOOLS_PREFIX=arm-linux-androideabi
-        export ANDROID_SDK_ROOT=${WORK}/sdk
+        export ANDROID_SDK_ROOT=${ANDROID_SDK_HOME}
         echo "${ANDROID_NDK_ROOT}"
-        ls -al "${ANDROID_NDK_ROOT}"
         echo "--- Run QMake ---"
         cd "QtFirebaseExample/"
         mkdir build && cd build
@@ -124,24 +122,19 @@ jobs:
     - name: Run Make
       run: |
         cd ..
-        
         echo "--- Setup PATH ---"
-        export WORK="$(readlink -f .)"
-        ls -al .
-        echo "---"
-        ls -al ${WORK}
-        echo "---"
         PATH=${PATH}:${WORK}/gradle/bin:${WORK}/ndk
         echo "${PATH}"
         echo "--- Set ANDROID ENV ---"
-        export ANDROID_HOME=${WORK}/sdk
+        export ANDROID_HOME=${ANDROID_SDK_HOME}
         export ANDROID_NDK_HOST=linux-x86_64
         export ANDROID_NDK_PLATFORM=android-28
-        export ANDROID_NDK_ROOT=${WORK}/ndk
+        export ANDROID_NDK_ROOT=${ANDROID_NDK_HOME}
         export ANDROID_NDK_TOOLCHAIN_PREFIX=arm-linux-androideabi
         export ANDROID_NDK_TOOLCHAIN_VERSION=4.9
         export ANDROID_NDK_TOOLS_PREFIX=arm-linux-androideabi
-        export ANDROID_SDK_ROOT=${WORK}/sdk
+        export ANDROID_SDK_ROOT=${ANDROID_SDK_HOME}
+        echo "${ANDROID_NDK_ROOT}"
         
         cd QtFirebaseExample/build
         make
