@@ -20,12 +20,13 @@ jobs:
     - name: 1UP
       run: |
         cd ..
-        echo "---"
-        ls -al ./Qt/5.12.6/android_armv7/bin
-        echo "---"
-        echo "$(readlink -f ./Qt)"
-        echo "---"
-        echo "$(readlink -f "${Qt5_Dir}")"
+        export WORK="$(readlink -f "$(pwd)")"
+#        echo "---"
+#        ls -al ./Qt/5.12.6/android_armv7/bin
+#        echo "---"
+#        echo "$(readlink -f ./Qt)"
+#        echo "---"
+#        echo "$(readlink -f "${Qt5_Dir}")"
 
 #        echo "---"
 #        ls -al
@@ -34,31 +35,30 @@ jobs:
 #        echo "---"
 #        ls -al ./Qt/5.12.6
         
-#    - name: Install Firebase C++ SDK
-#      run: |
-#        curl -L https://firebase.google.com/download/cpp -o firebase_cpp_sdk.zip
-#        unzip firebase_cpp_sdk.zip
+    - name: Install Firebase C++ SDK
+      run: |
+        curl -L https://firebase.google.com/download/cpp -o firebase_cpp_sdk.zip
+        unzip firebase_cpp_sdk.zip
 
     #- name: Install QtFirebase
     #  run: |
     #    git clone https://github.com/Larpon/QtFirebase.git
 
-#    - name: Install QtFirebaseExample
- #     run: |
-  #      git clone https://github.com/Larpon/QtFirebaseExample.git
+    - name: Install QtFirebaseExample
+      run: |
+        git clone https://github.com/Larpon/QtFirebaseExample.git
 
-   # - name: Setup
-    #  run: |
-     #   ls -al
-      #  ln -s firebase_cpp_sdk QtFirebase/firebase_cpp_sdk
-       # ln -s QtFirebase QtFirebaseExample/extensions/QtFirebase
+    - name: Setup
+      run: |
+        ln -s ${WORK}/firebase_cpp_sdk ${WORK}/QtFirebase/firebase_cpp_sdk
+        ln -s ${WORK}/QtFirebase ${WORK}/QtFirebaseExample/extensions/QtFirebase
 
-#    - name: Run QMake
- #     run: |
-  #      cd "QtFirebaseExample/"
-   #     mkdir build && cd build
-    #    ${Qt5_Dir}/Qt/5.12.6/android_armv7/bin/qmake ../
+    - name: Run QMake
+      run: |
+        cd "QtFirebaseExample/"
+        mkdir build && cd build
+        ${Qt5_Dir}/bin/qmake ../
         
-#    - name: Run Make
- #     run: |
-  #      make
+    - name: Run Make
+      run: |
+        make
