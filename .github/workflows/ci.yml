@@ -18,7 +18,7 @@ jobs:
     
     - name: Setup ENV
       run: |
-        export WORK="$(readlink -f "$(pwd)")"
+        export WORK="$(readlink -f "${RUNNER_WORKSPACE}")"
         
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.1.0
