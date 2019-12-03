@@ -21,7 +21,11 @@ jobs:
       run: |
         cd ..
         echo "---"
-        ls -al ./Qt/5.12.6/android_armv7/
+        ls -al ./Qt/5.12.6/android_armv7/bin
+        echo "---"
+        echo "$(readlink -f ./Qt)"
+        echo "---"
+        echo "$(readlink -f "${Qt5_Dir}")"
 
 #        echo "---"
 #        ls -al
