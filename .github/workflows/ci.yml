@@ -95,15 +95,18 @@ jobs:
         echo "--- Setup PATH ---"
         export WORK="$(readlink -f .)"
         PATH=${PATH}:${WORK}/gradle/bin:${WORK}/ndk
+        echo "${PATH}"
         echo "--- Set ANDROID ENV ---"
         export ANDROID_HOME=${WORK}/sdk
         export ANDROID_NDK_HOST=linux-x86_64
         export ANDROID_NDK_PLATFORM=android-28
         export ANDROID_NDK_ROOT=${WORK}/ndk
-        #export ANDROID_NDK_TOOLCHAIN_PREFIX=arm-linux-androideabi
-        #export ANDROID_NDK_TOOLCHAIN_VERSION=4.9
-        #export ANDROID_NDK_TOOLS_PREFIX=arm-linux-androideabi
+        export ANDROID_NDK_TOOLCHAIN_PREFIX=arm-linux-androideabi
+        export ANDROID_NDK_TOOLCHAIN_VERSION=4.9
+        export ANDROID_NDK_TOOLS_PREFIX=arm-linux-androideabi
         export ANDROID_SDK_ROOT=${WORK}/sdk
+        echo "${ANDROID_NDK_ROOT}"
+        ls -al "${ANDROID_NDK_ROOT}"
         echo "--- Run QMake ---"
         cd "QtFirebaseExample/"
         mkdir build && cd build
