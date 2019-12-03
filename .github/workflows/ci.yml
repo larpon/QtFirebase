@@ -22,6 +22,7 @@ jobs:
         cd ..
         curl -L https://dl.google.com/android/repository/android-ndk-r20b-linux-x86_64.zip -o ndk.zip
         unzip ndk.zip
+        mv android-ndk-r20b ndk
         
     - name: Install Android SDK
       run: |
@@ -99,8 +100,9 @@ jobs:
         echo "--- Setup PATH ---"
         export WORK="$(readlink -f .)"
         ls -al .
-        las -al ${WORK}
-        
+        echo "---"
+        ls -al ${WORK}
+        echo "---"
         PATH=${PATH}:${WORK}/gradle/bin:${WORK}/ndk
         echo "${PATH}"
         echo "--- Set ANDROID ENV ---"
