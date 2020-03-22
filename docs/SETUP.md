@@ -104,9 +104,9 @@ Please see [SETUP_IOS](https://github.com/Larpon/QtFirebase/blob/master/docs/SET
 
 ## What to do next
 
-Congratiolations! You fought through the setup - pad yourself on the back!
+Congratulations! You fought through the setup - pad yourself on the back!
 
-This is kind of where we leave you off as a developer. Why? Because your entering Google's domain - and your project's specific setup.
+This is kind of where we leave you off as a developer. Why? Because you're entering Google's domain - and your project's specific setup.
 Firebase and AdMob are (mostly) closed platforms. Any problems with Ad fill-rates and backend messaging are out of scope for this project.
 The QtFirebase project only provide Qt wrapper classes - that's it.
 
