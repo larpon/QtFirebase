@@ -43,6 +43,8 @@ If you have multiple projects using QtFirebase it's a space-saver to have the Fi
 You can either symlink the Firebase C++ SDK to the default search path OR set the `QTFIREBASE_SDK_PATH` variable to the absolute path of the SDK in your project's `.pro` file for the app build.
 
 #### Symlink method
+
+Please note that symlinks will only work for \*nix host platforms (Linux, macOS)
 ```
 ln -s /path/to/sdk/firebase_cpp_sdk /path/to/projects/QtFirebase/firebase_cpp_sdk
 ```
