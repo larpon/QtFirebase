@@ -128,13 +128,13 @@ Community
 A few hints and ideas to what could be wrong:
 
 * Use QtFirebaseExample as a *reference* project, not a base for your own app. 
-* Double check that no QtFirebaseExample app id's are left over *anywhere*. Use `grep -nr 'blackgrain'` in the project root to try and identify possible places.
+* Double check that no QtFirebaseExample app id's are left over *anywhere*. Use `grep -nr 'blackgrain'` in the project root or search project wide for "blackgrain" in your IDE to try and identify possible places.
 * Make sure you replace `com.blackgrain.android.firebasetest` and `com.google.android.gms.ads.ca-app-pub-...` with your own ids.
 * Remember that Java expects directories to match your id e.g: `com.blackgrain.android.firebasetest.Main` is in `com/blackgrain/android/firebasetest/Main.java` (note how they match).
 * Wipe your builds now and then to make sure `qmake` isn't using old/cached data.
 * Triple check that you have Google Play Services installed.
-* Triple check that you're not blocking ads or other network routes on your phone or WiFi/network (**Messaging/Ads**).
-* Triple check that you're allowing your app to actually receive notifications (permissions, volume, flight mode, custom apps that block XYZ feature) (**Messaging**).
+* Triple check that you're not blocking ads or other network routes on your phone or WiFi/network.
+* Triple check that you're allowing your app to actually receive notifications (permissions, volume, flight mode, custom apps that block XYZ feature).
 * [This URL](https://github.com/Larpon/QtFirebaseExample/blob/0adea209ee2558f1f2a7a4bc1ae18c0cb9253e7b/App/qml/pages/Messaging.qml#L16) is not a service I provide - it's only there for me to test QtFirebase for this project.
 * Make sure both `QtFirebase` and `QtFirebaseExample` is on `master` branch - they should always match.
 * This is a spare time pet project - I can't and won't go through your project code, sorry :smiley:
