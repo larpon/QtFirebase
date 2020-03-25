@@ -116,9 +116,29 @@ Documentation:
 * https://firebase.google.com/docs/cpp/setup
 * https://developers.google.com/admob/
 
-Troubleshooting
+Firebase troubleshooting
 * https://stackoverflow.com/questions/tagged/firebase%20c%2b%2b
 
 Community
 * https://github.com/firebase/firebase-cpp-sdk
 * https://groups.google.com/forum/#!forum/google-admob-ads-sdk
+
+## Troubleshooting
+
+A few hints and ideas to what could be wrong:
+
+* Use QtFirebaseExample as a *reference* project, not a base for your own app. 
+* Double check that no QtFirebaseExample app id's are left over *anywhere*. Use `grep -nr 'blackgrain'` in the project root to try and identify possible places.
+* Make sure you replace `com.blackgrain.android.firebasetest` and `com.google.android.gms.ads.ca-app-pub-...` with your own ids.
+* Remember that Java expects directories to match your id e.g: `com.blackgrain.android.firebasetest.Main` is in `com/blackgrain/android/firebasetest/Main.java` (note how they match).
+* Wipe your builds now and then to make sure `qmake` isn't using old/cached data.
+* Triple check that you have Google Play Services installed.
+* Triple check that you're not blocking ads or other network routes on your phone or WiFi/network (**Messaging/Ads**).
+* Triple check that you're allowing your app to actually receive notifications (permissions, volume, flight mode, custom apps that block XYZ feature) (**Messaging**).
+* [This URL](https://github.com/Larpon/QtFirebaseExample/blob/0adea209ee2558f1f2a7a4bc1ae18c0cb9253e7b/App/qml/pages/Messaging.qml#L16) is not a service I provide - it's only there for me to test QtFirebase for this project.
+* Make sure both `QtFirebase` and `QtFirebaseExample` is on `master` branch - they should always match.
+* This is a spare time pet project - I can't and won't go through your project code, sorry :smiley:
+* QtFirebaseExample is provided as a working example, a reference, of a working setup. Qt projects can literally be setup in a million different ways - we haven't got resources to provide support for individual cases.
+* We're always open to suggestions on how to improve the documentation or setup in general :smiley:
+* If you still think something is wrong with QtFirebase try and see how [Google currently does things](https://github.com/firebase/quickstart-cpp) - also with [Messaging](https://github.com/firebase/quickstart-cpp/tree/master/messaging/testapp)
+
