@@ -116,10 +116,10 @@ Documentation:
 * https://firebase.google.com/docs/cpp/setup
 * https://developers.google.com/admob/
 
-Firebase troubleshooting
+Firebase Q/A:
 * https://stackoverflow.com/questions/tagged/firebase%20c%2b%2b
 
-Community
+Community:
 * https://github.com/firebase/firebase-cpp-sdk
 * https://groups.google.com/forum/#!forum/google-admob-ads-sdk
 
