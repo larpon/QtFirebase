@@ -18,7 +18,7 @@ Enable gradle in your Qt Creator build options.
 
 For a fully working `build.gradle` file please refer to [this example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/android/build.gradle)
 
-Depending on what modules you intend to use from Firebase you should edit the dependencies in your project's `gradle.build` to match your preferences and app ids. ([Example](https://github.com/Larpon/QtFirebaseExample/blob/cc190b/App/platforms/android/build.gradle#L166-L194))
+Depending on what modules you intend to use from Firebase you should edit the dependencies in your project's `gradle.build` to match your preferences and [app id](https://github.com/Larpon/QtFirebaseExample/blob/cc190b6b1a39f43242daa846b7d2b273c5bbc58f/App/platforms/android/build.gradle#L89)s. ([Example](https://github.com/Larpon/QtFirebaseExample/blob/cc190b/App/platforms/android/build.gradle#L166-L194))
 
 Edit paths to match your setup in `/path/to/your/Qt Creator/project/android/gradle.properties`. ([Example](https://github.com/Larpon/QtFirebaseExample/blob/master/App/platforms/android/gradle.properties))
 
