@@ -103,7 +103,6 @@ The following is a list of software that uses QtFirebase
 * [Spin The Wall](https://play.google.com/store/apps/details?id=com.iceball.spinthewall)
 * [CrackWord](https://play.google.com/store/apps/details?id=com.reddeer.crackword)
 * Scoreboard Basketball (Scoreboard for basketball, [Android](https://play.google.com/store/apps/details?id=com.alexodus.scorebkfree), [iOS](https://itunes.apple.com/us/app/my-scoreboard-basketball/id1235460810?mt=8))
-* [Pico Islands](https://play.google.com/store/apps/details?id=de.bitspree.pico.islands)
 * \<your awesome project here\>
 
 # Contributors
