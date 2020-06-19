@@ -2,7 +2,7 @@ message("QtFirebase: configuring build for supported Firebase target platform...
 
 isEmpty(QTFIREBASE_SDK_PATH){
     QTFIREBASE_SDK_PATH = $$PWD/firebase_cpp_sdk
-    message("No QTFIREBASE_SDK_PATH path sat. Using default (firebase_cpp_sdk) $$QTFIREBASE_SDK_PATH")
+    message("No QTFIREBASE_SDK_PATH path set. Using default (firebase_cpp_sdk) $$QTFIREBASE_SDK_PATH")
 } else {
     message("Using QTFIREBASE_SDK_PATH ($$QTFIREBASE_SDK_PATH)")
 }
@@ -88,7 +88,17 @@ ios: {
 
     QTFIREBASE_SDK_LIBS_PATH = $$QTFIREBASE_SDK_PATH/libs/ios/universal/
 
-    QTFIREBASE_FRAMEWORKS_ROOT = $$PWD/src/ios/Firebase/
+    isEmpty(QTFIREBASE_FRAMEWORKS_ROOT) {
+        QTFIREBASE_FRAMEWORKS_ROOT = $$PWD/src/ios/Firebase/
+        message("No QTFIREBASE_FRAMEWORKS_ROOT path set. Using default $$QTFIREBASE_FRAMEWORKS_ROOT")
+    } else {
+        message("Using QTFIREBASE_FRAMEWORKS_ROOT ($$QTFIREBASE_FRAMEWORKS_ROOT)")
+    }
+
+    !exists($$QTFIREBASE_FRAMEWORKS_ROOT) {
+        error("$$QTFIREBASE_FRAMEWORKS_ROOT path does not exist. To download iOS SDK run download_firebase_ios.sh\
+ in $$PWD/src/ios directory using command line or set the proper path to SDK by setting QTFIREBASE_FRAMEWORKS_ROOT in your project's .pro file")
+    }
 
     QMAKE_LFLAGS += -ObjC
 
