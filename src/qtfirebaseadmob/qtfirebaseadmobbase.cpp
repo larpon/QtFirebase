@@ -2,7 +2,7 @@
 
 QtFirebaseAdMobBase::QtFirebaseAdMobBase(QObject *parent)
     : QObject(parent)
-    , __QTFIREBASE_ID(QString().sprintf("%8p", static_cast<void*>(this)))
+    , __QTFIREBASE_ID(QString().asprintf("%8p", static_cast<void*>(this)))
     , _ready(false)
     , _initializing(false)
     , _loaded(false)
