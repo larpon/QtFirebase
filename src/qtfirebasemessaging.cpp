@@ -18,7 +18,7 @@ QtFirebaseMessaging::QtFirebaseMessaging(QObject* parent)
     , _ready(false)
     , _initializing(false)
     , __QTFIREBASE_ID(QString().asprintf("%8p", static_cast<void*> (this)))
-    , g_listener(new MessageListener())
+    , g_listener(new MessageListener(this))
     , _data()
     , _token()
 {
