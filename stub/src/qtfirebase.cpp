@@ -3,6 +3,7 @@
 #include "qtfirebaseadmob.h"
 #include "qtfirebaseauth.h"
 #include "qtfirebasedatabase.h"
+#include "qtfirebasemessaging.h"
 
 #ifdef QTFIREBASE_BUILD_ANALYTICS
 QtFirebaseAnalytics* QtFirebaseAnalytics::self = nullptr;
@@ -22,4 +23,8 @@ QtFirebaseAuth *QtFirebaseAuth::self = nullptr;
 
 #ifdef QTFIREBASE_BUILD_DATABASE
 QtFirebaseDatabase *QtFirebaseDatabase::self = nullptr;
+#endif
+
+#ifdef QTFIREBASE_BUILD_MESSAGING
+QtFirebaseMessaging *QtFirebaseMessaging::self = nullptr;
 #endif
