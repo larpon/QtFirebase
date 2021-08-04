@@ -317,6 +317,8 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
         }
     }
 
+    QVector<QByteArray> stringsData;
+
     // From <memory> include
     std::unique_ptr<remote_config::ConfigKeyValueVariant[]> defaults(
                 new remote_config::ConfigKeyValueVariant[filteredMap.size()]);
@@ -349,8 +351,10 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
 
         else if(value.type() == QVariant::String)
         {
-            defaults[index] = remote_config::ConfigKeyValueVariant{key,
-                    value.toString().toUtf8().constData()};
+            // Store the string to ensure a valid data pointer
+            stringsData += value.toString().toUtf8();
+
+            defaults[index] = remote_config::ConfigKeyValueVariant{key, stringsData.last().constData()};
 
             //Code for data type
             /*QByteArray data = value.toString().toUtf8();
