@@ -81,6 +81,7 @@ void QtFirebaseMessaging::init()
         setReady(true);
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(7, 0, 0)
+#if !defined(Q_OS_DARWIN) // https://firebase.google.com/docs/cloud-messaging/ios/client#method_swizzling_in
         QPointer<QtFirebaseMessaging> self { this };
 
         // firebase::messaging::Listener::OnTokenReceived() may not be called on second app launch
@@ -91,6 +92,7 @@ void QtFirebaseMessaging::init()
             if(future.result())
                 self->setToken(QString::fromStdString(*future.result()));
         });
+#endif
 #endif
     }
 }
