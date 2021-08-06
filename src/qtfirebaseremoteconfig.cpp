@@ -40,8 +40,10 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent)
 }
 
 QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig() {
+#if QTFIREBASE_FIREBASE_VERSION < QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
     if(_ready)
         remote_config::Terminate();
+#endif
 }
 
 
@@ -152,7 +154,13 @@ void QtFirebaseRemoteConfig::init()
             // NOTE only write debug output here when developing
             // Causes crash on re-initialization (probably the "self" reference. And "this" can't be used in a lambda)
             //qDebug() << self << "::init" << "try to initialize Remote Config";
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+            ::firebase::remote_config::RemoteConfig::GetInstance(app)->EnsureInitialized();
+            // TODO: No init_result_out parameter in ::firebase::remote_config::RemoteConfig::GetInstance() yet
+            return ::firebase::kInitResultSuccess;
+#else
             return ::firebase::remote_config::Initialize(*app);
+#endif
         });
 
         qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.init"), future);
@@ -196,11 +204,28 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
     qDebug() << this << "::onFutureEvent initialized ok";
     _initializing = false;
 
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    auto remoteConfigInstance = remote_config::RemoteConfig::GetInstance(qFirebase->firebaseApp());
+#endif
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    auto activateFuture = remoteConfigInstance->Activate();
+
+    qFirebase->waitForFutureCompletion(activateFuture);
+
+    bool fetchActivated = false;
+    if (activateFuture.result())
+        fetchActivated = *activateFuture.result();
+#else
     bool fetchActivated = remote_config::ActivateFetched();
+#endif
     //On first run even if we have activateResult failed we still can get cached values
     qDebug() << this << QString(QStringLiteral("ActivateFetched %1")).arg(fetchActivated ? QStringLiteral("succeeded") : QStringLiteral("failed"));
 
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    const remote_config::ConfigInfo& info = remoteConfigInstance->GetInfo();
+#else
     const remote_config::ConfigInfo& info = remote_config::GetInfo();
+#endif
 
     qDebug() << this << QString(QStringLiteral("Info last_fetch_time_ms=%1 fetch_status=%2 failure_reason=%3"))
                 .arg(QString::number(info.fetch_time))
@@ -222,23 +247,43 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
 
             if(value.type() == QVariant::Bool)
             {
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+                updatedParameters[it.key()] = remoteConfigInstance->GetBoolean(it.key().toUtf8().constData());
+#else
                 updatedParameters[it.key()] = remote_config::GetBoolean(it.key().toUtf8().constData());
+#endif
             }
             else if(value.type() == QVariant::LongLong)
             {
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+                updatedParameters[it.key()] = static_cast<qint64> ( remoteConfigInstance->GetLong(it.key().toUtf8().constData()) );
+#else
                 updatedParameters[it.key()] = static_cast<qint64> ( remote_config::GetLong(it.key().toUtf8().constData()) );
+#endif
             }
             else if(value.type() == QVariant::Int)
             {
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+                updatedParameters[it.key()] = static_cast<qint64> ( remoteConfigInstance->GetLong(it.key().toUtf8().constData()) );
+#else
                 updatedParameters[it.key()] = static_cast<qint64> ( remote_config::GetLong(it.key().toUtf8().constData()) );
+#endif
             }
             else if(value.type() == QVariant::Double)
             {
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+                updatedParameters[it.key()] = remoteConfigInstance->GetDouble(it.key().toUtf8().constData());
+#else
                 updatedParameters[it.key()] = remote_config::GetDouble(it.key().toUtf8().constData());
+#endif
             }
             else if(value.type() == QVariant::String)
             {
+#if (QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0))
+                std::string result = remoteConfigInstance->GetString(it.key().toUtf8().constData());
+#else
                 std::string result = remote_config::GetString(it.key().toUtf8().constData());
+#endif
                 updatedParameters[it.key()] = QString(QString::fromUtf8(result.c_str()));
 
                 //Code for data type
@@ -298,6 +343,10 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
         return;
     }
     qDebug() << this <<"::fetch with expirationtime" << cacheExpirationInSeconds << "seconds";
+
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    auto remoteConfigInstance = remote_config::RemoteConfig::GetInstance(qFirebase->firebaseApp());
+#endif
 
     QVariantMap filteredMap;
     for(QVariantMap::const_iterator it = _parameters.begin(); it!=_parameters.end();++it)
@@ -366,7 +415,11 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
         index++;
     }
 
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    remoteConfigInstance->SetDefaults(defaults.get(), static_cast<size_t> (filteredMap.size()));
+#else
     remote_config::SetDefaults(defaults.get(), static_cast<size_t> (filteredMap.size()));
+#endif
 
     /*remote_config::SetConfigSetting(remote_config::kConfigSettingDeveloperMode, "1");
     if ((*remote_config::GetConfigSetting(remote_config::kConfigSettingDeveloperMode)
@@ -375,7 +428,11 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
     }*/
 
     qDebug() << this << "::fetch" << "run fetching...";
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    auto future = remoteConfigInstance->Fetch(cacheExpirationInSeconds);
+#else
     auto future = remote_config::Fetch(cacheExpirationInSeconds);
+#endif
     qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.fetch"), future);
 }
 

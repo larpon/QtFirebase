@@ -8,6 +8,18 @@
 
 #include "platformutils.h"
 
+#include "firebase/version.h"
+
+// Like the QT_VERSION
+#define QTFIREBASE_FIREBASE_VERSION QTFIREBASE_FIREBASE_VERSION_CHECK(\
+FIREBASE_VERSION_MAJOR,\
+FIREBASE_VERSION_MINOR,\
+FIREBASE_VERSION_REVISION\
+)
+
+// Like the QT_VERSION_CHECK
+#define QTFIREBASE_FIREBASE_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
+
 #include "firebase/app.h"
 #include "firebase/future.h"
 #include "firebase/util.h"
