@@ -22,6 +22,8 @@
 #include <QQmlParserStatus>
 #include <QMetaMethod>
 
+#include <QMutex>
+
 class MessageListener;
 class QtFirebaseMessaging: public QObject, public QQmlParserStatus
 {
@@ -102,6 +104,7 @@ private:
     MessageListener* g_listener = nullptr;
     QVariantMap _data;
     QString _token;
+    QMutex _tokenMutex;
 };
 
 class MessageListener : public QObject, public firebase::messaging::Listener
@@ -132,6 +135,7 @@ signals:
 private:
     QVariantMap _data;
     QString _token;
+    QMutex _tokenMutex;
     bool _messageReceivedConnected = false;
     bool _tokenReceivedConnected = false;
 

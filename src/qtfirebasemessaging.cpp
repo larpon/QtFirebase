@@ -1,7 +1,10 @@
 #include "qtfirebasemessaging.h"
 
+#include <QPointer>
 #include <QGuiApplication>
 #include <QQmlParserStatus>
+
+#include <QMutexLocker>
 
 #include <stdint.h>
 #include "firebase/app.h"
@@ -76,6 +79,19 @@ void QtFirebaseMessaging::init()
         messaging::Initialize(*qFirebase->firebaseApp(), g_listener);
         _initializing = false;
         setReady(true);
+
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(7, 0, 0)
+        QPointer<QtFirebaseMessaging> self { this };
+
+        // firebase::messaging::Listener::OnTokenReceived() may not be called on second app launch
+        auto future = messaging::GetToken();
+        future.OnCompletion([self, future](const firebase::FutureBase &){
+            if(!self)
+                return;
+            if(future.result())
+                self->setToken(QString::fromStdString(*future.result()));
+        });
+#endif
     }
 }
 
@@ -135,13 +151,17 @@ void QtFirebaseMessaging::setData(const QVariantMap &data)
 
 QString QtFirebaseMessaging::token()
 {
+    QMutexLocker lock { &_tokenMutex };
     return _token;
 }
 
 void QtFirebaseMessaging::setToken(const QString &token)
 {
+    QMutexLocker lock { &_tokenMutex };
     if (_token != token) {
         _token = token;
+        lock.unlock();
+
         emit tokenChanged();
     }
 }
@@ -287,14 +307,18 @@ void MessageListener::setData(const QVariantMap &data)
 
 QString MessageListener::token()
 {
+    QMutexLocker lock { &_tokenMutex };
     return _token;
 }
 
 void MessageListener::setToken(const QString &token)
 {
+    QMutexLocker lock { &_tokenMutex };
     if (_token != token) {
-        _notifyTokenReceived = true;
         _token = token;
+        lock.unlock();
+
+        _notifyTokenReceived = true;
 
         if(_tokenReceivedConnected) {
             emit onTokenReceived();
