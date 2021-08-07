@@ -279,7 +279,7 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
             }
             else if(value.type() == QVariant::String)
             {
-#if (QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0))
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
                 std::string result = remoteConfigInstance->GetString(it.key().toUtf8().constData());
 #else
                 std::string result = remote_config::GetString(it.key().toUtf8().constData());
