@@ -206,12 +206,17 @@ contains(DEFINES,QTFIREBASE_BUILD_MESSAGING) {
         # Removed due to Qt 5.12 - see https://github.com/Larpon/QtFirebase/issues/106
         # QMAKE_IOS_DEPLOYMENT_TARGET = 10.0
 
+        exists($$QTFIREBASE_FRAMEWORKS_ROOT/FirebaseMessaging/FirebaseInstanceID.xcframework) {
+            LIBS += \
+                -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebaseMessaging/FirebaseInstanceID.xcframework/ios-arm64_armv7 \
+                -framework FirebaseInstanceID \
+                \
+        }
+
         LIBS += \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebaseMessaging/FirebaseMessaging.xcframework/ios-arm64_armv7 \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebasePerformance/Protobuf.xcframework/ios-arm64_armv7 \
-            -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebaseMessaging/FirebaseInstanceID.xcframework/ios-arm64_armv7 \
             -framework FirebaseMessaging \
-            -framework FirebaseInstanceID \
             -framework Protobuf \
             -framework UserNotifications \
             \
