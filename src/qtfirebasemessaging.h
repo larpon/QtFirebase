@@ -31,6 +31,7 @@ class QtFirebaseMessaging: public QObject, public QQmlParserStatus
     Q_INTERFACES(QQmlParserStatus)
 
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
+    Q_PROPERTY(bool hasMissingDependency READ hasMissingDependency NOTIFY hasMissingDependencyChanged)
     Q_PROPERTY(QVariantMap data READ data NOTIFY dataChanged)
     Q_PROPERTY(QString token READ token NOTIFY tokenChanged)
 
@@ -64,6 +65,9 @@ public:
     bool ready();
     void setReady(bool ready);
 
+    bool hasMissingDependency();
+    void setHasMissingDependency(bool hasMissingDependency);
+
     QVariantMap data();
     void setData(const QVariantMap &data);
 
@@ -82,6 +86,7 @@ private slots:
 
 signals:
     void readyChanged();
+    void hasMissingDependencyChanged();
     void dataChanged();
     void tokenChanged();
     void messageReceived();
@@ -98,6 +103,7 @@ private:
     Q_DISABLE_COPY(QtFirebaseMessaging)
 
     bool _ready;
+    bool _hasMissingDependency;
     bool _initializing;
 
     QString __QTFIREBASE_ID;
