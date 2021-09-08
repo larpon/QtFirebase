@@ -19,6 +19,7 @@ QtFirebaseMessaging *QtFirebaseMessaging::self = nullptr;
 QtFirebaseMessaging::QtFirebaseMessaging(QObject* parent)
     : QObject(parent)
     , _ready(false)
+    , _hasMissingDependency(false)
     , _initializing(false)
     , __QTFIREBASE_ID(QString().asprintf("%8p", static_cast<void*> (this)))
     , g_listener(new MessageListener(this))
@@ -76,10 +77,17 @@ void QtFirebaseMessaging::init()
 
     if(!_ready && !_initializing) {
         _initializing = true;
-        messaging::Initialize(*qFirebase->firebaseApp(), g_listener);
-        _initializing = false;
-        setReady(true);
 
+        auto initResult = messaging::Initialize(*qFirebase->firebaseApp(), g_listener);
+        if(firebase::kInitResultFailedMissingDependency == initResult)
+            setHasMissingDependency(true);
+
+        _initializing = false;
+
+        if(firebase::kInitResultSuccess != initResult)
+            return;
+
+        setReady(true);
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(7, 0, 0)
 #if !defined(Q_OS_DARWIN) // https://firebase.google.com/docs/cloud-messaging/ios/client#method_swizzling_in
         QPointer<QtFirebaseMessaging> self { this };
@@ -137,6 +145,19 @@ void QtFirebaseMessaging::setReady(bool ready)
     }
 }
 
+bool QtFirebaseMessaging::hasMissingDependency()
+{
+    return _hasMissingDependency;
+}
+
+void QtFirebaseMessaging::setHasMissingDependency(bool hasMissingDependency)
+{
+    if (_hasMissingDependency != hasMissingDependency) {
+        _hasMissingDependency = hasMissingDependency;
+        emit hasMissingDependencyChanged();
+    }
+}
+
 QVariantMap QtFirebaseMessaging::data()
 {
     return _data;
@@ -170,6 +191,11 @@ void QtFirebaseMessaging::setToken(const QString &token)
 
 void QtFirebaseMessaging::subscribe(const QString &topic)
 {
+    if(!_ready) {
+        qDebug() << this << "::subscribe native part not ready";
+        return;
+    }
+
     // TODO queue these futures so repeated calls don't get lost
     auto result = firebase::messaging::Subscribe(topic.toUtf8());
 
@@ -184,6 +210,11 @@ void QtFirebaseMessaging::subscribe(const QString &topic)
 
 void QtFirebaseMessaging::unsubscribe(const QString &topic)
 {
+    if(!_ready) {
+        qDebug() << this << "::unsubscribe native part not ready";
+        return;
+    }
+
     // TODO queue these futures so repeated calls don't get lost
     auto result = firebase::messaging::Unsubscribe(topic.toUtf8());
 
