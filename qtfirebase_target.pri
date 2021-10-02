@@ -213,11 +213,16 @@ contains(DEFINES,QTFIREBASE_BUILD_MESSAGING) {
                 \
         }
 
+        exists($$QTFIREBASE_FRAMEWORKS_ROOT/FirebasePerformance/Protobuf.xcframework) {
+            LIBS += \
+                -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebasePerformance/Protobuf.xcframework/ios-arm64_armv7 \
+                -framework Protobuf \
+                \
+        }
+
         LIBS += \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebaseMessaging/FirebaseMessaging.xcframework/ios-arm64_armv7 \
-            -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebasePerformance/Protobuf.xcframework/ios-arm64_armv7 \
             -framework FirebaseMessaging \
-            -framework Protobuf \
             -framework UserNotifications \
             \
     }
@@ -235,7 +240,6 @@ contains(DEFINES,QTFIREBASE_BUILD_ANALYTICS) {
 
     ios: {
         # -framework FirebaseCoreDiagnostics \
-        # -framework GoogleDataTransport \
         #-framework GoogleDataTransportCCTSupport \
 
         LIBS += \
@@ -246,9 +250,11 @@ contains(DEFINES,QTFIREBASE_BUILD_ANALYTICS) {
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebaseAnalytics/nanopb.xcframework/ios-arm64_armv7 \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebaseAnalytics/PromisesObjC.xcframework/ios-arm64_armv7 \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebaseAnalytics/FirebaseInstallations.xcframework/ios-arm64_armv7 \
+            -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebaseAnalytics/GoogleDataTransport.xcframework/ios-arm64_armv7 \
             -F$$QTFIREBASE_FRAMEWORKS_ROOT/FirebaseAnalytics/GoogleAppMeasurement.xcframework/ios-arm64_armv7 \
             -framework FirebaseAnalytics \
             -framework FirebaseCore \                        
+            -framework GoogleDataTransport \
             -framework GoogleAppMeasurement \
             -framework GoogleUtilities \
             -framework nanopb \
