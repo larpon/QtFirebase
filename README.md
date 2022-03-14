@@ -22,10 +22,10 @@ Feature | Library | C++ | QML | Credits
 Base                      |libapp.a               |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
 AdMob                     |libadmob.a             |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
 Analytics                 |libanalytics.a         |✓|✓|[Lars Pontoppidan](https://github.com/Larpon)
-Authentication	          |libauth.a              |Partial |Partial |[Isy](https://github.com/isipisi281)
+Authentication	          |libauth.a              |Partial |Partial |[Isy](https://github.com/isipisi89)
 Realtime Database	        |libdatabase.a          |Partial |Partial |[greenfield932](https://github.com/greenfield932)
 ~~Dynamic Links~~       	|~~libdynamic_links.a~~ | | |
-Cloud Messaging	          |libmessaging.a         |✓|✓|[Isy](https://github.com/isipisi281)
+Cloud Messaging	          |libmessaging.a         |✓|✓|[Isy](https://github.com/isipisi89)
 Remote Config             |libremote_config.a     |✓|✓|[greenfield932](https://github.com/greenfield932)
 ~~Cloud Storage~~	        |~~libstorage.a~~       |in progress |:wrench: |[Furkanzmc](https://github.com/Furkanzmc)
 
