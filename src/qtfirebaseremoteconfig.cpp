@@ -113,40 +113,6 @@ void QtFirebaseRemoteConfig::setCacheExpirationTime(quint64 ms)
     emit cacheExpirationTimeChanged();
 }
 
-void QtFirebaseRemoteConfig::addParameterInternal(const QString &name, const QVariant &defaultValue)
-{
-    _parameters[name] = defaultValue;
-}
-
-QVariant QtFirebaseRemoteConfig::getParameterValue(const QString &name) const
-{
-    if(_parameters.contains(name))
-    {
-        return _parameters[name];
-    }
-    return _parameters[name];
-}
-
-void QtFirebaseRemoteConfig::addParameter(const QString &name, long long defaultValue)
-{
-    addParameterInternal(name, defaultValue);
-}
-
-void QtFirebaseRemoteConfig::addParameter(const QString &name, double defaultValue)
-{
-    addParameterInternal(name, defaultValue);
-}
-
-void QtFirebaseRemoteConfig::addParameter(const QString &name, const QString &defaultValue)
-{
-    addParameterInternal(name, defaultValue);
-}
-
-void QtFirebaseRemoteConfig::addParameter(const QString &name, bool defaultValue)
-{
-    addParameterInternal(name, defaultValue);
-}
-
 void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase future)
 {
     if(!eventId.startsWith(__QTFIREBASE_ID))
@@ -275,11 +241,6 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
     future.Release();
 }
 
-void QtFirebaseRemoteConfig::fetch()
-{
-    fetch(_cacheExpirationTime<1000 ? 0 : _cacheExpirationTime/1000);
-}
-
 void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
 {
     if(_parameters.size() == 0)
@@ -367,9 +328,4 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
     auto future = remote_config::Fetch(cacheExpirationInSeconds);
 #endif
     qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.fetch"), future);
-}
-
-void QtFirebaseRemoteConfig::fetchNow()
-{
-    fetch(0);
 }
