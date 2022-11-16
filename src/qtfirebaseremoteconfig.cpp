@@ -31,21 +31,12 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent)
         return;
     self = this;
 
-    #if defined(Q_OS_ANDROID)
-    if (GooglePlayServices::available()) {
-        qDebug() << this << " Google Play Services is available, now init remote_config" ;
-
-        //Call init outside of constructor, otherwise signal readyChanged not emited
-        QTimer::singleShot(500, this, SLOT(delayedInit()));
-        connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
-    } else {
-        qDebug() << this << " Google Play Services is NOT available, CANNOT use remote_config" ;
-    }
-    #else
-    //Call init outside of constructor, otherwise signal readyChanged not emited
-    QTimer::singleShot(500, this, SLOT(delayedInit()));
-    connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
-    #endif
+#ifdef Q_OS_ANDROID
+    if (!GooglePlayServices::available())
+        return;
+#endif
+    connect(qFirebase, &QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
+    QTimer::singleShot(500, this, &QtFirebaseRemoteConfig::delayedInit);
 }
 
 QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig()
