@@ -64,14 +64,14 @@ signals:
     void cacheExpirationTimeChanged();
 
 private slots:
-    void addParameterInternal(const QString &name, const QVariant &defaultValue);
     void init();
+    void addParameterInternal(const QString &name, const QVariant &defaultValue);
     void onFutureEvent(QString eventId, firebase::FutureBase future);
-    void onFutureEventInit(firebase::FutureBase& future);
+    void onFutureEventInit(const firebase::FutureBase& future);
     void onFutureEventFetch(firebase::FutureBase& future);
 
 private:
-    void setReady(bool ready);
+    void setReady(bool);
     void fetch(quint64 cacheExpirationInSeconds);
 
     QString __QTFIREBASE_ID;

@@ -58,6 +58,45 @@ QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig()
         self = nullptr;
 }
 
+void QtFirebaseRemoteConfig::init()
+{
+    if (!qFirebase->ready() || _ready || _initializing)
+        return;
+    _initializing = true;
+
+    const auto future = _initializer.Initialize(qFirebase->firebaseApp(), nullptr, [ ](::firebase::App *app, void *) {
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+        ::firebase::remote_config::RemoteConfig::GetInstance(app)->EnsureInitialized();
+        // TODO: No init_result_out parameter in ::firebase::remote_config::RemoteConfig::GetInstance() yet
+        return ::firebase::kInitResultSuccess;
+#else
+        return ::firebase::remote_config::Initialize(*app);
+#endif
+    });
+
+    qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.init"), future);
+}
+
+void QtFirebaseRemoteConfig::onFutureEventInit(const firebase::FutureBase &future)
+{
+    const auto status = future.status();
+
+    const bool ready = (status == firebase::kFutureStatusComplete);
+    if (!ready)
+        qWarning().noquote() << Q_FUNC_INFO << "future status" << status;
+
+    _initializing = false;
+    setReady(ready);
+}
+
+void QtFirebaseRemoteConfig::setReady(bool ready)
+{
+    if (_ready == ready)
+        return;
+    _ready = ready;
+    emit readyChanged();
+}
+
 void QtFirebaseRemoteConfig::setParameters(const QVariantMap &parameters)
 {
     if (_parameters == parameters)
@@ -88,15 +127,6 @@ QVariant QtFirebaseRemoteConfig::getParameterValue(const QString &name) const
     return _parameters[name];
 }
 
-void QtFirebaseRemoteConfig::setReady(bool ready)
-{
-    qDebug() << this << "::setReady before:" << _ready << "now:" << ready;
-    if (_ready != ready) {
-        _ready = ready;
-        emit readyChanged();
-    }
-}
-
 void QtFirebaseRemoteConfig::addParameter(const QString &name, long long defaultValue)
 {
     addParameterInternal(name, defaultValue);
@@ -117,34 +147,6 @@ void QtFirebaseRemoteConfig::addParameter(const QString &name, bool defaultValue
     addParameterInternal(name, defaultValue);
 }
 
-void QtFirebaseRemoteConfig::init()
-{
-    qDebug() << this << "::init" << "called";
-    if(!qFirebase->ready()) {
-        qDebug() << this << "::init" << "base not ready";
-        return;
-    }
-
-    if(!_ready && !_initializing) {
-        _initializing = true;
-
-        auto future = _initializer.Initialize(qFirebase->firebaseApp(), nullptr, [](::firebase::App* app, void*) {
-            // NOTE only write debug output here when developing
-            // Causes crash on re-initialization (probably the "self" reference. And "this" can't be used in a lambda)
-            //qDebug() << self << "::init" << "try to initialize Remote Config";
-#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-            ::firebase::remote_config::RemoteConfig::GetInstance(app)->EnsureInitialized();
-            // TODO: No init_result_out parameter in ::firebase::remote_config::RemoteConfig::GetInstance() yet
-            return ::firebase::kInitResultSuccess;
-#else
-            return ::firebase::remote_config::Initialize(*app);
-#endif
-        });
-
-        qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.init"), future);
-    }
-}
-
 void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase future)
 {
     if(!eventId.startsWith(__QTFIREBASE_ID))
@@ -155,19 +157,6 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
         onFutureEventFetch(future);
     else if( eventId == __QTFIREBASE_ID + QStringLiteral(".config.init") )
         onFutureEventInit(future);
-}
-
-void QtFirebaseRemoteConfig::onFutureEventInit(firebase::FutureBase &future)
-{
-    if (future.status() != firebase::kFutureStatusComplete) {
-        qDebug() << this << "::onFutureEvent" << "initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
-        _initializing = false;
-        return;
-    }
-
-    qDebug() << this << "::onFutureEvent initialized ok";
-    _initializing = false;
-    setReady(true);
     future.Release();
 }
 
