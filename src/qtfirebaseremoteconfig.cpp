@@ -28,7 +28,7 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent)
         return;
 #endif
     connect(qFirebase, &QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
-    QTimer::singleShot(500, this, [ this ] {
+    QTimer::singleShot(0, this, [ this ] {
         if (qFirebase->ready()) {
             init();
             return;
