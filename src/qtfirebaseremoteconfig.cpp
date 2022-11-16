@@ -4,7 +4,14 @@
 
 namespace remote_config = ::firebase::remote_config;
 
-QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self = nullptr;
+QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self { nullptr };
+
+QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::instance(QObject *parent)
+{
+    if (!self)
+        self = new QtFirebaseRemoteConfig(parent);
+    return self;
+}
 
 QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent)
     : QObject(parent)
@@ -18,11 +25,11 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent)
     , __defaultsByteArrayList()
     , __appId(nullptr)
 {
-    if(self == nullptr)
-    {
-        self = this;
-        qDebug() << self << "::QtFirebaseRemoteConfig" << "singleton";
-    }
+    // deny multiple instances
+    Q_ASSERT(!self);
+    if (self)
+        return;
+    self = this;
 
     #if defined(Q_OS_ANDROID)
     if (GooglePlayServices::available()) {
@@ -41,11 +48,16 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent)
     #endif
 }
 
-QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig() {
+QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig()
+{
 #if QTFIREBASE_FIREBASE_VERSION < QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-    if(_ready)
+    if (_ready)
         remote_config::Terminate();
 #endif
+
+    // check this instance is legal
+    if (self == this)
+        self = nullptr;
 }
 
 bool QtFirebaseRemoteConfig::checkInstance(const char *function)

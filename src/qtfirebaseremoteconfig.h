@@ -19,25 +19,20 @@ class QtFirebaseRemoteConfig : public QObject
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
     Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
     Q_PROPERTY(quint64 cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
-public:
-    explicit QtFirebaseRemoteConfig(QObject *parent = nullptr);
-    virtual ~QtFirebaseRemoteConfig();
 
-    enum FetchFailure
-    {
+    static QtFirebaseRemoteConfig *self;
+public:
+    static QtFirebaseRemoteConfig *instance(QObject *parent = nullptr);
+
+    enum FetchFailure {
         FetchFailureReasonInvalid = firebase::remote_config::kFetchFailureReasonInvalid,
         FetchFailureReasonThrottled = firebase::remote_config::kFetchFailureReasonThrottled,
         FetchFailureReasonError = firebase::remote_config::kFetchFailureReasonError,
     };
     Q_ENUM(FetchFailure)
 
-    static QtFirebaseRemoteConfig *instance() {
-        if(self == nullptr) {
-            self = new QtFirebaseRemoteConfig(nullptr);
-            qDebug() << self << "::instance" << "singleton";
-        }
-        return self;
-    }
+    explicit QtFirebaseRemoteConfig(QObject *parent = nullptr);
+    virtual ~QtFirebaseRemoteConfig();
 
     bool checkInstance(const char *function);
     bool ready();
@@ -82,8 +77,6 @@ private:
     void setReady(bool ready);
     void fetch(quint64 cacheExpirationInSeconds);
 
-    static QtFirebaseRemoteConfig *self;
-
     QString __QTFIREBASE_ID;
 
     bool _ready;
@@ -99,5 +92,5 @@ private:
     const char *__appId;
 };
 
-#endif //QTFIREBASE_BUILD_REMOTE_CONFIG
+#endif // QTFIREBASE_BUILD_REMOTE_CONFIG
 #endif // QTFIREBASE_REMOTE_CONFIG_H
