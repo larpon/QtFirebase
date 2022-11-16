@@ -50,6 +50,9 @@ public slots:
     void fetch() { fetch(_cacheExpirationTime / 1000); }
     void fetchNow() { fetch(0); }
 signals:
+    void googlePlayServicesError();
+    void futuresError(int code, QString message);
+
     void error(int code, QString message);
 
     void readyChanged();
@@ -59,18 +62,18 @@ signals:
 private slots:
     void init();
     void onFutureEvent(const QString &eventId, firebase::FutureBase);
-
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
     void onFutureEventInit(const firebase::FutureBase &);
+#endif
     void onFutureEventFetch(const firebase::FutureBase &);
 private:
-    void setReady(bool);
+    void setReady(bool = true);
     void addParameterInternal(const QString &name, const QVariant &defaultValue) { _parameters[name] = defaultValue; }
     void fetch(quint64 cacheExpirationInSeconds);
 
 private:
     const QString __QTFIREBASE_ID;
     firebase::ModuleInitializer _initializer;
-    bool _initializing = false;
     bool _ready = false;
     quint64 _cacheExpirationTime = firebase::remote_config::kDefaultCacheExpiration * 1000;
 

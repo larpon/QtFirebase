@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace remote_config = ::firebase::remote_config;
+namespace remote_config = firebase::remote_config;
 
 QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self { nullptr };
 
@@ -24,10 +24,14 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent)
     self = this;
 
 #ifdef Q_OS_ANDROID
-    if (!GooglePlayServices::available())
+    if (!GooglePlayServices::available()) {
+        QTimer::singleShot(0, this, &QtFirebaseRemoteConfig::googlePlayServicesError);
         return;
+    }
 #endif
+
     connect(qFirebase, &QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
+
     QTimer::singleShot(0, this, [ this ] {
         if (qFirebase->ready()) {
             init();
@@ -52,33 +56,50 @@ QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig()
 
 void QtFirebaseRemoteConfig::init()
 {
-    if (!qFirebase->ready() || _ready || _initializing)
+    if (!qFirebase->ready() || _ready)
         return;
-    _initializing = true;
 
-    const auto future = _initializer.Initialize(qFirebase->firebaseApp(), nullptr, [ ](::firebase::App *app, void *) {
+    const auto app = qFirebase->firebaseApp();
+
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-        ::firebase::remote_config::RemoteConfig::GetInstance(app)->EnsureInitialized();
-        // TODO: No init_result_out parameter in ::firebase::remote_config::RemoteConfig::GetInstance() yet
-        return ::firebase::kInitResultSuccess;
-#else
-        return ::firebase::remote_config::Initialize(*app);
-#endif
-    });
-
+    const auto future = firebase::remote_config::RemoteConfig::GetInstance(app)->EnsureInitialized();
     qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.init"), future);
+#else
+    const auto initResult = firebase::remote_config::Initialize(*app);
+    if (initResult != firebase::kInitResultSuccess) {
+        emit googlePlayServicesError();
+        return;
+    }
+    setReady();
+#endif
 }
 
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
 void QtFirebaseRemoteConfig::onFutureEventInit(const firebase::FutureBase &future)
 {
-    const auto status = future.status();
+    const auto futureStatus = future.status();
+    const auto futureError = future.error();
+    if (futureStatus != firebase::kFutureStatusComplete || futureError) {
+        emit futuresError(futureError, future.error_message());
+        return;
+    }
+    setReady();
+}
+#endif
 
-    const bool ready = (status == firebase::kFutureStatusComplete);
-    if (!ready)
-        qWarning().noquote() << Q_FUNC_INFO << "future status" << status;
+void QtFirebaseRemoteConfig::onFutureEvent(const QString &eventId, firebase::FutureBase future)
+{
+    if (!eventId.startsWith(__QTFIREBASE_ID))
+        return;
 
-    _initializing = false;
-    setReady(ready);
+    if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.fetch"))
+        onFutureEventFetch(future);
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    else if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.init"))
+        onFutureEventInit(future);
+#endif
+
+    future.Release();
 }
 
 void QtFirebaseRemoteConfig::setReady(bool ready)
@@ -105,29 +126,14 @@ void QtFirebaseRemoteConfig::setCacheExpirationTime(quint64 ms)
     emit cacheExpirationTimeChanged();
 }
 
-void QtFirebaseRemoteConfig::onFutureEvent(const QString &eventId, firebase::FutureBase future)
-{
-    if(!eventId.startsWith(__QTFIREBASE_ID))
-        return;
-
-    qDebug() << this << "::onFutureEvent" << eventId;
-    if(eventId == __QTFIREBASE_ID + QStringLiteral(".config.fetch"))
-        onFutureEventFetch(future);
-    else if( eventId == __QTFIREBASE_ID + QStringLiteral(".config.init") )
-        onFutureEventInit(future);
-    future.Release();
-}
-
 void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &future)
 {
     if(future.status() != firebase::kFutureStatusComplete)
     {
         qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
-        _initializing = false;
         return;
     }
     qDebug() << this << "::onFutureEvent initialized ok";
-    _initializing = false;
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
     auto remoteConfigInstance = remote_config::RemoteConfig::GetInstance(qFirebase->firebaseApp());
@@ -234,6 +240,9 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
 
 void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
 {
+    if (!_ready)
+        return;
+
     if(_parameters.size() == 0)
     {
         qDebug() << this << "::fetch not started, parameters were not initialized";
