@@ -5,27 +5,23 @@
 
 #include "src/qtfirebase.h"
 
+#include <firebase/remote_config.h>
+
 #ifdef qFirebaseRemoteConfig
 #undef qFirebaseRemoteConfig
 #endif
 #define qFirebaseRemoteConfig (QtFirebaseRemoteConfig::instance())
 
-#include "firebase/remote_config.h"
-
-#include <memory> //For std::unique_ptr
-#include <QDebug>
-#include <QObject>
-
 class QtFirebaseRemoteConfig : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(QtFirebaseRemoteConfig)
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
     Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
     Q_PROPERTY(quint64 cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
-
 public:
     explicit QtFirebaseRemoteConfig(QObject *parent = nullptr);
-    ~QtFirebaseRemoteConfig();
+    virtual ~QtFirebaseRemoteConfig();
 
     enum FetchFailure
     {
@@ -87,7 +83,6 @@ private:
     void fetch(quint64 cacheExpirationInSeconds);
 
     static QtFirebaseRemoteConfig *self;
-    Q_DISABLE_COPY(QtFirebaseRemoteConfig)
 
     QString __QTFIREBASE_ID;
 

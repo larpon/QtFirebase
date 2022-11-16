@@ -1,5 +1,7 @@
 #include "qtfirebaseremoteconfig.h"
 
+#include <memory>
+
 namespace remote_config = ::firebase::remote_config;
 
 QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self = nullptr;
@@ -45,7 +47,6 @@ QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig() {
         remote_config::Terminate();
 #endif
 }
-
 
 bool QtFirebaseRemoteConfig::checkInstance(const char *function)
 {
