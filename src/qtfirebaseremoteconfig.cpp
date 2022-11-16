@@ -15,15 +15,7 @@ QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::instance(QObject *parent)
 
 QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent)
     : QObject(parent)
-    , __QTFIREBASE_ID(QString().asprintf("%8p", static_cast<void*> (this)))
-    , _ready(false)
-    , _initializing(false)
-    , _parameters()
-    , _cacheExpirationTime(firebase::remote_config::kDefaultCacheExpiration*1000) // milliseconds
-    , _appId()
-    , __appIdByteArray()
-    , __defaultsByteArrayList()
-    , __appId(nullptr)
+    , __QTFIREBASE_ID(QString().asprintf("%8p", static_cast<void *>(this)))
 {
     // deny multiple instances
     Q_ASSERT(!self);
@@ -113,7 +105,7 @@ void QtFirebaseRemoteConfig::setCacheExpirationTime(quint64 ms)
     emit cacheExpirationTimeChanged();
 }
 
-void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase future)
+void QtFirebaseRemoteConfig::onFutureEvent(const QString &eventId, firebase::FutureBase future)
 {
     if(!eventId.startsWith(__QTFIREBASE_ID))
         return;
@@ -126,7 +118,7 @@ void QtFirebaseRemoteConfig::onFutureEvent(QString eventId, firebase::FutureBase
     future.Release();
 }
 
-void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
+void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &future)
 {
     if(future.status() != firebase::kFutureStatusComplete)
     {
@@ -238,7 +230,6 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
             emit error(FetchFailureReasonError, QStringLiteral("Failure reason is unknown"));
         }
     }
-    future.Release();
 }
 
 void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)

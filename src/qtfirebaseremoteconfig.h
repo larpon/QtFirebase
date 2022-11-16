@@ -41,7 +41,6 @@ public:
     void setCacheExpirationTime(quint64 ms);
 
     Q_INVOKABLE QVariant getParameterValue(const QString &name) const { return _parameters[name]; }
-
 public slots:
     void addParameter(const QString &name, bool defaultValue) { addParameterInternal(name, defaultValue); }
     void addParameter(const QString &name, long long defaultValue) { addParameterInternal(name, defaultValue); }
@@ -50,37 +49,33 @@ public slots:
 
     void fetch() { fetch(_cacheExpirationTime / 1000); }
     void fetchNow() { fetch(0); }
-
 signals:
+    void error(int code, QString message);
+
     void readyChanged();
     void parametersChanged();
     void cacheExpirationTimeChanged();
 
-    void error(int code, QString message);
 private slots:
     void init();
-    void onFutureEvent(QString eventId, firebase::FutureBase future);
-    void onFutureEventInit(const firebase::FutureBase& future);
-    void onFutureEventFetch(firebase::FutureBase& future);
+    void onFutureEvent(const QString &eventId, firebase::FutureBase);
 
+    void onFutureEventInit(const firebase::FutureBase &);
+    void onFutureEventFetch(const firebase::FutureBase &);
 private:
     void setReady(bool);
     void addParameterInternal(const QString &name, const QVariant &defaultValue) { _parameters[name] = defaultValue; }
     void fetch(quint64 cacheExpirationInSeconds);
+
 private:
-    QString __QTFIREBASE_ID;
+    const QString __QTFIREBASE_ID;
+    firebase::ModuleInitializer _initializer;
+    bool _initializing = false;
+    bool _ready = false;
+    quint64 _cacheExpirationTime = firebase::remote_config::kDefaultCacheExpiration * 1000;
 
-    bool _ready;
-    bool _initializing;
     QVariantMap _parameters;
-    quint64 _cacheExpirationTime;
-    ::firebase::ModuleInitializer _initializer;
-
-    QString _appId;
-    QByteArray __appIdByteArray;
-
     QByteArrayList __defaultsByteArrayList;
-    const char *__appId;
 };
 
 #endif // QTFIREBASE_BUILD_REMOTE_CONFIG
