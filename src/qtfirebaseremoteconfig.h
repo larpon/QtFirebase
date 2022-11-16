@@ -5,10 +5,10 @@
 
 #include "src/qtfirebase.h"
 
-#if defined(qFirebaseRemoteConfig)
+#ifdef qFirebaseRemoteConfig
 #undef qFirebaseRemoteConfig
 #endif
-#define qFirebaseRemoteConfig (static_cast<QtFirebaseRemoteConfig *>(QtFirebaseRemoteConfig::instance()))
+#define qFirebaseRemoteConfig (QtFirebaseRemoteConfig::instance())
 
 #include "firebase/remote_config.h"
 
