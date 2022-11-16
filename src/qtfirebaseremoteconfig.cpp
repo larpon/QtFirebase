@@ -252,30 +252,8 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(firebase::FutureBase &future)
                 std::string result = remote_config::GetString(it.key().toUtf8().constData());
 #endif
                 updatedParameters[it.key()] = QString(QString::fromUtf8(result.c_str()));
-
-                //Code for data type
-                /*std::vector<unsigned char> out = remote_config::GetData(it.key().toUtf8().constData());
-                QByteArray data;
-                for (size_t i = 0; i < out.size(); ++i)
-                {
-                    data.append(out[i]);
-                }
-                updatedParameters[it.key()] = QString(data);*/
             }
         }
-
-        //SDK code to print out the keys
-        /*std::vector<std::string> keys = remote_config::GetKeys();
-        qDebug() << "QtFirebaseRemoteConfig GetKeys:";
-        for (auto s = keys.begin(); s != keys.end(); ++s)
-        {
-            qDebug() << s->c_str();
-        }
-        keys = remote_config::GetKeysByPrefix("TestD");
-        printf("GetKeysByPrefix(\"TestD\"):");
-        for (auto s = keys.begin(); s != keys.end(); ++s) {
-          printf("  %s", s->c_str());
-        }*/
 
         setParameters(updatedParameters);
     }
@@ -371,12 +349,6 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
             stringsData += value.toString().toUtf8();
 
             defaults[index] = remote_config::ConfigKeyValueVariant{key, stringsData.last().constData()};
-
-            //Code for data type
-            /*QByteArray data = value.toString().toUtf8();
-            defaults[cnt] = remote_config::ConfigKeyValueVariant{
-                                it.key().toUtf8().constData(),
-                                firebase::Variant::FromMutableBlob(data.constData(), data.size())};*/
         }
 
         index++;
@@ -387,12 +359,6 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
 #else
     remote_config::SetDefaults(defaults.get(), static_cast<size_t> (filteredMap.size()));
 #endif
-
-    /*remote_config::SetConfigSetting(remote_config::kConfigSettingDeveloperMode, "1");
-    if ((*remote_config::GetConfigSetting(remote_config::kConfigSettingDeveloperMode)
-                .c_str()) != '1') {
-        qDebug() << "Failed to enable developer mode";
-    }*/
 
     qDebug() << this << "::fetch" << "run fetching...";
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
