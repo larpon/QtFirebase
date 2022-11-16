@@ -36,7 +36,14 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent)
         return;
 #endif
     connect(qFirebase, &QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
-    QTimer::singleShot(500, this, &QtFirebaseRemoteConfig::delayedInit);
+    QTimer::singleShot(500, this, [ this ] {
+        if (qFirebase->ready()) {
+            init();
+            return;
+        }
+        connect(qFirebase, &QtFirebase::readyChanged, this, &QtFirebaseRemoteConfig::init);
+        qFirebase->requestInit();
+    });
 }
 
 QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig()
@@ -70,21 +77,6 @@ void QtFirebaseRemoteConfig::setCacheExpirationTime(quint64 ms)
 void QtFirebaseRemoteConfig::addParameterInternal(const QString &name, const QVariant &defaultValue)
 {
     _parameters[name] = defaultValue;
-}
-
-void QtFirebaseRemoteConfig::delayedInit()
-{
-    if(qFirebase->ready())
-    {
-        qDebug() << this << "::delayedInit : QtFirebase is ready, calling init" ;
-        init();
-    }
-    else
-    {
-        qDebug() << this << "::delayedInit : QtFirebase not ready, connecting to its readyChanged signal" ;
-        connect(qFirebase,&QtFirebase::readyChanged, this, &QtFirebaseRemoteConfig::init);
-        qFirebase->requestInit();
-    }
 }
 
 QVariant QtFirebaseRemoteConfig::getParameterValue(const QString &name) const
