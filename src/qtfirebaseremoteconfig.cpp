@@ -51,13 +51,6 @@ QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig()
         self = nullptr;
 }
 
-bool QtFirebaseRemoteConfig::checkInstance(const char *function)
-{
-    bool b = (QtFirebaseRemoteConfig::self != nullptr);
-    if(!b) qWarning("QtFirebaseRemoteConfig::%s:", function);
-    return b;
-}
-
 void QtFirebaseRemoteConfig::addParameterInternal(const QString &name, const QVariant &defaultValue)
 {
     _parameters[name] = defaultValue;

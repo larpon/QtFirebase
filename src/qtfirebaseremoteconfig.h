@@ -34,7 +34,6 @@ public:
     explicit QtFirebaseRemoteConfig(QObject *parent = nullptr);
     virtual ~QtFirebaseRemoteConfig();
 
-    bool checkInstance(const char *function);
     bool ready();
 
     QVariantMap parameters() const;
