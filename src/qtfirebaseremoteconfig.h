@@ -34,13 +34,12 @@ public:
     explicit QtFirebaseRemoteConfig(QObject *parent = nullptr);
     virtual ~QtFirebaseRemoteConfig();
 
-    bool ready();
+    bool ready() const { return _ready; }
 
-    QVariantMap parameters() const;
-    void setParameters(const QVariantMap& map);
-
-    quint64 cacheExpirationTime() const;
-    void setCacheExpirationTime(quint64 timeMs);
+    QVariantMap parameters() const { return _parameters; }
+    quint64 cacheExpirationTime() const { return _cacheExpirationTime; }
+    void setParameters(const QVariantMap &);
+    void setCacheExpirationTime(quint64 ms);
 
 public slots:
     void addParameter(const QString &name, long long defaultValue);

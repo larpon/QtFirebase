@@ -51,6 +51,22 @@ QtFirebaseRemoteConfig::~QtFirebaseRemoteConfig()
         self = nullptr;
 }
 
+void QtFirebaseRemoteConfig::setParameters(const QVariantMap &parameters)
+{
+    if (_parameters == parameters)
+        return;
+    _parameters = parameters;
+    emit parametersChanged();
+}
+
+void QtFirebaseRemoteConfig::setCacheExpirationTime(quint64 ms)
+{
+    if (_cacheExpirationTime == ms)
+        return;
+    _cacheExpirationTime = ms;
+    emit cacheExpirationTimeChanged();
+}
+
 void QtFirebaseRemoteConfig::addParameterInternal(const QString &name, const QVariant &defaultValue)
 {
     _parameters[name] = defaultValue;
@@ -80,11 +96,6 @@ QVariant QtFirebaseRemoteConfig::getParameterValue(const QString &name) const
     return _parameters[name];
 }
 
-bool QtFirebaseRemoteConfig::ready()
-{
-    return _ready;
-}
-
 void QtFirebaseRemoteConfig::setReady(bool ready)
 {
     qDebug() << this << "::setReady before:" << _ready << "now:" << ready;
@@ -92,28 +103,6 @@ void QtFirebaseRemoteConfig::setReady(bool ready)
         _ready = ready;
         emit readyChanged();
     }
-}
-
-QVariantMap QtFirebaseRemoteConfig::parameters() const
-{
-    return _parameters;
-}
-
-void QtFirebaseRemoteConfig::setParameters(const QVariantMap &map)
-{
-    _parameters = map;
-    emit parametersChanged();
-}
-
-quint64 QtFirebaseRemoteConfig::cacheExpirationTime() const
-{
-    return _cacheExpirationTime;
-}
-
-void QtFirebaseRemoteConfig::setCacheExpirationTime(quint64 timeMs)
-{
-    _cacheExpirationTime = timeMs;
-    emit cacheExpirationTimeChanged();
 }
 
 void QtFirebaseRemoteConfig::addParameter(const QString &name, long long defaultValue)
