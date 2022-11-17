@@ -145,8 +145,7 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
             QVariant::String,
         };
         const auto &value = it.value();
-        const auto type = value.type();
-        if (types.contains(type))
+        if (types.contains(value.type()))
             filteredMap[it.key()] = value;
     }
 
@@ -201,112 +200,94 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
 
 void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &future)
 {
-    if(future.status() != firebase::kFutureStatusComplete)
-    {
-        qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
+    const auto futureStatus = future.status();
+    const auto futureError = future.error();
+    if (futureStatus != firebase::kFutureStatusComplete || futureError) {
+        emit futuresError(futureError, future.error_message());
         return;
     }
-    qDebug() << this << "::onFutureEvent initialized ok";
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
     auto remoteConfigInstance = remote_config::RemoteConfig::GetInstance(qFirebase->firebaseApp());
-#endif
-#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-    auto activateFuture = remoteConfigInstance->Activate();
-
+    const auto activateFuture = remoteConfigInstance->Activate();
     qFirebase->waitForFutureCompletion(activateFuture);
 
-    bool fetchActivated = false;
-    if (activateFuture.result())
-        fetchActivated = *activateFuture.result();
+    const bool fetchActivated = activateFuture.result() ? *activateFuture.result() : false;
 #else
-    bool fetchActivated = remote_config::ActivateFetched();
+    const bool fetchActivated = remote_config::ActivateFetched();
 #endif
-    //On first run even if we have activateResult failed we still can get cached values
-    qDebug() << this << QString(QStringLiteral("ActivateFetched %1")).arg(fetchActivated ? QStringLiteral("succeeded") : QStringLiteral("failed"));
+    Q_UNUSED(fetchActivated)
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-    const remote_config::ConfigInfo& info = remoteConfigInstance->GetInfo();
+    const remote_config::ConfigInfo &info = remoteConfigInstance->GetInfo();
 #else
-    const remote_config::ConfigInfo& info = remote_config::GetInfo();
+    const remote_config::ConfigInfo &info = remote_config::GetInfo();
 #endif
 
-    qDebug() << this << QString(QStringLiteral("Info last_fetch_time_ms=%1 fetch_status=%2 failure_reason=%3"))
-                .arg(QString::number(info.fetch_time))
-                .arg(info.last_fetch_status)
-                .arg(info.last_fetch_failure_reason);
-
-    if(info.last_fetch_status == remote_config::kLastFetchStatusSuccess)
-    {
-        QVariantMap updatedParameters;
-        for(QVariantMap::const_iterator it = _parameters.begin(); it!=_parameters.end();++it)
-        {
-            const QVariant& value = it.value();
-
-            Q_ASSERT(value.type() == QVariant::Bool ||
-                     value.type() == QVariant::LongLong ||
-                     value.type() == QVariant::Int ||
-                     value.type() == QVariant::Double ||
-                     value.type() == QVariant::String);
-
-            if(value.type() == QVariant::Bool)
-            {
-#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-                updatedParameters[it.key()] = remoteConfigInstance->GetBoolean(it.key().toUtf8().constData());
-#else
-                updatedParameters[it.key()] = remote_config::GetBoolean(it.key().toUtf8().constData());
-#endif
-            }
-            else if(value.type() == QVariant::LongLong)
-            {
-#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-                updatedParameters[it.key()] = static_cast<qint64> ( remoteConfigInstance->GetLong(it.key().toUtf8().constData()) );
-#else
-                updatedParameters[it.key()] = static_cast<qint64> ( remote_config::GetLong(it.key().toUtf8().constData()) );
-#endif
-            }
-            else if(value.type() == QVariant::Int)
-            {
-#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-                updatedParameters[it.key()] = static_cast<qint64> ( remoteConfigInstance->GetLong(it.key().toUtf8().constData()) );
-#else
-                updatedParameters[it.key()] = static_cast<qint64> ( remote_config::GetLong(it.key().toUtf8().constData()) );
-#endif
-            }
-            else if(value.type() == QVariant::Double)
-            {
-#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-                updatedParameters[it.key()] = remoteConfigInstance->GetDouble(it.key().toUtf8().constData());
-#else
-                updatedParameters[it.key()] = remote_config::GetDouble(it.key().toUtf8().constData());
-#endif
-            }
-            else if(value.type() == QVariant::String)
-            {
-#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-                std::string result = remoteConfigInstance->GetString(it.key().toUtf8().constData());
-#else
-                std::string result = remote_config::GetString(it.key().toUtf8().constData());
-#endif
-                updatedParameters[it.key()] = QString(QString::fromUtf8(result.c_str()));
-            }
-        }
-
-        setParameters(updatedParameters);
-    }
-    else
-    {
-        if(info.last_fetch_failure_reason == remote_config::kFetchFailureReasonInvalid)
-        {
+    const auto lastFetchStatus = info.last_fetch_status;
+    const auto lastFetchFailureReason = info.last_fetch_failure_reason;
+    if (lastFetchStatus != remote_config::kLastFetchStatusSuccess) {
+        if (lastFetchFailureReason == remote_config::kFetchFailureReasonInvalid) {
             emit error(FetchFailureReasonInvalid, QStringLiteral("The fetch has not yet failed."));
+            return;
         }
-        else if(info.last_fetch_failure_reason == remote_config::kFetchFailureReasonThrottled)
-        {
+        if (lastFetchFailureReason == remote_config::kFetchFailureReasonThrottled) {
             emit error(FetchFailureReasonThrottled, QStringLiteral("Throttled by the server. You are sending too many fetch requests in too short a time."));
+            return;
         }
-        else
-        {
-            emit error(FetchFailureReasonError, QStringLiteral("Failure reason is unknown"));
+        emit error(FetchFailureReasonError, QStringLiteral("Failure reason is unknown."));
+        return;
+    }
+
+    QVariantMap updatedParameters;
+    for (auto it = _parameters.cbegin(); it != _parameters.cend(); ++it) {
+        static QSet<QVariant::Type> types {
+            QVariant::Bool,
+            QVariant::Int,
+            QVariant::LongLong,
+            QVariant::Double,
+            QVariant::String,
+        };
+        const QVariant &value = it.value();
+        const QString &key = it.key();
+
+        const auto type = value.type();
+
+        Q_ASSERT(types.contains(type));
+
+        if (type == QVariant::Bool) {
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+            updatedParameters[key] = remoteConfigInstance->GetBoolean(key.toUtf8().constData());
+#else
+            updatedParameters[key] = remote_config::GetBoolean(key.toUtf8().constData());
+#endif
+        } else if (type == QVariant::Int) {
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+            updatedParameters[key] = static_cast<int>(remoteConfigInstance->GetLong(key.toUtf8().constData()));
+#else
+            updatedParameters[key] = static_cast<int>(remote_config::GetLong(key.toUtf8().constData()));
+#endif
+        } else if (type == QVariant::LongLong) {
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+            updatedParameters[key] = static_cast<long long>(remoteConfigInstance->GetLong(key.toUtf8().constData()));
+#else
+            updatedParameters[key] = static_cast<long long>(remote_config::GetLong(key.toUtf8().constData()));
+#endif
+        } else if (type == QVariant::Double) {
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+            updatedParameters[key] = remoteConfigInstance->GetDouble(key.toUtf8().constData());
+#else
+            updatedParameters[key] = remote_config::GetDouble(key.toUtf8().constData());
+#endif
+        } else if (type == QVariant::String) {
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+            const std::string result = remoteConfigInstance->GetString(key.toUtf8().constData());
+#else
+            const std::string result = remote_config::GetString(key.toUtf8().constData());
+#endif
+            updatedParameters[key] = QString::fromUtf8(result.c_str());
         }
     }
+
+    setParameters(updatedParameters);
 }
