@@ -93,6 +93,8 @@ void QtFirebaseRemoteConfig::onFutureEvent(const QString &eventId, firebase::Fut
     if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.fetch"))
         onFutureEventFetch(future);
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    else if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.defaults"))
+        onFutureEventDefaults(future);
     else if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.init"))
         onFutureEventInit(future);
 #endif
@@ -192,16 +194,34 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
     setFetching();
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    _cacheExpirationInSeconds = cacheExpirationInSeconds;
     auto instance = remote_config::RemoteConfig::GetInstance(qFirebase->firebaseApp());
-    instance->SetDefaults(defaults.constData(), static_cast<size_t>(defaults.length()));
-    const auto future = instance->Fetch(cacheExpirationInSeconds);
+    const auto future = instance->SetDefaults(defaults.constData(), static_cast<size_t>(defaults.length()));
+    qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.defaults"), future);
 #else
     remote_config::SetDefaults(defaults.constData(), static_cast<size_t>(defaults.length()));
     const auto future = remote_config::Fetch(cacheExpirationInSeconds);
-#endif
-
     qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.fetch"), future);
+#endif
 }
+
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+void QtFirebaseRemoteConfig::onFutureEventDefaults(const firebase::FutureBase &future)
+{
+    const auto futureStatus = future.status();
+    const auto futureError = future.error();
+    if (futureStatus != firebase::kFutureStatusComplete || futureError) {
+        setFetching(false);
+        emit futuresError(futureError, future.error_message());
+        return;
+    }
+
+    auto instance = remote_config::RemoteConfig::GetInstance(qFirebase->firebaseApp());
+
+    const auto fetchFuture = instance->Fetch(_cacheExpirationInSeconds);
+    qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.fetch"), fetchFuture);
+}
+#endif
 
 void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &future)
 {

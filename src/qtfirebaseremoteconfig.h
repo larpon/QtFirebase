@@ -69,6 +69,7 @@ private slots:
     void onFutureEvent(const QString &eventId, firebase::FutureBase);
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
     void onFutureEventInit(const firebase::FutureBase &);
+    void onFutureEventDefaults(const firebase::FutureBase &);
 #endif
     void onFutureEventFetch(const firebase::FutureBase &);
 private:
@@ -85,6 +86,10 @@ private:
     bool _fetching = false;
     quint64 _cacheExpirationTime = firebase::remote_config::kDefaultCacheExpiration * 1000;
     QVariantMap _parameters;
+
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    quint64 _cacheExpirationInSeconds = 0;
+#endif
 };
 
 #endif // QTFIREBASE_BUILD_REMOTE_CONFIG
