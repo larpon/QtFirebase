@@ -89,6 +89,7 @@ private:
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
     quint64 _cacheExpirationInSeconds = 0;
+    firebase::remote_config::RemoteConfig *_rc = nullptr;
 #endif
 };
 

@@ -58,9 +58,9 @@ void QtFirebaseRemoteConfig::init()
         return;
 
     const auto app = qFirebase->firebaseApp();
-
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-    const auto future = remote_config::RemoteConfig::GetInstance(app)->EnsureInitialized();
+    _rc = remote_config::RemoteConfig::GetInstance(app);
+    const auto future = _rc->EnsureInitialized();
     qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.init"), future);
 #else
     const auto initResult = remote_config::Initialize(*app);
@@ -195,8 +195,7 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
     _cacheExpirationInSeconds = cacheExpirationInSeconds;
-    auto instance = remote_config::RemoteConfig::GetInstance(qFirebase->firebaseApp());
-    const auto future = instance->SetDefaults(defaults.constData(), static_cast<size_t>(defaults.length()));
+    const auto future = _rc->SetDefaults(defaults.constData(), static_cast<size_t>(defaults.length()));
     qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.defaults"), future);
 #else
     remote_config::SetDefaults(defaults.constData(), static_cast<size_t>(defaults.length()));
@@ -216,9 +215,7 @@ void QtFirebaseRemoteConfig::onFutureEventDefaults(const firebase::FutureBase &f
         return;
     }
 
-    auto instance = remote_config::RemoteConfig::GetInstance(qFirebase->firebaseApp());
-
-    const auto fetchFuture = instance->Fetch(_cacheExpirationInSeconds);
+    const auto fetchFuture = _rc->Fetch(_cacheExpirationInSeconds);
     qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.fetch"), fetchFuture);
 }
 #endif
@@ -234,8 +231,7 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
     }
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-    auto instance = remote_config::RemoteConfig::GetInstance(qFirebase->firebaseApp());
-    const auto activateFuture = instance->Activate();
+    const auto activateFuture = _rc->Activate();
     qFirebase->waitForFutureCompletion(activateFuture);
 
     const bool fetchActivated = activateFuture.result() ? *activateFuture.result() : false;
@@ -245,7 +241,7 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
     Q_UNUSED(fetchActivated)
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-    const remote_config::ConfigInfo &info = instance->GetInfo();
+    const remote_config::ConfigInfo &info = _rc->GetInfo();
 #else
     const remote_config::ConfigInfo &info = remote_config::GetInfo();
 #endif
@@ -276,19 +272,19 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
         switch (type) {
         case QVariant::Bool:
-            updatedParameters[key] = instance->GetBoolean(keyStr);
+            updatedParameters[key] = _rc->GetBoolean(keyStr);
             break;
         case QVariant::Int:
-            updatedParameters[key] = static_cast<int>(instance->GetLong(keyStr));
+            updatedParameters[key] = static_cast<int>(_rc->GetLong(keyStr));
             break;
         case QVariant::LongLong:
-            updatedParameters[key] = static_cast<long long>(instance->GetLong(keyStr));
+            updatedParameters[key] = static_cast<long long>(_rc->GetLong(keyStr));
             break;
         case QVariant::Double:
-            updatedParameters[key] = instance->GetDouble(keyStr);
+            updatedParameters[key] = _rc->GetDouble(keyStr);
             break;
         case QVariant::String:
-            updatedParameters[key] = QString::fromStdString(instance->GetString(keyStr));
+            updatedParameters[key] = QString::fromStdString(_rc->GetString(keyStr));
             break;
         default:
             break;
