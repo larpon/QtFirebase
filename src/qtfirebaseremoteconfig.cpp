@@ -1,8 +1,5 @@
 #include "qtfirebaseremoteconfig.h"
 
-#include <QSet>
-#include <memory>
-
 namespace remote_config = firebase::remote_config;
 
 QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self { nullptr };
