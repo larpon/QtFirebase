@@ -147,28 +147,26 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
         const auto &value = it.value();
         const auto type = value.type();
 
-        remote_config::ConfigKeyValueVariant variant;
         switch (type) {
         case QVariant::Bool:
-            variant = remote_config::ConfigKeyValueVariant { key, value.toBool() };
+            defaults << remote_config::ConfigKeyValueVariant { key, value.toBool() };
             break;
         case QVariant::Int:
-            variant = remote_config::ConfigKeyValueVariant { key, value.toInt() };
+            defaults << remote_config::ConfigKeyValueVariant { key, value.toInt() };
             break;
         case QVariant::LongLong:
-            variant = remote_config::ConfigKeyValueVariant { key, static_cast<int64_t>(value.toLongLong()) };
+            defaults << remote_config::ConfigKeyValueVariant { key, static_cast<int64_t>(value.toLongLong()) };
             break;
         case QVariant::Double:
-            variant = remote_config::ConfigKeyValueVariant { key, value.toDouble() };
+            defaults << remote_config::ConfigKeyValueVariant { key, value.toDouble() };
             break;
         case QVariant::String:
             stringsData << value.toString().toUtf8();
-            variant = remote_config::ConfigKeyValueVariant { key, stringsData.last().constData() };
+            defaults << remote_config::ConfigKeyValueVariant { key, stringsData.last().constData() };
             break;
         default:
             break;
         }
-        defaults << variant;
     }
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
