@@ -225,9 +225,10 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
     QVariantMap updatedParameters;
     for (auto it = _parameters.cbegin(); it != _parameters.cend(); ++it) {
         const auto type = it.value().type();
-        const QString &key = it.key();
+        const auto &key = it.key();
 
-        const auto keyStr = key.toUtf8().constData();
+        const auto keyUtf8 = key.toUtf8();
+        const auto keyStr = keyUtf8.constData();
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
         switch (type) {
