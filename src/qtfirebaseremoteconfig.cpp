@@ -142,11 +142,11 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
     defaults.reserve(_parameters.size());
     for (auto it = _parameters.cbegin(); it != _parameters.cend(); ++it) {
         keysData << it.key().toUtf8();
+
         const auto key = keysData.last().constData();
-
         const auto &value = it.value();
-        const auto type = value.type();
 
+        const auto type = value.type();
         switch (type) {
         case QVariant::Bool:
             defaults << remote_config::ConfigKeyValueVariant { key, value.toBool() };
@@ -224,12 +224,11 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
 
     QVariantMap updatedParameters;
     for (auto it = _parameters.cbegin(); it != _parameters.cend(); ++it) {
-        const auto type = it.value().type();
         const auto &key = it.key();
-
         const auto keyUtf8 = key.toUtf8();
         const auto keyStr = keyUtf8.constData();
 
+        const auto type = it.value().type();
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
         switch (type) {
         case QVariant::Bool:
