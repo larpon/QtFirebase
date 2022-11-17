@@ -68,11 +68,11 @@ private slots:
     void init();
     void onFutureEvent(const QString &eventId, firebase::FutureBase);
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-    void onFutureEventInit(const firebase::FutureBase &);
-    void onFutureEventDefaults(const firebase::FutureBase &);
-    void onFutureEventActivate(const firebase::FutureBase &);
+    void onFutureEventInit();
+    void onFutureEventDefaults();
+    void onFutureEventActivate();
 #endif
-    void onFutureEventFetch(const firebase::FutureBase &);
+    void onFutureEventFetch();
 private:
     void setReady(bool = true);
     void setFetching(bool = true);
