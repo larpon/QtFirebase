@@ -93,6 +93,8 @@ void QtFirebaseRemoteConfig::onFutureEvent(const QString &eventId, firebase::Fut
     if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.fetch"))
         onFutureEventFetch(future);
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    else if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.activate"))
+        onFutureEventActivate(future);
     else if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.defaults"))
         onFutureEventDefaults(future);
     else if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.init"))
@@ -232,18 +234,33 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
     const auto activateFuture = _rc->Activate();
-    qFirebase->waitForFutureCompletion(activateFuture);
-
-    const bool fetchActivated = activateFuture.result() ? *activateFuture.result() : false;
+    qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.activate"), activateFuture);
 #else
-    const bool fetchActivated = remote_config::ActivateFetched();
+    updateParameters();
 #endif
-    Q_UNUSED(fetchActivated)
+}
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-    const remote_config::ConfigInfo &info = _rc->GetInfo();
+void QtFirebaseRemoteConfig::onFutureEventActivate(const firebase::FutureBase &future)
+{
+    const auto futureStatus = future.status();
+    const auto futureError = future.error();
+    if (futureStatus != firebase::kFutureStatusComplete || futureError) {
+        setFetching(false);
+        emit futuresError(futureError, future.error_message());
+        return;
+    }
+
+    updateParameters();
+}
+#endif
+
+void QtFirebaseRemoteConfig::updateParameters()
+{
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    const auto info = _rc->GetInfo();
 #else
-    const remote_config::ConfigInfo &info = remote_config::GetInfo();
+    const auto info = remote_config::GetInfo();
 #endif
 
     const auto lastFetchStatus = info.last_fetch_status;

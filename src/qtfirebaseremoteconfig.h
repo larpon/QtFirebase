@@ -70,6 +70,7 @@ private slots:
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
     void onFutureEventInit(const firebase::FutureBase &);
     void onFutureEventDefaults(const firebase::FutureBase &);
+    void onFutureEventActivate(const firebase::FutureBase &);
 #endif
     void onFutureEventFetch(const firebase::FutureBase &);
 private:
@@ -79,6 +80,7 @@ private:
     void addParameterInternal(const QString &name, const QVariant &defaultValue) { _parameters[name] = defaultValue; }
     void fetch(quint64 cacheExpirationInSeconds);
 
+    void updateParameters();
 private:
     const QString __QTFIREBASE_ID;
 
