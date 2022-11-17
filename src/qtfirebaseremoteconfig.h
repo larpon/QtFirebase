@@ -75,9 +75,7 @@ private:
     const QString __QTFIREBASE_ID;
     bool _ready = false;
     quint64 _cacheExpirationTime = firebase::remote_config::kDefaultCacheExpiration * 1000;
-
     QVariantMap _parameters;
-    QByteArrayList __defaultsByteArrayList;
 };
 
 #endif // QTFIREBASE_BUILD_REMOTE_CONFIG
