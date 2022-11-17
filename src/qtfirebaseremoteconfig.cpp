@@ -135,26 +135,12 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
     if (_parameters.isEmpty())
         return;
 
-    QVariantMap filteredMap;
-    for (auto it = _parameters.cbegin(); it != _parameters.cend(); ++it) {
-        static QSet<QVariant::Type> types {
-            QVariant::Bool,
-            QVariant::Int,
-            QVariant::LongLong,
-            QVariant::Double,
-            QVariant::String,
-        };
-        const auto &value = it.value();
-        if (types.contains(value.type()))
-            filteredMap[it.key()] = value;
-    }
-
     QByteArrayList keysData;
     QByteArrayList stringsData;
 
     QVector<remote_config::ConfigKeyValueVariant> defaults;
-    defaults.reserve(filteredMap.size());
-    for (auto it = filteredMap.cbegin(); it != filteredMap.cend(); ++it) {
+    defaults.reserve(_parameters.size());
+    for (auto it = _parameters.cbegin(); it != _parameters.cend(); ++it) {
         keysData << it.key().toUtf8();
         const auto key = keysData.last().constData();
 
@@ -240,18 +226,8 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
 
     QVariantMap updatedParameters;
     for (auto it = _parameters.cbegin(); it != _parameters.cend(); ++it) {
-        static QSet<QVariant::Type> types {
-            QVariant::Bool,
-            QVariant::Int,
-            QVariant::LongLong,
-            QVariant::Double,
-            QVariant::String,
-        };
-
-        const QVariant &value = it.value();
+        const auto type = it.value().type();
         const QString &key = it.key();
-        const auto type = value.type();
-        Q_ASSERT(types.contains(type));
 
         const auto keyStr = key.toUtf8().constData();
 
