@@ -60,10 +60,10 @@ void QtFirebaseRemoteConfig::init()
     const auto app = qFirebase->firebaseApp();
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-    const auto future = firebase::remote_config::RemoteConfig::GetInstance(app)->EnsureInitialized();
+    const auto future = remote_config::RemoteConfig::GetInstance(app)->EnsureInitialized();
     qFirebase->addFuture(__QTFIREBASE_ID + QStringLiteral(".config.init"), future);
 #else
-    const auto initResult = firebase::remote_config::Initialize(*app);
+    const auto initResult = remote_config::Initialize(*app);
     if (initResult != firebase::kInitResultSuccess) {
         emit googlePlayServicesError();
         return;
