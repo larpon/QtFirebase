@@ -17,8 +17,10 @@ class QtFirebaseRemoteConfig : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(QtFirebaseRemoteConfig)
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
-    Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
+    Q_PROPERTY(bool fetching READ fetching NOTIFY fetchingChanged)
     Q_PROPERTY(quint64 cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
+    Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
+
     static QtFirebaseRemoteConfig *self;
 public:
     static QtFirebaseRemoteConfig *instance(QObject *parent = nullptr);
@@ -34,11 +36,12 @@ public:
     virtual ~QtFirebaseRemoteConfig();
 
     bool ready() const { return _ready; }
-
-    QVariantMap parameters() const { return _parameters; }
+    bool fetching() const { return _fetching; }
     quint64 cacheExpirationTime() const { return _cacheExpirationTime; }
-    void setParameters(const QVariantMap &);
+    QVariantMap parameters() const { return _parameters; }
+
     void setCacheExpirationTime(quint64 ms);
+    void setParameters(const QVariantMap &);
 
     Q_INVOKABLE QVariant getParameterValue(const QString &name) const { return _parameters[name]; }
 public slots:
@@ -47,17 +50,19 @@ public slots:
     void addParameter(const QString &name, double defaultValue) { addParameterInternal(name, defaultValue); }
     void addParameter(const QString &name, const QString &defaultValue) { addParameterInternal(name, defaultValue); }
 
-    void fetch() { fetch(_cacheExpirationTime / 1000); }
     void fetchNow() { fetch(0); }
+    void fetch() { fetch(_cacheExpirationTime / 1000); }
 signals:
+
+    void readyChanged();
+    void fetchingChanged();
+    void cacheExpirationTimeChanged();
+    void parametersChanged();
+
     void googlePlayServicesError();
     void futuresError(int code, QString message);
 
     void error(int code, QString message);
-
-    void readyChanged();
-    void parametersChanged();
-    void cacheExpirationTimeChanged();
 
 private slots:
     void init();
@@ -68,12 +73,16 @@ private slots:
     void onFutureEventFetch(const firebase::FutureBase &);
 private:
     void setReady(bool = true);
+    void setFetching(bool = true);
+    void setParametersAndFetching(const QVariantMap &, bool);
     void addParameterInternal(const QString &name, const QVariant &defaultValue) { _parameters[name] = defaultValue; }
     void fetch(quint64 cacheExpirationInSeconds);
 
 private:
     const QString __QTFIREBASE_ID;
+
     bool _ready = false;
+    bool _fetching = false;
     quint64 _cacheExpirationTime = firebase::remote_config::kDefaultCacheExpiration * 1000;
     QVariantMap _parameters;
 };

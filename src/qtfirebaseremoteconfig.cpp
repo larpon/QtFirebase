@@ -108,6 +108,29 @@ void QtFirebaseRemoteConfig::setReady(bool ready)
     emit readyChanged();
 }
 
+void QtFirebaseRemoteConfig::setFetching(bool fetching)
+{
+    if (_fetching == fetching)
+        return;
+    _fetching = fetching;
+    emit fetchingChanged();
+}
+
+void QtFirebaseRemoteConfig::setParametersAndFetching(const QVariantMap &parameters, bool fetching)
+{
+    const bool emitFetching = (_fetching != fetching);
+
+    const bool emitParameters = (_parameters != parameters);
+    if (emitParameters)
+        _parameters = parameters;
+    _fetching = fetching;
+
+    if (emitFetching)
+        emit fetchingChanged();
+    if (emitParameters)
+        emit parametersChanged();
+}
+
 void QtFirebaseRemoteConfig::setParameters(const QVariantMap &parameters)
 {
     if (_parameters == parameters)
@@ -126,17 +149,17 @@ void QtFirebaseRemoteConfig::setCacheExpirationTime(quint64 ms)
 
 void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
 {
-    if (!_ready)
+    if (!_ready || _fetching)
         return;
 
     if (_parameters.isEmpty())
         return;
 
-    QByteArrayList keysData;
-    QByteArrayList stringsData;
-
     QVector<remote_config::ConfigKeyValueVariant> defaults;
     defaults.reserve(_parameters.size());
+
+    QByteArrayList keysData;
+    QByteArrayList stringsData;
     for (auto it = _parameters.cbegin(); it != _parameters.cend(); ++it) {
         keysData << it.key().toUtf8();
 
@@ -166,6 +189,8 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
         }
     }
 
+    setFetching();
+
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
     auto instance = remote_config::RemoteConfig::GetInstance(qFirebase->firebaseApp());
     instance->SetDefaults(defaults.constData(), static_cast<size_t>(defaults.length()));
@@ -183,6 +208,7 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
     const auto futureStatus = future.status();
     const auto futureError = future.error();
     if (futureStatus != firebase::kFutureStatusComplete || futureError) {
+        setFetching(false);
         emit futuresError(futureError, future.error_message());
         return;
     }
@@ -207,6 +233,7 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
     const auto lastFetchStatus = info.last_fetch_status;
     const auto lastFetchFailureReason = info.last_fetch_failure_reason;
     if (lastFetchStatus != remote_config::kLastFetchStatusSuccess) {
+        setFetching(false);
         if (lastFetchFailureReason == remote_config::kFetchFailureReasonInvalid) {
             emit error(FetchFailureReasonInvalid, QStringLiteral("The fetch has not yet failed."));
             return;
@@ -269,5 +296,5 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
 #endif
     }
 
-    setParameters(updatedParameters);
+    setParametersAndFetching(updatedParameters, false);
 }
