@@ -214,8 +214,8 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
     }
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-    auto remoteConfigInstance = remote_config::RemoteConfig::GetInstance(qFirebase->firebaseApp());
-    const auto activateFuture = remoteConfigInstance->Activate();
+    auto instance = remote_config::RemoteConfig::GetInstance(qFirebase->firebaseApp());
+    const auto activateFuture = instance->Activate();
     qFirebase->waitForFutureCompletion(activateFuture);
 
     const bool fetchActivated = activateFuture.result() ? *activateFuture.result() : false;
@@ -225,7 +225,7 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
     Q_UNUSED(fetchActivated)
 
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
-    const remote_config::ConfigInfo &info = remoteConfigInstance->GetInfo();
+    const remote_config::ConfigInfo &info = instance->GetInfo();
 #else
     const remote_config::ConfigInfo &info = remote_config::GetInfo();
 #endif
@@ -256,19 +256,19 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
         switch (type) {
         case QVariant::Bool:
-            updatedParameters[key] = remoteConfigInstance->GetBoolean(keyStr);
+            updatedParameters[key] = instance->GetBoolean(keyStr);
             break;
         case QVariant::Int:
-            updatedParameters[key] = static_cast<int>(remoteConfigInstance->GetLong(keyStr));
+            updatedParameters[key] = static_cast<int>(instance->GetLong(keyStr));
             break;
         case QVariant::LongLong:
-            updatedParameters[key] = static_cast<long long>(remoteConfigInstance->GetLong(keyStr));
+            updatedParameters[key] = static_cast<long long>(instance->GetLong(keyStr));
             break;
         case QVariant::Double:
-            updatedParameters[key] = remoteConfigInstance->GetDouble(keyStr);
+            updatedParameters[key] = instance->GetDouble(keyStr);
             break;
         case QVariant::String:
-            updatedParameters[key] = QString::fromStdString(remoteConfigInstance->GetString(keyStr));
+            updatedParameters[key] = QString::fromStdString(instance->GetString(keyStr));
             break;
         default:
             break;
