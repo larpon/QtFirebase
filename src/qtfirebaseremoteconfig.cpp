@@ -250,50 +250,48 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
 
         const QVariant &value = it.value();
         const QString &key = it.key();
-
         const auto type = value.type();
         Q_ASSERT(types.contains(type));
+
+        const auto keyStr = key.toUtf8().constData();
+
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
         switch (type) {
         case QVariant::Bool:
-            updatedParameters[key] = remoteConfigInstance->GetBoolean(key.toUtf8().constData());
+            updatedParameters[key] = remoteConfigInstance->GetBoolean(keyStr);
             break;
         case QVariant::Int:
-            updatedParameters[key] = static_cast<int>(remoteConfigInstance->GetLong(key.toUtf8().constData()));
+            updatedParameters[key] = static_cast<int>(remoteConfigInstance->GetLong(keyStr));
             break;
         case QVariant::LongLong:
-            updatedParameters[key] = static_cast<long long>(remoteConfigInstance->GetLong(key.toUtf8().constData()));
+            updatedParameters[key] = static_cast<long long>(remoteConfigInstance->GetLong(keyStr));
             break;
         case QVariant::Double:
-            updatedParameters[key] = remoteConfigInstance->GetDouble(key.toUtf8().constData());
+            updatedParameters[key] = remoteConfigInstance->GetDouble(keyStr);
             break;
-        case QVariant::String: {
-            const std::string result = remoteConfigInstance->GetString(key.toUtf8().constData());
-            updatedParameters[key] = QString::fromUtf8(result.c_str());
+        case QVariant::String:
+            updatedParameters[key] = QString::fromStdString(remoteConfigInstance->GetString(keyStr));
             break;
-        }
         default:
             break;
         }
 #else
         switch (type) {
         case QVariant::Bool:
-            updatedParameters[key] = remote_config::GetBoolean(key.toUtf8().constData());
+            updatedParameters[key] = remote_config::GetBoolean(keyStr);
             break;
         case QVariant::Int:
-            updatedParameters[key] = static_cast<int>(remote_config::GetLong(key.toUtf8().constData()));
+            updatedParameters[key] = static_cast<int>(remote_config::GetLong(keyStr));
             break;
         case QVariant::LongLong:
-            updatedParameters[key] = static_cast<long long>(remote_config::GetLong(key.toUtf8().constData()));
+            updatedParameters[key] = static_cast<long long>(remote_config::GetLong(keyStr));
             break;
         case QVariant::Double:
-            updatedParameters[key] = remote_config::GetDouble(key.toUtf8().constData());
+            updatedParameters[key] = remote_config::GetDouble(keyStr);
             break;
-        case QVariant::String: {
-            const std::string result = remote_config::GetString(key.toUtf8().constData());
-            updatedParameters[key] = QString::fromUtf8(result.c_str());
+        case QVariant::String:
+            updatedParameters[key] = QString::fromStdString(remote_config::GetString(keyStr));
             break;
-        }
         default:
             break;
         }
