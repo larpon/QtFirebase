@@ -248,45 +248,57 @@ void QtFirebaseRemoteConfig::onFutureEventFetch(const firebase::FutureBase &futu
             QVariant::Double,
             QVariant::String,
         };
+
         const QVariant &value = it.value();
         const QString &key = it.key();
 
         const auto type = value.type();
-
         Q_ASSERT(types.contains(type));
-
-        if (type == QVariant::Bool) {
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+        switch (type) {
+        case QVariant::Bool:
             updatedParameters[key] = remoteConfigInstance->GetBoolean(key.toUtf8().constData());
-#else
-            updatedParameters[key] = remote_config::GetBoolean(key.toUtf8().constData());
-#endif
-        } else if (type == QVariant::Int) {
-#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+            break;
+        case QVariant::Int:
             updatedParameters[key] = static_cast<int>(remoteConfigInstance->GetLong(key.toUtf8().constData()));
-#else
-            updatedParameters[key] = static_cast<int>(remote_config::GetLong(key.toUtf8().constData()));
-#endif
-        } else if (type == QVariant::LongLong) {
-#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+            break;
+        case QVariant::LongLong:
             updatedParameters[key] = static_cast<long long>(remoteConfigInstance->GetLong(key.toUtf8().constData()));
-#else
-            updatedParameters[key] = static_cast<long long>(remote_config::GetLong(key.toUtf8().constData()));
-#endif
-        } else if (type == QVariant::Double) {
-#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+            break;
+        case QVariant::Double:
             updatedParameters[key] = remoteConfigInstance->GetDouble(key.toUtf8().constData());
-#else
-            updatedParameters[key] = remote_config::GetDouble(key.toUtf8().constData());
-#endif
-        } else if (type == QVariant::String) {
-#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+            break;
+        case QVariant::String: {
             const std::string result = remoteConfigInstance->GetString(key.toUtf8().constData());
-#else
-            const std::string result = remote_config::GetString(key.toUtf8().constData());
-#endif
             updatedParameters[key] = QString::fromUtf8(result.c_str());
+            break;
         }
+        default:
+            break;
+        }
+#else
+        switch (type) {
+        case QVariant::Bool:
+            updatedParameters[key] = remote_config::GetBoolean(key.toUtf8().constData());
+            break;
+        case QVariant::Int:
+            updatedParameters[key] = static_cast<int>(remote_config::GetLong(key.toUtf8().constData()));
+            break;
+        case QVariant::LongLong:
+            updatedParameters[key] = static_cast<long long>(remote_config::GetLong(key.toUtf8().constData()));
+            break;
+        case QVariant::Double:
+            updatedParameters[key] = remote_config::GetDouble(key.toUtf8().constData());
+            break;
+        case QVariant::String: {
+            const std::string result = remote_config::GetString(key.toUtf8().constData());
+            updatedParameters[key] = QString::fromUtf8(result.c_str());
+            break;
+        }
+        default:
+            break;
+        }
+#endif
     }
 
     setParameters(updatedParameters);
