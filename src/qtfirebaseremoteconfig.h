@@ -73,7 +73,6 @@ private:
 
 private:
     const QString __QTFIREBASE_ID;
-    firebase::ModuleInitializer _initializer;
     bool _ready = false;
     quint64 _cacheExpirationTime = firebase::remote_config::kDefaultCacheExpiration * 1000;
 
