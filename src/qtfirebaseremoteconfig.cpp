@@ -21,13 +21,6 @@ QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent)
         return;
     self = this;
 
-#ifdef Q_OS_ANDROID
-    if (!GooglePlayServices::available()) {
-        QTimer::singleShot(0, this, &QtFirebaseRemoteConfig::googlePlayServicesError);
-        return;
-    }
-#endif
-
     connect(qFirebase, &QtFirebase::futureEvent, this, &QtFirebaseRemoteConfig::onFutureEvent);
 
     QTimer::singleShot(0, this, [ this ] {
@@ -83,28 +76,31 @@ void QtFirebaseRemoteConfig::onFutureEvent(const QString &eventId, firebase::Fut
     if (!eventId.startsWith(__QTFIREBASE_ID))
         return;
 
-    const auto error = future.error();
     const auto status = future.status();
+    Q_ASSERT(status == firebase::kFutureStatusComplete);
+    if (status != firebase::kFutureStatusComplete)
+        return;
+
+    const auto error = future.error();
     const auto message = QString::fromUtf8(future.error_message());
-
     future.Release();
-
-    if (error || status != firebase::kFutureStatusComplete) {
+    if (error) {
         setFetching(false);
         emit futuresError(error, message);
         return;
     }
 
     if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.fetch"))
-        onFutureEventFetch();
+        return onFutureEventFetch();
 #if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
     else if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.activate"))
-        onFutureEventActivate();
+        return onFutureEventActivate();
     else if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.defaults"))
-        onFutureEventDefaults();
+        return onFutureEventDefaults();
     else if (eventId == __QTFIREBASE_ID + QStringLiteral(".config.init"))
-        onFutureEventInit();
+        return onFutureEventInit();
 #endif
+    Q_ASSERT(false);
 }
 
 void QtFirebaseRemoteConfig::setReady(bool ready)
@@ -123,21 +119,6 @@ void QtFirebaseRemoteConfig::setFetching(bool fetching)
     emit fetchingChanged();
 }
 
-void QtFirebaseRemoteConfig::setParametersAndFetching(const QVariantMap &parameters, bool fetching)
-{
-    const bool emitFetching = (_fetching != fetching);
-
-    const bool emitParameters = (_parameters != parameters);
-    if (emitParameters)
-        _parameters = parameters;
-    _fetching = fetching;
-
-    if (emitFetching)
-        emit fetchingChanged();
-    if (emitParameters)
-        emit parametersChanged();
-}
-
 void QtFirebaseRemoteConfig::setParameters(const QVariantMap &parameters)
 {
     if (_parameters == parameters)
@@ -154,6 +135,21 @@ void QtFirebaseRemoteConfig::setCacheExpirationTime(quint64 ms)
     emit cacheExpirationTimeChanged();
 }
 
+void QtFirebaseRemoteConfig::setParametersAndFetching(const QVariantMap &parameters, bool fetching)
+{
+    const bool emitFetching = (_fetching != fetching);
+
+    const bool emitParameters = (_parameters != parameters);
+    if (emitParameters)
+        _parameters = parameters;
+    _fetching = fetching;
+
+    if (emitFetching)
+        emit fetchingChanged();
+    if (emitParameters)
+        emit parametersChanged();
+}
+
 void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
 {
     if (!_ready || _fetching || _parameters.isEmpty())
@@ -166,32 +162,35 @@ void QtFirebaseRemoteConfig::fetch(quint64 cacheExpirationInSeconds)
     QByteArrayList keysData;
     for (auto it = _parameters.cbegin(); it != _parameters.cend(); ++it) {
         keysData << it.key().toUtf8();
-        const auto key = keysData.last().constData();
+
+        const auto keyStr = keysData.last().constData();
 
         const auto &value = it.value();
         const auto type = value.type();
         switch (type) {
         case QVariant::Bool:
-            defaults << remote_config::ConfigKeyValueVariant { key, value.toBool() };
+            defaults << remote_config::ConfigKeyValueVariant { keyStr, value.toBool() };
             break;
         case QVariant::Int:
-            defaults << remote_config::ConfigKeyValueVariant { key, value.toInt() };
+            defaults << remote_config::ConfigKeyValueVariant { keyStr, value.toInt() };
             break;
         case QVariant::LongLong:
-            defaults << remote_config::ConfigKeyValueVariant { key, static_cast<int64_t>(value.toLongLong()) };
+            defaults << remote_config::ConfigKeyValueVariant { keyStr, static_cast<int64_t>(value.toLongLong()) };
             break;
         case QVariant::Double:
-            defaults << remote_config::ConfigKeyValueVariant { key, value.toDouble() };
+            defaults << remote_config::ConfigKeyValueVariant { keyStr, value.toDouble() };
             break;
         case QVariant::String:
             stringsData << value.toString().toUtf8();
-            defaults << remote_config::ConfigKeyValueVariant { key, stringsData.last().constData() };
+            defaults << remote_config::ConfigKeyValueVariant { keyStr, stringsData.last().constData() };
             break;
         default:
             break;
         }
     }
 
+    if (defaults.isEmpty())
+        return;
     const auto data = defaults.constData();
     const auto n = static_cast<size_t>(defaults.length());
 
