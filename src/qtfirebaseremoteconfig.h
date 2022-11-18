@@ -44,6 +44,7 @@ public:
     void setParameters(const QVariantMap &);
 
     Q_INVOKABLE QVariant getParameterValue(const QString &name) const { return _parameters[name]; }
+
 public slots:
     void addParameter(const QString &name, bool defaultValue) { addParameterInternal(name, defaultValue); }
     void addParameter(const QString &name, long long defaultValue) { addParameterInternal(name, defaultValue); }
@@ -59,10 +60,10 @@ signals:
     void cacheExpirationTimeChanged();
     void parametersChanged();
 
-    void googlePlayServicesError();
-    void futuresError(int code, QString message);
+    void googlePlayServicesError(); ///< For Firebase CPP SDK < 8.0.0 only
 
-    void error(int code, QString message);
+    void futuresError(int code, QString message); ///< System error.
+    void error(int code, QString message); ///< Error of last fetch.
 
 private slots:
     void init();
