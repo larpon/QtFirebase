@@ -7,6 +7,10 @@
 
 #include <firebase/remote_config.h>
 
+#include <QObject>
+#include <QVariant>
+#include <QVariantMap>
+
 #ifdef qFirebaseRemoteConfig
 #undef qFirebaseRemoteConfig
 #endif
@@ -23,7 +27,11 @@ class QtFirebaseRemoteConfig : public QObject
 
     static QtFirebaseRemoteConfig *self;
 public:
-    static QtFirebaseRemoteConfig *instance(QObject *parent = nullptr);
+    static QtFirebaseRemoteConfig *instance(QObject *parent = nullptr) {
+        if (!self)
+            self = new QtFirebaseRemoteConfig(parent);
+        return self;
+    }
 
     enum FetchFailure {
         FetchFailureReasonInvalid = firebase::remote_config::kFetchFailureReasonInvalid,

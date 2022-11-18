@@ -4,13 +4,6 @@ namespace remote_config = firebase::remote_config;
 
 QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::self { nullptr };
 
-QtFirebaseRemoteConfig *QtFirebaseRemoteConfig::instance(QObject *parent)
-{
-    if (!self)
-        self = new QtFirebaseRemoteConfig(parent);
-    return self;
-}
-
 QtFirebaseRemoteConfig::QtFirebaseRemoteConfig(QObject *parent)
     : QObject(parent)
     , __QTFIREBASE_ID(QString().asprintf("%8p", static_cast<void *>(this)))
