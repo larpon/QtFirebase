@@ -33,6 +33,8 @@ public:
         return self;
     }
 
+    static bool checkInstance(const char *function = nullptr) { Q_UNUSED(function) return self; }
+
     enum FetchFailure {
         FetchFailureReasonInvalid = firebase::remote_config::kFetchFailureReasonInvalid,
         FetchFailureReasonThrottled = firebase::remote_config::kFetchFailureReasonThrottled,
