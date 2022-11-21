@@ -5,6 +5,12 @@
 #include <QVector>
 #include <QDebug>
 
+#define QTFIREBASE_ANALYTICS_CHECK_READY(name) \
+    if (!_ready) { \
+        qDebug().noquote() << this << name << "native part not ready"; \
+        return; \
+    }
+
 const int USER_ID_MAX_LEN { 256 };
 
 namespace analytics = firebase::analytics;
@@ -63,11 +69,7 @@ void QtFirebaseAnalytics::setReady(bool ready)
 
 void QtFirebaseAnalytics::setEnabled(bool enabled)
 {
-    if (!_ready) {
-        qDebug() << this << "::setEnabled native part not ready";
-        return;
-    }
-
+    QTFIREBASE_ANALYTICS_CHECK_READY("::setEnabled")
     if (_enabled == enabled)
         return;
 
@@ -81,11 +83,7 @@ void QtFirebaseAnalytics::setEnabled(bool enabled)
 void QtFirebaseAnalytics::setMinimumSessionDuration(uint minimumSessionDuration)
 {
     qWarning() << this << "::setMinimumSessionDuration is deprecated and no longer functional";
-    if (!_ready) {
-        qDebug() << this << "::setMinimumSessionDuration native part not ready";
-        return;
-    }
-
+    QTFIREBASE_ANALYTICS_CHECK_READY("::setMinimumSessionDuration")
     if (_minimumSessionDuration == minimumSessionDuration)
         return;
 
@@ -96,11 +94,7 @@ void QtFirebaseAnalytics::setMinimumSessionDuration(uint minimumSessionDuration)
 
 void QtFirebaseAnalytics::setSessionTimeout(uint sessionTimeout)
 {
-    if (!_ready) {
-        qDebug() << this << "::setSessionTimeout native part not ready";
-        return;
-    }
-
+    QTFIREBASE_ANALYTICS_CHECK_READY("::setSessionTimeout")
     if (_sessionTimeout == sessionTimeout)
         return;
 
@@ -113,10 +107,8 @@ void QtFirebaseAnalytics::setSessionTimeout(uint sessionTimeout)
 
 void QtFirebaseAnalytics::setUserId(const QString &userId)
 {
-    if (!_ready) {
-        qDebug() << this << "::setUserId native part not ready";
-        return;
-    }
+    QTFIREBASE_ANALYTICS_CHECK_READY("::setUserId")
+
     if (userId.isEmpty())
         return unsetUserId();
 
@@ -137,11 +129,7 @@ void QtFirebaseAnalytics::setUserId(const QString &userId)
 
 void QtFirebaseAnalytics::setUserProperties(const QVariantList &userProperties)
 {
-    if (!_ready) {
-        qDebug() << this << "::setUserProperties native part not ready";
-        return;
-    }
-
+    QTFIREBASE_ANALYTICS_CHECK_READY("::setUserProperties")
     if (_userProperties == userProperties)
         return;
     _userProperties = userProperties;
@@ -171,20 +159,14 @@ void QtFirebaseAnalytics::setUserProperties(const QVariantList &userProperties)
 
 void QtFirebaseAnalytics::setUserProperty(const QString &name, const QString &value)
 {
-    if (!_ready) {
-        qDebug() << this << "::setUserProperty native part not ready";
-        return;
-    }
+    QTFIREBASE_ANALYTICS_CHECK_READY("::setUserProperty")
     qDebug() << this << "::setUserProperty" << name << ":" << value;
     analytics::SetUserProperty(name.toUtf8().constData(), value.toUtf8().constData());
 }
 
 void QtFirebaseAnalytics::unsetUserId()
 {
-    if (!_ready) {
-        qDebug() << this << "::unsetUserId native part not ready";
-        return;
-    }
+    QTFIREBASE_ANALYTICS_CHECK_READY("::unsetUserId")
 
     if (_userId.isEmpty())
         return;
@@ -197,10 +179,7 @@ void QtFirebaseAnalytics::unsetUserId()
 void QtFirebaseAnalytics::setCurrentScreen(const QString &screenName, const QString &screenClass)
 {
     qWarning() << this << "::setCurrentScreen is deprecated";
-    if (!_ready) {
-        qDebug() << this << "::setCurrentScreen native part not ready";
-        return;
-    }
+    QTFIREBASE_ANALYTICS_CHECK_READY("::setCurrentScreen")
     qDebug() << this << "::setCurrentScreen" << screenName << ":" << screenClass;
     analytics::SetCurrentScreen(screenName.toUtf8().constData(), screenClass.toUtf8().constData());
 }
@@ -208,50 +187,36 @@ void QtFirebaseAnalytics::setCurrentScreen(const QString &screenName, const QStr
 
 void QtFirebaseAnalytics::logEvent(const QString &name)
 {
-    if (!_ready) {
-        qDebug() << this << "::logEvent native part not ready";
-        return;
-    }
+    QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
     qDebug() << this << "::logEvent" << name << "(no params)";
     analytics::LogEvent(name.toUtf8().constData());
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, int value)
 {
-    if (!_ready) {
-        qDebug() << this << "::logEvent native part not ready";
-        return;
-    }
+    QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
     qDebug() << this << "::logEvent" << name << "int param" << param << ":" << value;
     analytics::LogEvent(name.toUtf8().constData(), param.toUtf8().constData(), value);
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, double value)
 {
-    if (!_ready) {
-        qDebug() << this << "::logEvent native part not ready";
-        return;
-    }
+    QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
     qDebug() << this << "::logEvent" << name << "double param" << param << ":" << value;
     analytics::LogEvent(name.toUtf8().constData(), param.toUtf8().constData(), value);
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, const QString &value)
 {
-    if (!_ready) {
-        qDebug() << this << "::logEvent native part not ready";
-        return;
-    }
+    QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
     qDebug() << this << "::logEvent" << name << "string param" << param << ":" << value;
     analytics::LogEvent(name.toUtf8().constData(), param.toUtf8().constData(), value.toUtf8().constData());
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap &bundle)
 {
-    if (!_ready) {
-        qDebug() << this << "::logEvent native part not ready";
-        return;
-    }
+    QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
+
     qDebug().noquote() << this << "::logEvent bundle" << name;
 
     QVector<analytics::Parameter> parameters;
