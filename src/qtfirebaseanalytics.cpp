@@ -24,6 +24,8 @@ const int SCREEN_NAME_MAX_LEN { 100 };
 const int SCREEN_CLASS_MAX_LEN { 100 };
 #endif
 
+const int EVENT_NAME_MAX_LEN { 40 };
+
 namespace analytics = firebase::analytics;
 
 QtFirebaseAnalytics *QtFirebaseAnalytics::self { nullptr };
@@ -240,32 +242,72 @@ void QtFirebaseAnalytics::setCurrentScreen(const QString &screenName, const QStr
 }
 #endif
 
+bool QtFirebaseAnalytics::checkEventName(QString &fixed, const QString &name) const
+{
+    if (name.isEmpty())
+        return false;
+
+    auto aName = name;
+    if (aName.length() > EVENT_NAME_MAX_LEN) {
+        aName = aName.left(EVENT_NAME_MAX_LEN);
+        qWarning() << this << QStringLiteral("::logEvent name longer than allowed %1 chars and truncated to").arg(EVENT_NAME_MAX_LEN) << aName;
+    }
+
+    const auto aNameUtf8 = aName.toUtf8();
+
+    const bool valid = std::all_of(aNameUtf8.cbegin(), aNameUtf8.cend(), [ ](const char ch) { return std::isalnum(ch) || ch == '_'; });
+    if (!valid) {
+        qWarning().noquote() << this << "::logEvent name is not alphanumeric with underscores" << aName;
+        return false;
+    }
+
+    if (!aName.at(0).isLetter()) {
+        qWarning().noquote() << this << "::logEvent name must start with a letter" << aName;
+        return false;
+    }
+
+    fixed = aName;
+    return true;
+}
+
 void QtFirebaseAnalytics::logEvent(const QString &name)
 {
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
     qDebug() << this << "::logEvent" << name << "(no params)";
-    analytics::LogEvent(name.toUtf8().constData());
+    QString nameFixed;
+    if (!checkEventName(nameFixed, name))
+        return;
+    analytics::LogEvent(nameFixed.toUtf8().constData());
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, int value)
 {
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
     qDebug() << this << "::logEvent" << name << "int param" << param << ":" << value;
-    analytics::LogEvent(name.toUtf8().constData(), param.toUtf8().constData(), value);
+    QString nameFixed;
+    if (!checkEventName(nameFixed, name))
+        return;
+    analytics::LogEvent(nameFixed.toUtf8().constData(), param.toUtf8().constData(), value);
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, double value)
 {
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
     qDebug() << this << "::logEvent" << name << "double param" << param << ":" << value;
-    analytics::LogEvent(name.toUtf8().constData(), param.toUtf8().constData(), value);
+    QString nameFixed;
+    if (!checkEventName(nameFixed, name))
+        return;
+    analytics::LogEvent(nameFixed.toUtf8().constData(), param.toUtf8().constData(), value);
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, const QString &value)
 {
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
     qDebug() << this << "::logEvent" << name << "string param" << param << ":" << value;
-    analytics::LogEvent(name.toUtf8().constData(), param.toUtf8().constData(), value.toUtf8().constData());
+    QString nameFixed;
+    if (!checkEventName(nameFixed, name))
+        return;
+    analytics::LogEvent(nameFixed.toUtf8().constData(), param.toUtf8().constData(), value.toUtf8().constData());
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap &bundle)
@@ -273,6 +315,9 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap &bundl
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
 
     qDebug().noquote() << this << "::logEvent bundle" << name;
+    QString nameFixed;
+    if (!checkEventName(nameFixed, name))
+        return;
 
     QVector<analytics::Parameter> parameters;
     parameters.reserve(bundle.size());
@@ -313,5 +358,5 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap &bundl
         }
     }
 
-    analytics::LogEvent(name.toUtf8().constData(), parameters.constData(), static_cast<size_t>(parameters.length()));
+    analytics::LogEvent(nameFixed.toUtf8().constData(), parameters.constData(), static_cast<size_t>(parameters.length()));
 }

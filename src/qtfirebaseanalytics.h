@@ -78,6 +78,8 @@ signals:
 private slots:
     void init();
 private:
+    bool checkEventName(QString &fixed, const QString &name) const;
+private:
 
     bool _ready = false;
     bool _enabled = false;
