@@ -5,6 +5,8 @@
 #include <QVector>
 #include <QDebug>
 
+const int USER_ID_MAX_LEN { 256 };
+
 namespace analytics = firebase::analytics;
 
 QtFirebaseAnalytics *QtFirebaseAnalytics::self { nullptr };
@@ -119,9 +121,9 @@ void QtFirebaseAnalytics::setUserId(const QString &userId)
         return unsetUserId();
 
     auto aUserId = userId;
-    if (aUserId.length() > 36) {
-        aUserId = aUserId.left(36);
-        qWarning() << this << "::setUserId" << "ID longer than allowed 36 chars" << "TRUNCATED to" << aUserId;
+    if (aUserId.length() > USER_ID_MAX_LEN) {
+        aUserId = aUserId.left(USER_ID_MAX_LEN);
+        qWarning() << this << QStringLiteral("::setUserId ID longer than allowed %1 chars and truncated to").arg(USER_ID_MAX_LEN) << aUserId;
     }
     if (_userId == aUserId)
         return;
