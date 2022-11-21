@@ -74,6 +74,15 @@ void QtFirebaseAnalytics::init()
     setReady();
 }
 
+QString QtFirebaseAnalytics::fixStringLength(const QString &str, uint maxLength, const char *func, const char *name) const
+{
+    if (str.length() <= static_cast<int>(maxLength))
+        return str;
+    const auto fixed = str.left(maxLength);
+    qWarning() << this << QStringLiteral("%1 %2 longer than allowed %3 chars and truncated to").arg(func).arg(name).arg(maxLength) << fixed;
+    return fixed;
+}
+
 void QtFirebaseAnalytics::setReady(bool ready)
 {
     if (_ready == ready)
@@ -127,11 +136,7 @@ void QtFirebaseAnalytics::setUserId(const QString &userId)
     if (userId.isEmpty())
         return unsetUserId();
 
-    auto aUserId = userId;
-    if (aUserId.length() > USER_ID_MAX_LEN) {
-        aUserId = aUserId.left(USER_ID_MAX_LEN);
-        qWarning() << this << QStringLiteral("::setUserId id longer than allowed %1 chars and truncated to").arg(USER_ID_MAX_LEN) << aUserId;
-    }
+    const auto aUserId = fixStringLength(userId, USER_ID_MAX_LEN, "::setUserId", "id");
     if (_userId == aUserId)
         return;
 
@@ -182,12 +187,7 @@ void QtFirebaseAnalytics::setUserProperty(const QString &name, const QString &va
         return;
     }
 
-    auto aName = name;
-    if (aName.length() > USER_PROP_NAME_MAX_LEN) {
-        aName = aName.left(USER_PROP_NAME_MAX_LEN);
-        qWarning() << this << QStringLiteral("::setUserProperty name longer than allowed %1 chars and truncated to").arg(USER_PROP_NAME_MAX_LEN) << aName;
-    }
-
+    const auto aName = fixStringLength(name, USER_PROP_NAME_MAX_LEN, "::setUserProperty", "name");
     const auto aNameUtf8 = aName.toUtf8();
 
     const bool valid = std::all_of(aNameUtf8.cbegin(), aNameUtf8.cend(), [ ](const char ch) { return std::isalnum(ch); });
@@ -196,16 +196,12 @@ void QtFirebaseAnalytics::setUserProperty(const QString &name, const QString &va
         return;
     }
 
-    if (!aName.at(0).isLetter()) {
+    if (!std::isalpha(aNameUtf8[0])) {
         qWarning().noquote() << this << "::setUserProperty name must start with a letter" << aName;
         return;
     }
 
-    auto aValue = value;
-    if (aValue.length() > USER_PROP_VALUE_MAX_LEN) {
-        aValue = aValue.left(USER_PROP_VALUE_MAX_LEN);
-        qWarning() << this << QStringLiteral("::setUserProperty %1 value longer than allowed %2 chars and truncated to").arg(aName).arg(USER_PROP_VALUE_MAX_LEN) << aValue;
-    }
+    const auto aValue = fixStringLength(name, USER_PROP_VALUE_MAX_LEN, "::setUserProperty", QStringLiteral("%1 value").arg(aName).toUtf8());
 
     analytics::SetUserProperty(aNameUtf8.constData(), aValue.isEmpty() ? nullptr : aValue.toUtf8().constData());
 }
@@ -228,17 +224,8 @@ void QtFirebaseAnalytics::setCurrentScreen(const QString &screenName, const QStr
     QTFIREBASE_ANALYTICS_CHECK_READY("::setCurrentScreen")
     qDebug() << this << "::setCurrentScreen" << screenName << ":" << screenClass;
 
-    auto aName = screenName;
-    if (aName.length() > SCREEN_NAME_MAX_LEN) {
-        aName = aName.left(SCREEN_NAME_MAX_LEN);
-        qWarning() << this << QStringLiteral("::setCurrentScreen name longer than allowed %1 chars and truncated to").arg(SCREEN_NAME_MAX_LEN) << aName;
-    }
-
-    auto aClass = screenClass;
-    if (aClass.length() > SCREEN_CLASS_MAX_LEN) {
-        aClass = aClass.left(SCREEN_CLASS_MAX_LEN);
-        qWarning() << this << QStringLiteral("::setCurrentScreen class longer than allowed %1 chars and truncated to").arg(SCREEN_CLASS_MAX_LEN) << aClass;
-    }
+    const auto aName = fixStringLength(screenName, SCREEN_NAME_MAX_LEN, "::setCurrentScreen", "name");
+    const auto aClass = fixStringLength(screenClass, SCREEN_CLASS_MAX_LEN, "::setCurrentScreen", "class");
 
     analytics::SetCurrentScreen(aName.isEmpty() ? nullptr : aName.toUtf8().constData(), aClass.isEmpty() ? nullptr : aClass.toUtf8().constData());
 }
@@ -249,12 +236,7 @@ bool QtFirebaseAnalytics::checkEventName(QString &fixed, const QString &name) co
     if (name.isEmpty())
         return false;
 
-    auto aName = name;
-    if (aName.length() > EVENT_NAME_MAX_LEN) {
-        aName = aName.left(EVENT_NAME_MAX_LEN);
-        qWarning() << this << QStringLiteral("::logEvent name longer than allowed %1 chars and truncated to").arg(EVENT_NAME_MAX_LEN) << aName;
-    }
-
+    const auto aName = fixStringLength(name, EVENT_NAME_MAX_LEN, "::logEvent", "name");
     const auto aNameUtf8 = aName.toUtf8();
 
     const bool valid = std::all_of(aNameUtf8.cbegin(), aNameUtf8.cend(), [ ](const char ch) { return std::isalnum(ch) || ch == '_'; });
@@ -277,12 +259,7 @@ bool QtFirebaseAnalytics::checkParamName(QString &fixed, const QString &name) co
     if (name.isEmpty())
         return false;
 
-    auto aName = name;
-    if (aName.length() > PARAM_NAME_MAX_LEN) {
-        aName = aName.left(PARAM_NAME_MAX_LEN);
-        qWarning() << this << QStringLiteral("::logEvent param name longer than allowed %1 chars and truncated to").arg(PARAM_NAME_MAX_LEN) << aName;
-    }
-
+    const auto aName = fixStringLength(name, PARAM_NAME_MAX_LEN, "::logEvent", "param name");
     const auto aNameUtf8 = aName.toUtf8();
 
     const bool valid = std::all_of(aNameUtf8.cbegin(), aNameUtf8.cend(), [ ](const char ch) { return std::isalnum(ch) || ch == '_'; });
@@ -347,11 +324,7 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, co
     if (!checkParamName(paramFixed, param))
         return;
 
-    auto aValue = value;
-    if (aValue.length() > PARAM_VALUE_MAX_LEN) {
-        aValue = aValue.left(PARAM_VALUE_MAX_LEN);
-        qWarning() << this << QStringLiteral("::logEvent param value longer than allowed %1 chars and truncated to").arg(PARAM_VALUE_MAX_LEN) << aValue;
-    }
+    const auto aValue = fixStringLength(value, PARAM_VALUE_MAX_LEN, "::logEvent", "param value");
 
     analytics::LogEvent(nameFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), aValue.toUtf8().constData());
 }

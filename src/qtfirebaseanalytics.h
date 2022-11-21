@@ -78,6 +78,10 @@ signals:
 private slots:
     void init();
 private:
+    QString fixStringLength(const QString &str, uint maxLength, const char *func, const char *name) const;
+    QString fixStringLength(const QString &str, uint maxLength, const char *func, const QByteArray &name) const {
+        return fixStringLength(str, maxLength, func, name.constData());
+    }
     bool checkEventName(QString &fixed, const QString &name) const;
     bool checkParamName(QString &fixed, const QString &name) const;
 private:
