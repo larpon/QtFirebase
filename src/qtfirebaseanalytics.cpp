@@ -300,6 +300,19 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, in
     analytics::LogEvent(nameFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), value);
 }
 
+void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, long long value)
+{
+    QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
+    qDebug() << this << "::logEvent" << name << "long long param" << param << ":" << value;
+    QString nameFixed;
+    QString paramFixed;
+    if (!checkEventName(nameFixed, name))
+        return;
+    if (!checkParamName(paramFixed, param))
+        return;
+    analytics::LogEvent(nameFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), static_cast<int64_t>(value));
+}
+
 void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, double value)
 {
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
@@ -355,6 +368,12 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap &bundl
             const int intVal = value.toInt();
             parameters << analytics::Parameter(keyStr, intVal);
             qDebug() << this << "::logEvent bundle param" << keyStr << ":" << intVal;
+            break;
+        }
+        case QVariant::LongLong: {
+            const int longLongVal = value.toLongLong();
+            parameters << analytics::Parameter(keyStr, static_cast<int64_t>(longLongVal));
+            qDebug() << this << "::logEvent bundle param" << keyStr << ":" << longLongVal;
             break;
         }
         case QVariant::Double: {

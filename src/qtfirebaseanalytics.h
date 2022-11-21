@@ -63,6 +63,7 @@ public slots:
 
     void logEvent(const QString &name);
     void logEvent(const QString &name, const QString &param, int value);
+    void logEvent(const QString &name, const QString &param, long long value);
     void logEvent(const QString &name, const QString &param, double value);
     void logEvent(const QString &name, const QString &param, const QString &value);
     void logEvent(const QString &name, const QVariantMap &bundle);
