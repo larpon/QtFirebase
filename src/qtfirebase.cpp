@@ -80,11 +80,6 @@ void QtFirebase::waitForFutureCompletion(firebase::FutureBase future)
     }
 }
 
-firebase::App* QtFirebase::firebaseApp() const
-{
-    return _firebaseApp;
-}
-
 void QtFirebase::addFuture(const QString &eventId, const firebase::FutureBase &future)
 {
     qDebug() << self << "::addFuture" << "adding" << eventId;
