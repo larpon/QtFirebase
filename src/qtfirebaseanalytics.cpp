@@ -25,6 +25,8 @@ const int SCREEN_CLASS_MAX_LEN { 100 };
 #endif
 
 const int EVENT_NAME_MAX_LEN { 40 };
+const int PARAM_NAME_MAX_LEN { 40 };
+const int PARAM_VALUE_MAX_LEN { 100 };
 
 namespace analytics = firebase::analytics;
 
@@ -261,8 +263,36 @@ bool QtFirebaseAnalytics::checkEventName(QString &fixed, const QString &name) co
         return false;
     }
 
-    if (!aName.at(0).isLetter()) {
+    if (!std::isalpha(aNameUtf8[0])) {
         qWarning().noquote() << this << "::logEvent name must start with a letter" << aName;
+        return false;
+    }
+
+    fixed = aName;
+    return true;
+}
+
+bool QtFirebaseAnalytics::checkParamName(QString &fixed, const QString &name) const
+{
+    if (name.isEmpty())
+        return false;
+
+    auto aName = name;
+    if (aName.length() > PARAM_NAME_MAX_LEN) {
+        aName = aName.left(PARAM_NAME_MAX_LEN);
+        qWarning() << this << QStringLiteral("::logEvent param name longer than allowed %1 chars and truncated to").arg(PARAM_NAME_MAX_LEN) << aName;
+    }
+
+    const auto aNameUtf8 = aName.toUtf8();
+
+    const bool valid = std::all_of(aNameUtf8.cbegin(), aNameUtf8.cend(), [ ](const char ch) { return std::isalnum(ch) || ch == '_'; });
+    if (!valid) {
+        qWarning().noquote() << this << "::logEvent param name is not alphanumeric with underscores" << aName;
+        return false;
+    }
+
+    if (!std::isalpha(aNameUtf8[0])) {
+        qWarning().noquote() << this << "::logEvent param name must start with a letter" << aName;
         return false;
     }
 
@@ -285,9 +315,12 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, in
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
     qDebug() << this << "::logEvent" << name << "int param" << param << ":" << value;
     QString nameFixed;
+    QString paramFixed;
     if (!checkEventName(nameFixed, name))
         return;
-    analytics::LogEvent(nameFixed.toUtf8().constData(), param.toUtf8().constData(), value);
+    if (!checkParamName(paramFixed, param))
+        return;
+    analytics::LogEvent(nameFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), value);
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, double value)
@@ -295,9 +328,12 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, do
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
     qDebug() << this << "::logEvent" << name << "double param" << param << ":" << value;
     QString nameFixed;
+    QString paramFixed;
     if (!checkEventName(nameFixed, name))
         return;
-    analytics::LogEvent(nameFixed.toUtf8().constData(), param.toUtf8().constData(), value);
+    if (!checkParamName(paramFixed, param))
+        return;
+    analytics::LogEvent(nameFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), value);
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, const QString &value)
@@ -305,9 +341,19 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, co
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
     qDebug() << this << "::logEvent" << name << "string param" << param << ":" << value;
     QString nameFixed;
+    QString paramFixed;
     if (!checkEventName(nameFixed, name))
         return;
-    analytics::LogEvent(nameFixed.toUtf8().constData(), param.toUtf8().constData(), value.toUtf8().constData());
+    if (!checkParamName(paramFixed, param))
+        return;
+
+    auto aValue = value;
+    if (aValue.length() > PARAM_VALUE_MAX_LEN) {
+        aValue = aValue.left(PARAM_VALUE_MAX_LEN);
+        qWarning() << this << QStringLiteral("::logEvent param value longer than allowed %1 chars and truncated to").arg(PARAM_VALUE_MAX_LEN) << aValue;
+    }
+
+    analytics::LogEvent(nameFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), aValue.toUtf8().constData());
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap &bundle)
