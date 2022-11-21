@@ -5,6 +5,9 @@
 #include <QVector>
 #include <QDebug>
 
+#include <algorithm>
+#include <cctype>
+
 #define QTFIREBASE_ANALYTICS_CHECK_READY(name) \
     if (!_ready) { \
         qDebug().noquote() << this << name << "native part not ready"; \
@@ -13,6 +16,13 @@
 
 const int USER_ID_MAX_LEN { 256 };
 const int USER_PROPS_LIST_MAX_LEN { 25 };
+const int USER_PROP_NAME_MAX_LEN { 40 };
+const int USER_PROP_VALUE_MAX_LEN { 100 };
+
+#if QTFIREBASE_FIREBASE_VERSION < QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+const int SCREEN_NAME_MAX_LEN { 100 };
+const int SCREEN_CLASS_MAX_LEN { 100 };
+#endif
 
 namespace analytics = firebase::analytics;
 
@@ -116,7 +126,7 @@ void QtFirebaseAnalytics::setUserId(const QString &userId)
     auto aUserId = userId;
     if (aUserId.length() > USER_ID_MAX_LEN) {
         aUserId = aUserId.left(USER_ID_MAX_LEN);
-        qWarning() << this << QStringLiteral("::setUserId ID longer than allowed %1 chars and truncated to").arg(USER_ID_MAX_LEN) << aUserId;
+        qWarning() << this << QStringLiteral("::setUserId id longer than allowed %1 chars and truncated to").arg(USER_ID_MAX_LEN) << aUserId;
     }
     if (_userId == aUserId)
         return;
@@ -140,18 +150,18 @@ void QtFirebaseAnalytics::setUserProperties(const QVariantList &userProperties)
 
     uint index = 0;
     for (auto it = _userProperties.cbegin(); it != _userProperties.cend(); ++it, ++index) {
-        const bool ok = (*it).canConvert<QVariantMap>();
+        const bool ok = it->canConvert<QVariantMap>();
         if (!ok) {
             qWarning() << this << "::setUserProperties wrong entry at index" << index;
             continue;
         }
-        const auto map = (*it).toMap();
+        const auto map = it->toMap();
         if (map.isEmpty())
             continue;
         const auto &first = map.first();
         if (first.canConvert<QString>()) {
-            const auto key = map.firstKey();
             const auto value = first.toString();
+            const auto key = map.firstKey();
             setUserProperty(key, value);
         }
     }
@@ -162,7 +172,38 @@ void QtFirebaseAnalytics::setUserProperty(const QString &name, const QString &va
 {
     QTFIREBASE_ANALYTICS_CHECK_READY("::setUserProperty")
     qDebug() << this << "::setUserProperty" << name << ":" << value;
-    analytics::SetUserProperty(name.toUtf8().constData(), value.toUtf8().constData());
+
+    if (name.isEmpty()) {
+        qWarning().noquote() << this << "::setUserProperty name is empty";
+        return;
+    }
+
+    auto aName = name;
+    if (aName.length() > USER_PROP_NAME_MAX_LEN) {
+        aName = aName.left(USER_PROP_NAME_MAX_LEN);
+        qWarning() << this << QStringLiteral("::setUserProperty name longer than allowed %1 chars and truncated to").arg(USER_PROP_NAME_MAX_LEN) << aName;
+    }
+
+    const auto aNameUtf8 = aName.toUtf8();
+
+    const bool valid = std::all_of(aNameUtf8.cbegin(), aNameUtf8.cend(), [ ](const char ch) { return std::isalnum(ch); });
+    if (!valid) {
+        qWarning().noquote() << this << "::setUserProperty name is not alphanumeric" << aName;
+        return;
+    }
+
+    if (!aName.at(0).isLetter()) {
+        qWarning().noquote() << this << "::setUserProperty name must start with a letter" << aName;
+        return;
+    }
+
+    auto aValue = value;
+    if (aValue.length() > USER_PROP_VALUE_MAX_LEN) {
+        aValue = aValue.left(USER_PROP_VALUE_MAX_LEN);
+        qWarning() << this << QStringLiteral("::setUserProperty %1 value longer than allowed %2 chars and truncated to").arg(aName).arg(USER_PROP_VALUE_MAX_LEN) << aValue;
+    }
+
+    analytics::SetUserProperty(aNameUtf8.constData(), aValue.isEmpty() ? nullptr : aValue.toUtf8().constData());
 }
 
 void QtFirebaseAnalytics::unsetUserId()
@@ -182,7 +223,20 @@ void QtFirebaseAnalytics::setCurrentScreen(const QString &screenName, const QStr
     qWarning() << this << "::setCurrentScreen is deprecated";
     QTFIREBASE_ANALYTICS_CHECK_READY("::setCurrentScreen")
     qDebug() << this << "::setCurrentScreen" << screenName << ":" << screenClass;
-    analytics::SetCurrentScreen(screenName.toUtf8().constData(), screenClass.toUtf8().constData());
+
+    auto aName = screenName;
+    if (aName.length() > SCREEN_NAME_MAX_LEN) {
+        aName = aName.left(SCREEN_NAME_MAX_LEN);
+        qWarning() << this << QStringLiteral("::setCurrentScreen name longer than allowed %1 chars and truncated to").arg(SCREEN_NAME_MAX_LEN) << aName;
+    }
+
+    auto aClass = screenClass;
+    if (aClass.length() > SCREEN_CLASS_MAX_LEN) {
+        aClass = aClass.left(SCREEN_CLASS_MAX_LEN);
+        qWarning() << this << QStringLiteral("::setCurrentScreen class longer than allowed %1 chars and truncated to").arg(SCREEN_CLASS_MAX_LEN) << aClass;
+    }
+
+    analytics::SetCurrentScreen(aName.isEmpty() ? nullptr : aName.toUtf8().constData(), aClass.isEmpty() ? nullptr : aClass.toUtf8().constData());
 }
 #endif
 
