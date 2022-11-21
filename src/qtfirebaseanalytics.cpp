@@ -12,6 +12,7 @@
     }
 
 const int USER_ID_MAX_LEN { 256 };
+const int USER_PROPS_LIST_MAX_LEN { 25 };
 
 namespace analytics = firebase::analytics;
 
@@ -134,8 +135,8 @@ void QtFirebaseAnalytics::setUserProperties(const QVariantList &userProperties)
         return;
     _userProperties = userProperties;
 
-    if (_userProperties.size() > 25)
-        qWarning() << this << "::setUserProperties size is more than 25";
+    if (_userProperties.size() > USER_PROPS_LIST_MAX_LEN)
+        qWarning().noquote() << this << "::setUserProperties list length is more than" << USER_PROPS_LIST_MAX_LEN;
 
     uint index = 0;
     for (auto it = _userProperties.cbegin(); it != _userProperties.cend(); ++it, ++index) {
