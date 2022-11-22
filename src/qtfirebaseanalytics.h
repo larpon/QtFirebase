@@ -79,10 +79,6 @@ private slots:
     void init();
 private:
     void setReady(bool = true);
-
-    bool checkEventName(QString &fixed, const QString &name) const;
-    bool checkParamName(QString &fixed, const QString &name) const;
-    QString fixStringLength(const QString &str, int maxLength, const char *func, const char *name) const;
 private:
 
     bool _ready = false;
