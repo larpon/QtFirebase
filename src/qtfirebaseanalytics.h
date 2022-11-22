@@ -20,6 +20,7 @@ class QtFirebaseAnalytics : public QObject
     Q_DISABLE_COPY(QtFirebaseAnalytics)
 
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
+
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(uint minimumSessionDuration READ minimumSessionDuration WRITE setMinimumSessionDuration NOTIFY minimumSessionDurationChanged)
     Q_PROPERTY(uint sessionTimeout READ sessionTimeout WRITE setSessionTimeout NOTIFY sessionTimeoutChanged)
@@ -46,15 +47,13 @@ public:
     QString userId() const { return _userId; }
     QVariantList userProperties() const { return _userProperties; }
 
-    void setReady(bool = true);
     void setEnabled(bool = true);
     void setMinimumSessionDuration(uint);
-    void setSessionTimeout(uint);
+    void setSessionTimeout(uint ms);
     void setUserId(const QString &);
     void setUserProperties(const QVariantList &);
 public slots:
     void setUserProperty(const QString &name, const QString &value);
-
     void unsetUserId();
 
 #if QTFIREBASE_FIREBASE_VERSION < QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
@@ -79,6 +78,8 @@ signals:
 private slots:
     void init();
 private:
+    void setReady(bool = true);
+
     bool checkEventName(QString &fixed, const QString &name) const;
     bool checkParamName(QString &fixed, const QString &name) const;
     QString fixStringLength(const QString &str, int maxLength, const char *func, const char *name) const;

@@ -104,7 +104,7 @@ void QtFirebaseAnalytics::setEnabled(bool enabled)
 
 void QtFirebaseAnalytics::setMinimumSessionDuration(uint minimumSessionDuration)
 {
-    qDebug() << this << "::setMinimumSessionDuration is deprecated and no longer functional";
+    qWarning() << this << "::setMinimumSessionDuration is deprecated and no longer functional";
     QTFIREBASE_ANALYTICS_CHECK_READY("::setMinimumSessionDuration")
     if (_minimumSessionDuration == minimumSessionDuration)
         return;
@@ -114,15 +114,15 @@ void QtFirebaseAnalytics::setMinimumSessionDuration(uint minimumSessionDuration)
     emit minimumSessionDurationChanged();
 }
 
-void QtFirebaseAnalytics::setSessionTimeout(uint sessionTimeout)
+void QtFirebaseAnalytics::setSessionTimeout(uint ms)
 {
     QTFIREBASE_ANALYTICS_CHECK_READY("::setSessionTimeout")
-    if (_sessionTimeout == sessionTimeout)
+    if (_sessionTimeout == ms)
         return;
 
-    qDebug() << this << "::setSessionTimeout" << sessionTimeout;
-    analytics::SetSessionTimeoutDuration(_sessionTimeout);
-    _sessionTimeout = sessionTimeout;
+    qDebug() << this << "::setSessionTimeout" << ms;
+    analytics::SetSessionTimeoutDuration(ms);
+    _sessionTimeout = ms;
     emit sessionTimeoutChanged();
 }
 
@@ -136,8 +136,8 @@ void QtFirebaseAnalytics::setUserId(const QString &userId)
     if (_userId == aUserId)
         return;
 
-    qDebug() << this << "::setUserId" << _userId;
-    analytics::SetUserId(_userId.toUtf8().constData());
+    qDebug() << this << "::setUserId" << aUserId;
+    analytics::SetUserId(aUserId.toUtf8().constData());
     _userId = aUserId;
     emit userIdChanged();
 }
@@ -149,6 +149,7 @@ void QtFirebaseAnalytics::unsetUserId()
         return;
 
     _userId = QString();
+    qDebug() << this << "::setUserId nullptr";
     analytics::SetUserId(nullptr);
     emit userIdChanged();
 }
@@ -159,25 +160,31 @@ void QtFirebaseAnalytics::setUserProperties(const QVariantList &userProperties)
     if (_userProperties == userProperties)
         return;
 
-    if (_userProperties.size() > USER_PROPS_LIST_MAX_LEN)
+    if (userProperties.size() > USER_PROPS_LIST_MAX_LEN)
         qWarning().noquote() << this << "::setUserProperties list length is more than" << USER_PROPS_LIST_MAX_LEN;
 
-    for (auto it = _userProperties.cbegin(); it != _userProperties.cend(); ++it) {
+    for (auto it = userProperties.cbegin(); it != userProperties.cend(); ++it) {
+        const auto index = it - userProperties.cbegin();
+
         const bool ok = it->canConvert<QVariantMap>();
         if (!ok) {
-            qWarning() << this << "::setUserProperties wrong entry at index" << it - _userProperties.cbegin();
+            qWarning() << this << "::setUserProperties wrong entry at index" << index;
             continue;
         }
         const auto map = it->toMap();
-        if (map.isEmpty())
+        if (map.isEmpty()) {
+            qWarning() << this << "::setUserProperties wrong entry at index" << index;
             continue;
-        const auto &first = map.first();
-        if (first.canConvert<QString>()) {
-            const auto value = first.toString();
-            const auto key = map.firstKey();
-
-            setUserProperty(key, value);
         }
+        const auto &first = map.first();
+        if (!first.canConvert<QString>()) {
+            qWarning() << this << "::setUserProperties wrong entry at index" << index;
+            continue;
+        }
+        const auto value = first.toString();
+        const auto key = map.firstKey();
+
+        setUserProperty(key, value);
     }
     _userProperties = userProperties;
     emit userPropertiesChanged();
@@ -293,7 +300,7 @@ bool QtFirebaseAnalytics::checkParamName(QString &fixed, const QString &name) co
 void QtFirebaseAnalytics::logEvent(const QString &event)
 {
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
-    qDebug() << this << "::logEvent" << event << "(no params)";
+    qDebug() << this << "::logEvent" << event << "with no params";
 
     QString eventFixed;
     if (!checkEventName(eventFixed, event))
