@@ -363,7 +363,12 @@ void QtFirebaseAnalytics::logEvent(const QString &event, const QVariantMap &bund
     QByteArrayList stringsData;
     QByteArrayList keysData;
     for (auto it = bundle.cbegin(); it != bundle.cend(); ++it) {
-        keysData << it.key().toUtf8();
+        const auto &key = it.key();
+        QString keyFixed;
+        if (!checkParamName(keyFixed, key))
+            continue;
+
+        keysData << keyFixed.toUtf8();
 
         const auto keyStr = keysData.last().constData();
 
@@ -372,31 +377,40 @@ void QtFirebaseAnalytics::logEvent(const QString &event, const QVariantMap &bund
         switch (type) {
         case QVariant::Int: {
             const int intVal = value.toInt();
+
             parameters << analytics::Parameter(keyStr, intVal);
             qDebug() << this << "::logEvent bundle param" << keyStr << ":" << intVal;
             break;
         }
         case QVariant::LongLong: {
             const int longLongVal = value.toLongLong();
+
             parameters << analytics::Parameter(keyStr, static_cast<int64_t>(longLongVal));
             qDebug() << this << "::logEvent bundle param" << keyStr << ":" << longLongVal;
             break;
         }
         case QVariant::Double: {
             const double doubleVal = value.toDouble();
+
             parameters << analytics::Parameter(keyStr, doubleVal);
             qDebug() << this << "::logEvent bundle param" << keyStr << ":" << doubleVal;
             break;
         }
         case QVariant::String: {
-            stringsData << value.toString().toUtf8();
-            const auto valueStr = stringsData.last().constData();
+            const auto t = QStringLiteral("%1 value").arg(keyFixed).toUtf8();
+            const auto aValue = fixStringLength(value.toString(), PARAM_VALUE_MAX_LEN, "::logEvent", t.constData());
+
+            char *valueStr = nullptr;
+            if (!aValue.isEmpty()) {
+                stringsData << aValue.toUtf8();
+                valueStr = stringsData.last().constData();
+            }
+
             parameters << analytics::Parameter(keyStr, valueStr);
             qDebug() << this << "::logEvent bundle param" << keyStr << ":" << valueStr;
             break;
         }
         default:
-            parameters << analytics::Parameter("", "");
             qWarning() << this << "::logEvent bundle param" << keyStr << "with unsupported data type";
             break;
         }
