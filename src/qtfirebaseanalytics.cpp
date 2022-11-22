@@ -228,7 +228,12 @@ void QtFirebaseAnalytics::setCurrentScreen(const QString &screenName, const QStr
 bool QtFirebaseAnalytics::checkEventName(QString &fixed, const QString &name) const
 {
     if (name.isEmpty()) {
-        qWarning().noquote() << this << "::logEvent event is empty";
+        qWarning().noquote() << this << "::logEvent event name is empty";
+        return false;
+    }
+
+    if (name.startsWith(QStringLiteral("firebase_"))) {
+        qWarning().noquote() << this << "::logEvent event name is reserved";
         return false;
     }
 
@@ -252,8 +257,20 @@ bool QtFirebaseAnalytics::checkEventName(QString &fixed, const QString &name) co
 
 bool QtFirebaseAnalytics::checkParamName(QString &fixed, const QString &name) const
 {
-    if (name.isEmpty())
+    if (name.isEmpty()) {
+        qWarning().noquote() << this << "::logEvent param name is empty";
         return false;
+    }
+
+    static QStringList reserved {
+        QStringLiteral("firebase_"),
+        QStringLiteral("google_"),
+        QStringLiteral("ga_"),
+    };
+    if (std::any_of(reserved.cbegin(), reserved.cend(), [ &name ](const QString &prefix) { return name.startsWith(prefix); })) {
+        qWarning().noquote() << this << "::logEvent param name is reserved";
+        return false;
+    }
 
     const auto aName = fixStringLength(name, PARAM_NAME_MAX_LEN, "::logEvent", "param name");
     const auto aNameUtf8 = aName.toUtf8();
