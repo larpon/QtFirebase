@@ -396,21 +396,21 @@ void QtFirebaseAnalytics::logEvent(const QString &event, const QVariantMap &bund
             const int intVal = value.toInt();
 
             parameters << analytics::Parameter(keyStr, intVal);
-            qDebug() << this << "::logEvent bundle param" << keyStr << ":" << intVal;
+            qDebug() << this << "::logEvent bundle int param" << keyStr << ":" << intVal;
             break;
         }
         case QVariant::LongLong: {
             const int longLongVal = value.toLongLong();
 
             parameters << analytics::Parameter(keyStr, static_cast<int64_t>(longLongVal));
-            qDebug() << this << "::logEvent bundle param" << keyStr << ":" << longLongVal;
+            qDebug() << this << "::logEvent bundle long long param" << keyStr << ":" << longLongVal;
             break;
         }
         case QVariant::Double: {
             const double doubleVal = value.toDouble();
 
             parameters << analytics::Parameter(keyStr, doubleVal);
-            qDebug() << this << "::logEvent bundle param" << keyStr << ":" << doubleVal;
+            qDebug() << this << "::logEvent bundle double param" << keyStr << ":" << doubleVal;
             break;
         }
         case QVariant::String: {
@@ -424,7 +424,7 @@ void QtFirebaseAnalytics::logEvent(const QString &event, const QVariantMap &bund
             }
 
             parameters << analytics::Parameter(keyStr, valueStr);
-            qDebug() << this << "::logEvent bundle param" << keyStr << ":" << valueStr;
+            qDebug() << this << "::logEvent bundle string param" << keyStr << ":" << valueStr;
             break;
         }
         default:
