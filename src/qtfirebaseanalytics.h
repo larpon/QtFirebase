@@ -61,12 +61,12 @@ public slots:
     void setCurrentScreen(const QString &screenName, const QString &screenClass);
 #endif
 
-    void logEvent(const QString &name);
-    void logEvent(const QString &name, const QString &param, int value);
-    void logEvent(const QString &name, const QString &param, long long value);
-    void logEvent(const QString &name, const QString &param, double value);
-    void logEvent(const QString &name, const QString &param, const QString &value);
-    void logEvent(const QString &name, const QVariantMap &bundle);
+    void logEvent(const QString &event);
+    void logEvent(const QString &event, const QString &param, int value);
+    void logEvent(const QString &event, const QString &param, long long value);
+    void logEvent(const QString &event, const QString &param, double value);
+    void logEvent(const QString &event, const QString &param, const QString &value);
+    void logEvent(const QString &event, const QVariantMap &bundle);
 
 signals:
     void readyChanged();
@@ -79,12 +79,9 @@ signals:
 private slots:
     void init();
 private:
-    QString fixStringLength(const QString &str, uint maxLength, const char *func, const char *name) const;
-    QString fixStringLength(const QString &str, uint maxLength, const char *func, const QByteArray &name) const {
-        return fixStringLength(str, maxLength, func, name.constData());
-    }
     bool checkEventName(QString &fixed, const QString &name) const;
     bool checkParamName(QString &fixed, const QString &name) const;
+    QString fixStringLength(const QString &str, int maxLength, const char *func, const char *name) const;
 private:
 
     bool _ready = false;

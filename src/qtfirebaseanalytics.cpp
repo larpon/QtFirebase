@@ -67,16 +67,15 @@ void QtFirebaseAnalytics::init()
         return;
 
     const auto app = qFirebase->firebaseApp();
-
     analytics::Initialize(*app);
     analytics::SetSessionTimeoutDuration(_sessionTimeout);
 
     setReady();
 }
 
-QString QtFirebaseAnalytics::fixStringLength(const QString &str, uint maxLength, const char *func, const char *name) const
+QString QtFirebaseAnalytics::fixStringLength(const QString &str, int maxLength, const char *func, const char *name) const
 {
-    if (str.length() <= static_cast<int>(maxLength))
+    if (str.length() <= maxLength)
         return str;
     const auto fixed = str.left(maxLength);
     qWarning() << this << QStringLiteral("%1 %2 longer than allowed %3 chars and truncated to").arg(func).arg(name).arg(maxLength) << fixed;
@@ -97,22 +96,21 @@ void QtFirebaseAnalytics::setEnabled(bool enabled)
     if (_enabled == enabled)
         return;
 
-    analytics::SetAnalyticsCollectionEnabled(enabled);
-
-    _enabled = enabled;
     qDebug() << this << "::setEnabled" << enabled;
+    analytics::SetAnalyticsCollectionEnabled(enabled);
+    _enabled = enabled;
     emit enabledChanged();
 }
 
 void QtFirebaseAnalytics::setMinimumSessionDuration(uint minimumSessionDuration)
 {
-    qWarning() << this << "::setMinimumSessionDuration is deprecated and no longer functional";
+    qDebug() << this << "::setMinimumSessionDuration is deprecated and no longer functional";
     QTFIREBASE_ANALYTICS_CHECK_READY("::setMinimumSessionDuration")
     if (_minimumSessionDuration == minimumSessionDuration)
         return;
 
-    _minimumSessionDuration = minimumSessionDuration;
     qDebug() << this << "::setMinimumSessionDuration" << minimumSessionDuration;
+    _minimumSessionDuration = minimumSessionDuration;
     emit minimumSessionDurationChanged();
 }
 
@@ -122,28 +120,36 @@ void QtFirebaseAnalytics::setSessionTimeout(uint sessionTimeout)
     if (_sessionTimeout == sessionTimeout)
         return;
 
-    analytics::SetSessionTimeoutDuration(_sessionTimeout);
-
-    _sessionTimeout = sessionTimeout;
     qDebug() << this << "::setSessionTimeout" << sessionTimeout;
+    analytics::SetSessionTimeoutDuration(_sessionTimeout);
+    _sessionTimeout = sessionTimeout;
     emit sessionTimeoutChanged();
 }
 
 void QtFirebaseAnalytics::setUserId(const QString &userId)
 {
-    QTFIREBASE_ANALYTICS_CHECK_READY("::setUserId")
-
     if (userId.isEmpty())
         return unsetUserId();
 
+    QTFIREBASE_ANALYTICS_CHECK_READY("::setUserId")
     const auto aUserId = fixStringLength(userId, USER_ID_MAX_LEN, "::setUserId", "id");
     if (_userId == aUserId)
         return;
 
-    analytics::SetUserId(_userId.toUtf8().constData());
-
-    _userId = aUserId;
     qDebug() << this << "::setUserId" << _userId;
+    analytics::SetUserId(_userId.toUtf8().constData());
+    _userId = aUserId;
+    emit userIdChanged();
+}
+
+void QtFirebaseAnalytics::unsetUserId()
+{
+    QTFIREBASE_ANALYTICS_CHECK_READY("::unsetUserId")
+    if (_userId.isEmpty())
+        return;
+
+    _userId = QString();
+    analytics::SetUserId(nullptr);
     emit userIdChanged();
 }
 
@@ -152,16 +158,14 @@ void QtFirebaseAnalytics::setUserProperties(const QVariantList &userProperties)
     QTFIREBASE_ANALYTICS_CHECK_READY("::setUserProperties")
     if (_userProperties == userProperties)
         return;
-    _userProperties = userProperties;
 
     if (_userProperties.size() > USER_PROPS_LIST_MAX_LEN)
         qWarning().noquote() << this << "::setUserProperties list length is more than" << USER_PROPS_LIST_MAX_LEN;
 
-    uint index = 0;
-    for (auto it = _userProperties.cbegin(); it != _userProperties.cend(); ++it, ++index) {
+    for (auto it = _userProperties.cbegin(); it != _userProperties.cend(); ++it) {
         const bool ok = it->canConvert<QVariantMap>();
         if (!ok) {
-            qWarning() << this << "::setUserProperties wrong entry at index" << index;
+            qWarning() << this << "::setUserProperties wrong entry at index" << it - _userProperties.cbegin();
             continue;
         }
         const auto map = it->toMap();
@@ -171,9 +175,11 @@ void QtFirebaseAnalytics::setUserProperties(const QVariantList &userProperties)
         if (first.canConvert<QString>()) {
             const auto value = first.toString();
             const auto key = map.firstKey();
+
             setUserProperty(key, value);
         }
     }
+    _userProperties = userProperties;
     emit userPropertiesChanged();
 }
 
@@ -181,7 +187,6 @@ void QtFirebaseAnalytics::setUserProperty(const QString &name, const QString &va
 {
     QTFIREBASE_ANALYTICS_CHECK_READY("::setUserProperty")
     qDebug() << this << "::setUserProperty" << name << ":" << value;
-
     if (name.isEmpty()) {
         qWarning().noquote() << this << "::setUserProperty name is empty";
         return;
@@ -192,29 +197,18 @@ void QtFirebaseAnalytics::setUserProperty(const QString &name, const QString &va
 
     const bool valid = std::all_of(aNameUtf8.cbegin(), aNameUtf8.cend(), [ ](const char ch) { return std::isalnum(ch); });
     if (!valid) {
-        qWarning().noquote() << this << "::setUserProperty name is not alphanumeric" << aName;
+        qWarning().noquote() << this << "::setUserProperty name is not alphanumeric" << ':' << aName;
         return;
     }
-
     if (!std::isalpha(aNameUtf8[0])) {
-        qWarning().noquote() << this << "::setUserProperty name must start with a letter" << aName;
+        qWarning().noquote() << this << "::setUserProperty name must start with a letter" << ':' << aName;
         return;
     }
 
-    const auto aValue = fixStringLength(name, USER_PROP_VALUE_MAX_LEN, "::setUserProperty", QStringLiteral("%1 value").arg(aName).toUtf8());
+    const auto t = QStringLiteral("%1 value").arg(aName).toUtf8();
+    const auto aValue = fixStringLength(name, USER_PROP_VALUE_MAX_LEN, "::setUserProperty", t.constData());
 
     analytics::SetUserProperty(aNameUtf8.constData(), aValue.isEmpty() ? nullptr : aValue.toUtf8().constData());
-}
-
-void QtFirebaseAnalytics::unsetUserId()
-{
-    QTFIREBASE_ANALYTICS_CHECK_READY("::unsetUserId")
-
-    if (_userId.isEmpty())
-        return;
-    _userId.clear();
-    analytics::SetUserId(nullptr);
-    emit userIdChanged();
 }
 
 #if QTFIREBASE_FIREBASE_VERSION < QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
@@ -233,20 +227,22 @@ void QtFirebaseAnalytics::setCurrentScreen(const QString &screenName, const QStr
 
 bool QtFirebaseAnalytics::checkEventName(QString &fixed, const QString &name) const
 {
-    if (name.isEmpty())
+    if (name.isEmpty()) {
+        qWarning().noquote() << this << "::logEvent event is empty";
         return false;
+    }
 
     const auto aName = fixStringLength(name, EVENT_NAME_MAX_LEN, "::logEvent", "name");
     const auto aNameUtf8 = aName.toUtf8();
 
     const bool valid = std::all_of(aNameUtf8.cbegin(), aNameUtf8.cend(), [ ](const char ch) { return std::isalnum(ch) || ch == '_'; });
     if (!valid) {
-        qWarning().noquote() << this << "::logEvent name is not alphanumeric with underscores" << aName;
+        qWarning().noquote() << this << "::logEvent name is not alphanumeric with underscores" << ':' << aName;
         return false;
     }
 
     if (!std::isalpha(aNameUtf8[0])) {
-        qWarning().noquote() << this << "::logEvent name must start with a letter" << aName;
+        qWarning().noquote() << this << "::logEvent name must start with a letter" << ':' << aName;
         return false;
     }
 
@@ -277,78 +273,88 @@ bool QtFirebaseAnalytics::checkParamName(QString &fixed, const QString &name) co
     return true;
 }
 
-void QtFirebaseAnalytics::logEvent(const QString &name)
+void QtFirebaseAnalytics::logEvent(const QString &event)
 {
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
-    qDebug() << this << "::logEvent" << name << "(no params)";
-    QString nameFixed;
-    if (!checkEventName(nameFixed, name))
+    qDebug() << this << "::logEvent" << event << "(no params)";
+
+    QString eventFixed;
+    if (!checkEventName(eventFixed, event))
         return;
-    analytics::LogEvent(nameFixed.toUtf8().constData());
+
+    analytics::LogEvent(eventFixed.toUtf8().constData());
 }
 
-void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, int value)
+void QtFirebaseAnalytics::logEvent(const QString &event, const QString &param, int value)
 {
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
-    qDebug() << this << "::logEvent" << name << "int param" << param << ":" << value;
-    QString nameFixed;
-    QString paramFixed;
-    if (!checkEventName(nameFixed, name))
-        return;
-    if (!checkParamName(paramFixed, param))
-        return;
-    analytics::LogEvent(nameFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), value);
-}
+    qDebug() << this << "::logEvent" << event << "int param" << param << ":" << value;
 
-void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, long long value)
-{
-    QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
-    qDebug() << this << "::logEvent" << name << "long long param" << param << ":" << value;
-    QString nameFixed;
+    QString eventFixed;
     QString paramFixed;
-    if (!checkEventName(nameFixed, name))
-        return;
-    if (!checkParamName(paramFixed, param))
-        return;
-    analytics::LogEvent(nameFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), static_cast<int64_t>(value));
-}
-
-void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, double value)
-{
-    QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
-    qDebug() << this << "::logEvent" << name << "double param" << param << ":" << value;
-    QString nameFixed;
-    QString paramFixed;
-    if (!checkEventName(nameFixed, name))
-        return;
-    if (!checkParamName(paramFixed, param))
-        return;
-    analytics::LogEvent(nameFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), value);
-}
-
-void QtFirebaseAnalytics::logEvent(const QString &name, const QString &param, const QString &value)
-{
-    QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
-    qDebug() << this << "::logEvent" << name << "string param" << param << ":" << value;
-    QString nameFixed;
-    QString paramFixed;
-    if (!checkEventName(nameFixed, name))
+    if (!checkEventName(eventFixed, event))
         return;
     if (!checkParamName(paramFixed, param))
         return;
 
-    const auto aValue = fixStringLength(value, PARAM_VALUE_MAX_LEN, "::logEvent", "param value");
-
-    analytics::LogEvent(nameFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), aValue.toUtf8().constData());
+    analytics::LogEvent(eventFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), value);
 }
 
-void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap &bundle)
+void QtFirebaseAnalytics::logEvent(const QString &event, const QString &param, long long value)
+{
+    QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
+    qDebug() << this << "::logEvent" << event << "long long param" << param << ":" << value;
+
+    QString eventFixed;
+    QString paramFixed;
+    if (!checkEventName(eventFixed, event))
+        return;
+    if (!checkParamName(paramFixed, param))
+        return;
+
+    analytics::LogEvent(eventFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), static_cast<int64_t>(value));
+}
+
+void QtFirebaseAnalytics::logEvent(const QString &event, const QString &param, double value)
+{
+    QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
+    qDebug() << this << "::logEvent" << event << "double param" << param << ":" << value;
+
+    QString eventFixed;
+    QString paramFixed;
+    if (!checkEventName(eventFixed, event))
+        return;
+    if (!checkParamName(paramFixed, param))
+        return;
+
+    analytics::LogEvent(eventFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), value);
+}
+
+void QtFirebaseAnalytics::logEvent(const QString &event, const QString &param, const QString &value)
+{
+    QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
+    qDebug() << this << "::logEvent" << event << "string param" << param << ":" << value;
+
+    QString eventFixed;
+    QString paramFixed;
+    if (!checkEventName(eventFixed, event))
+        return;
+    if (!checkParamName(paramFixed, param))
+        return;
+
+    const auto t = QStringLiteral("%1 value").arg(paramFixed).toUtf8();
+    const auto aValue = fixStringLength(value, PARAM_VALUE_MAX_LEN, "::logEvent", t.constData());
+
+    analytics::LogEvent(eventFixed.toUtf8().constData(), paramFixed.toUtf8().constData(), aValue.toUtf8().constData());
+}
+
+void QtFirebaseAnalytics::logEvent(const QString &event, const QVariantMap &bundle)
 {
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
 
-    qDebug().noquote() << this << "::logEvent bundle" << name;
-    QString nameFixed;
-    if (!checkEventName(nameFixed, name))
+    qDebug().noquote() << this << "::logEvent bundle" << event;
+    QString eventFixed;
+    if (!checkEventName(eventFixed, event))
         return;
 
     QVector<analytics::Parameter> parameters;
@@ -396,5 +402,5 @@ void QtFirebaseAnalytics::logEvent(const QString &name, const QVariantMap &bundl
         }
     }
 
-    analytics::LogEvent(nameFixed.toUtf8().constData(), parameters.constData(), static_cast<size_t>(parameters.length()));
+    analytics::LogEvent(eventFixed.toUtf8().constData(), parameters.constData(), static_cast<size_t>(parameters.length()));
 }
