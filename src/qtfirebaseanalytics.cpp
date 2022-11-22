@@ -400,7 +400,7 @@ void QtFirebaseAnalytics::logEvent(const QString &event, const QVariantMap &bund
             const auto t = QStringLiteral("%1 value").arg(keyFixed).toUtf8();
             const auto aValue = fixStringLength(value.toString(), PARAM_VALUE_MAX_LEN, "::logEvent", t.constData());
 
-            char *valueStr = nullptr;
+            const char *valueStr = nullptr;
             if (!aValue.isEmpty()) {
                 stringsData << aValue.toUtf8();
                 valueStr = stringsData.last().constData();
