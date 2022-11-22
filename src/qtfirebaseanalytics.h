@@ -9,6 +9,8 @@
 #include <QVariantMap>
 #include <QVariantList>
 
+#include <functional>
+
 #if defined(qFirebaseAnalytics)
 #undef qFirebaseAnalytics
 #endif
@@ -77,6 +79,7 @@ signals:
 
 private slots:
     void init();
+    void processCache();
 private:
     void setReady(bool = true);
 private:
@@ -87,6 +90,8 @@ private:
     uint _sessionTimeout = 1800000;
     QString _userId;
     QVariantList _userProperties;
+
+    QList<std::function<void()> > _cache;
 };
 
 #endif // QTFIREBASE_BUILD_ANALYTICS

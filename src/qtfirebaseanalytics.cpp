@@ -24,6 +24,8 @@ QtFirebaseAnalytics::QtFirebaseAnalytics(QObject *parent)
         return;
     self = this;
 
+    connect(this, &QtFirebaseAnalytics::readyChanged, this, &QtFirebaseAnalytics::processCache);
+
     QTimer::singleShot(0, this, [ this ] {
         if (qFirebase->ready()) {
             init();
@@ -54,6 +56,16 @@ void QtFirebaseAnalytics::init()
     analytics::SetSessionTimeoutDuration(_sessionTimeout);
 
     setReady();
+}
+
+void QtFirebaseAnalytics::processCache()
+{
+    if (!_ready)
+        return;
+
+    for (const auto &f : qAsConst(_cache))
+        f();
+    _cache.clear();
 }
 
 void QtFirebaseAnalytics::setReady(bool ready)
@@ -174,41 +186,58 @@ void QtFirebaseAnalytics::setCurrentScreen(const QString &screenName, const QStr
 
 void QtFirebaseAnalytics::logEvent(const QString &event)
 {
+    if (!_ready)
+        _cache << [ this, event ] { logEvent(event); };
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
+
     qDebug() << this << "::logEvent" << event << "with no params";
     analytics::LogEvent(event.toUtf8().constData());
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &event, const QString &param, int value)
 {
+    if (!_ready)
+        _cache << [ this, event, param, value ] { logEvent(event, param, value); };
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
+
     qDebug() << this << "::logEvent" << event << "int param" << param << ":" << value;
     analytics::LogEvent(event.toUtf8().constData(), param.toUtf8().constData(), value);
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &event, const QString &param, long long value)
 {
+    if (!_ready)
+        _cache << [ this, event, param, value ] { logEvent(event, param, value); };
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
+
     qDebug() << this << "::logEvent" << event << "long long param" << param << ":" << value;
     analytics::LogEvent(event.toUtf8().constData(), param.toUtf8().constData(), static_cast<int64_t>(value));
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &event, const QString &param, double value)
 {
+    if (!_ready)
+        _cache << [ this, event, param, value ] { logEvent(event, param, value); };
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
+
     qDebug() << this << "::logEvent" << event << "double param" << param << ":" << value;
     analytics::LogEvent(event.toUtf8().constData(), param.toUtf8().constData(), value);
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &event, const QString &param, const QString &value)
 {
+    if (!_ready)
+        _cache << [ this, event, param, value ] { logEvent(event, param, value); };
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
+
     qDebug() << this << "::logEvent" << event << "string param" << param << ":" << value;
     analytics::LogEvent(event.toUtf8().constData(), param.toUtf8().constData(), value.toUtf8().constData());
 }
 
 void QtFirebaseAnalytics::logEvent(const QString &event, const QVariantMap &bundle)
 {
+    if (!_ready)
+        _cache << [ this, event, bundle ] { logEvent(event, bundle); };
     QTFIREBASE_ANALYTICS_CHECK_READY("::logEvent")
 
     qDebug().noquote() << this << "::logEvent bundle" << event;
