@@ -1,71 +1,57 @@
 #include "qtfirebasemessaging.h"
 
+#if (QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(7, 0, 0)) && (QTFIREBASE_FIREBASE_VERSION < QTFIREBASE_FIREBASE_VERSION_CHECK(8, 6, 0))
+#if defined(Q_OS_ANDROID)
 #include <QPointer>
-#include <QGuiApplication>
-#include <QQmlParserStatus>
+#endif
+#endif
 
-#include <QMutexLocker>
+#include <firebase/app.h>
+#include <firebase/messaging.h>
+#include <firebase/internal/common.h>
 
-#include <stdint.h>
-#include "firebase/app.h"
-#include "firebase/internal/common.h"
-#include "firebase/messaging.h"
-#include "firebase/util.h"
+namespace messaging = firebase::messaging;
 
-namespace messaging = ::firebase::messaging;
+QtFirebaseMessaging *QtFirebaseMessaging::self { nullptr };
 
-QtFirebaseMessaging *QtFirebaseMessaging::self = nullptr;
-
-QtFirebaseMessaging::QtFirebaseMessaging(QObject* parent)
+QtFirebaseMessaging::QtFirebaseMessaging(QObject *parent)
     : QObject(parent)
-    , _ready(false)
-    , _hasMissingDependency(false)
-    , _initializing(false)
-    , __QTFIREBASE_ID(QString().asprintf("%8p", static_cast<void*> (this)))
-    , g_listener(new MessageListener(this))
-    , _data()
-    , _token()
+    , __QTFIREBASE_ID(QString().asprintf("%8p", static_cast<void *>(this)))
+    , _listener(new MessageListener(this))
 {
-    if(!self) {
-        self = this;
-        qDebug() << self << "::QtFirebaseMessaging" << "singleton";
-    }
+    // deny multiple instances
+    Q_ASSERT(!self);
+    if (self)
+        return;
+    self = this;
 
-    if(qFirebase->ready()) {
-        //Call init outside of constructor, otherwise signal readyChanged not emited
-        QTimer::singleShot(100, this, &QtFirebaseMessaging::init);
-    } else {
-        connect(qFirebase,&QtFirebase::readyChanged, this, &QtFirebaseMessaging::init);
+    connect(qFirebase, &QtFirebase::futureEvent, this, &QtFirebaseMessaging::onFutureEvent);
+
+    QTimer::singleShot(0, this, [ this ] {
+        if (qFirebase->ready()) {
+            init();
+            return;
+        }
+        connect(qFirebase, &QtFirebase::readyChanged, this, &QtFirebaseMessaging::init);
         qFirebase->requestInit();
-    }
-
-    connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseMessaging::onFutureEvent);
+    });
 }
 
 QtFirebaseMessaging::~QtFirebaseMessaging()
 {
-    if(_ready) {
+    if (_ready)
         messaging::Terminate();
-    }
-}
 
-void QtFirebaseMessaging::classBegin()
-{
+    // check this instance is legal
+    if (self == this)
+        self = nullptr;
 }
 
 void QtFirebaseMessaging::componentComplete()
 {
     // Connect on componentComplete so the signals are emited in the correct order
-    connect(g_listener, &MessageListener::onMessageReceived, this, &QtFirebaseMessaging::getMessage);
-    connect(g_listener, &MessageListener::onTokenReceived, this, &QtFirebaseMessaging::getToken);
-}
-
-bool QtFirebaseMessaging::checkInstance(const char *function)
-{
-    const bool b = (QtFirebaseMessaging::self != nullptr);
-    if (!b)
-        qWarning("QtFirebaseMessaging::%s: Please instantiate the QtFirebaseMessaging object first", function);
-    return b;
+    connect(_listener, &MessageListener::onMessageReceived, this, &QtFirebaseMessaging::getMessage);
+    connect(_listener, &MessageListener::onTokenReceived, this, &QtFirebaseMessaging::getToken);
 }
 
 void QtFirebaseMessaging::init()
@@ -78,7 +64,7 @@ void QtFirebaseMessaging::init()
     if(!_ready && !_initializing) {
         _initializing = true;
 
-        auto initResult = messaging::Initialize(*qFirebase->firebaseApp(), g_listener);
+        auto initResult = messaging::Initialize(*qFirebase->firebaseApp(), _listener);
         if(firebase::kInitResultFailedMissingDependency == initResult)
             setHasMissingDependency(true);
 
@@ -124,17 +110,12 @@ void QtFirebaseMessaging::onFutureEvent(const QString &eventId, const firebase::
 
 void QtFirebaseMessaging::getMessage()
 {
-    setData(g_listener->data());
+    setData(_listener->data());
 }
 
 void QtFirebaseMessaging::getToken()
 {
-    setToken(g_listener->token());
-}
-
-bool QtFirebaseMessaging::ready()
-{
-    return _ready;
+    setToken(_listener->token());
 }
 
 void QtFirebaseMessaging::setReady(bool ready)
@@ -145,22 +126,12 @@ void QtFirebaseMessaging::setReady(bool ready)
     }
 }
 
-bool QtFirebaseMessaging::hasMissingDependency()
-{
-    return _hasMissingDependency;
-}
-
 void QtFirebaseMessaging::setHasMissingDependency(bool hasMissingDependency)
 {
     if (_hasMissingDependency != hasMissingDependency) {
         _hasMissingDependency = hasMissingDependency;
         emit hasMissingDependencyChanged();
     }
-}
-
-QVariantMap QtFirebaseMessaging::data()
-{
-    return _data;
 }
 
 void QtFirebaseMessaging::setData(const QVariantMap &data)
@@ -170,12 +141,6 @@ void QtFirebaseMessaging::setData(const QVariantMap &data)
         emit dataChanged();
         emit messageReceived();
     }
-}
-
-QString QtFirebaseMessaging::token()
-{
-    QMutexLocker lock { &_tokenMutex };
-    return _token;
 }
 
 void QtFirebaseMessaging::setToken(const QString &token)
@@ -320,11 +285,6 @@ void MessageListener::connectNotify(const QMetaMethod &signal)
     }
 }
 
-QVariantMap MessageListener::data()
-{
-    return _data;
-}
-
 void MessageListener::setData(const QVariantMap &data)
 {
     if (_data != data) {
@@ -336,12 +296,6 @@ void MessageListener::setData(const QVariantMap &data)
             _notifyMessageReceived = false;
         }
     }
-}
-
-QString MessageListener::token()
-{
-    QMutexLocker lock { &_tokenMutex };
-    return _token;
 }
 
 void MessageListener::setToken(const QString &token)

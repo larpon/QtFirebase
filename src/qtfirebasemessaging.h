@@ -5,78 +5,84 @@
 
 #include "src/qtfirebase.h"
 
+#include <firebase/messaging.h>
+
+#include <QObject>
+#include <QVariantMap>
+#include <QMetaMethod>
+#include <QMutex>
+#include <QMutexLocker>
+
+#include <QQmlParserStatus>
+
 #if defined(qFirebaseMessaging)
 #undef qFirebaseMessaging
 #endif
-#define qFirebaseMessaging (static_cast<QtFirebaseMessaging *>(QtFirebaseMessaging::instance()))
-
-#include "firebase/app.h"
-#include "firebase/messaging.h"
-#include "firebase/util.h"
-
-#include <QDebug>
-#include <QObject>
-#include <QString>
-#include <QVariantMap>
-#include <QVariantList>
-#include <QQmlParserStatus>
-#include <QMetaMethod>
-
-#include <QMutex>
+#define qFirebaseMessaging (QtFirebaseMessaging::instance())
 
 class MessageListener;
-class QtFirebaseMessaging: public QObject, public QQmlParserStatus
+
+class QtFirebaseMessaging : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
+    Q_DISABLE_COPY(QtFirebaseMessaging)
     Q_INTERFACES(QQmlParserStatus)
 
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
     Q_PROPERTY(bool hasMissingDependency READ hasMissingDependency NOTIFY hasMissingDependencyChanged)
-    Q_PROPERTY(QVariantMap data READ data NOTIFY dataChanged)
     Q_PROPERTY(QString token READ token NOTIFY tokenChanged)
+    Q_PROPERTY(QVariantMap data READ data NOTIFY dataChanged)
 
+    static QtFirebaseMessaging *self;
 public:
-    enum Error
-    {
+    static QtFirebaseMessaging *instance(QObject *parent = nullptr) {
+        if (!self)
+            self = new QtFirebaseMessaging(parent);
+        return self;
+    }
+
+    static bool checkInstance(const char *function = nullptr) { Q_UNUSED(function) return self; }
+
+    enum Error {
         ErrorNone = firebase::messaging::kErrorNone,
         ErrorFailedToRegisterForRemoteNotifications = firebase::messaging::kErrorFailedToRegisterForRemoteNotifications,
         ErrorInvalidTopicName = firebase::messaging::kErrorInvalidTopicName,
         ErrorNoRegistrationToken = firebase::messaging::kErrorNoRegistrationToken,
-        ErrorUnknown = firebase::messaging::kErrorUnknown
+        ErrorUnknown = firebase::messaging::kErrorUnknown,
     };
     Q_ENUM(Error)
 
-    explicit QtFirebaseMessaging(QObject* parent = nullptr);
-    ~QtFirebaseMessaging() override;
+    explicit QtFirebaseMessaging(QObject *parent = nullptr);
+    virtual ~QtFirebaseMessaging();
 
-    void classBegin() override;
+    void classBegin() override { }
     void componentComplete() override;
 
-    static QtFirebaseMessaging *instance() {
-        if(!self) {
-            self = new QtFirebaseMessaging();
-            qDebug() << self << "::instance" << "singleton";
-        }
-        return self;
-    }
+    bool ready() const { return _ready; }
+    bool hasMissingDependency() const { return _hasMissingDependency; }
+    QString token() const { QMutexLocker locker { &(const_cast<QtFirebaseMessaging *>(this)->_tokenMutex) }; return _token; }
+    QVariantMap data() const { return _data; }
 
-    bool checkInstance(const char *function);
+    void setReady(bool = true);
+    void setHasMissingDependency(bool = true);
+    void setToken(const QString &);
+    void setData(const QVariantMap &);
 
-    bool ready();
-    void setReady(bool ready);
+public slots:
+    void subscribe(const QString &topic);
+    void unsubscribe(const QString &topic);
 
-    bool hasMissingDependency();
-    void setHasMissingDependency(bool hasMissingDependency);
+signals:
+    void readyChanged();
+    void hasMissingDependencyChanged();
+    void tokenChanged();
+    void dataChanged();
 
-    QVariantMap data();
-    void setData(const QVariantMap &data);
+    void messageReceived();
+    void subscribed(QString topic);
+    void unsubscribed(QString topic);
 
-    QString token();
-    void setToken(const QString &token);
-
-    // Topic
-    Q_INVOKABLE void subscribe(const QString &topic);
-    Q_INVOKABLE void unsubscribe(const QString &topic);
+    void error(int code, QString message);
 
 private slots:
     void init();
@@ -84,69 +90,53 @@ private slots:
     void getMessage();
     void getToken();
 
-signals:
-    void readyChanged();
-    void hasMissingDependencyChanged();
-    void dataChanged();
-    void tokenChanged();
-    void messageReceived();
-
-    void error(int code, QString message);
-
-    // Topic signals
-    // Valid topic regex: [a-zA-Z0-9-_.~%]{1,900}
-    void subscribed(const QString &topic);
-    void unsubscribed(const QString &topic);
-
 private:
-    static QtFirebaseMessaging *self;
-    Q_DISABLE_COPY(QtFirebaseMessaging)
+    const QString __QTFIREBASE_ID;
 
-    bool _ready;
-    bool _hasMissingDependency;
-    bool _initializing;
+    bool _initializing = false;
 
-    QString __QTFIREBASE_ID;
-    MessageListener* g_listener = nullptr;
-    QVariantMap _data;
+    bool _ready = false;
+    bool _hasMissingDependency = false;
     QString _token;
+    QVariantMap _data;
+
+    MessageListener *_listener = nullptr;
     QMutex _tokenMutex;
 };
 
 class MessageListener : public QObject, public firebase::messaging::Listener
 {
     Q_OBJECT
-
+    Q_DISABLE_COPY(MessageListener)
 public:
-    MessageListener(QObject* parent = nullptr);
+    explicit MessageListener(QObject* parent = nullptr);
+    QString token() const { return _token; }
+    QVariantMap data() const { return _data; }
 
-    virtual void OnMessage(const ::firebase::messaging::Message& message) override;
-    virtual void OnTokenReceived(const char* token) override;
+    void setToken(const QString &);
+    void setData(const QVariantMap &);
 
-    QVariantMap data();
-    void setData(const QVariantMap &data);
+    virtual void OnTokenReceived(const char *) override;
+    virtual void OnMessage(const firebase::messaging::Message &) override;
+signals:
+    void emitMessageReceived();
 
-    QString token();
-    void setToken(const QString &token);
+    void onConnected();
+    void onTokenReceived();
+    void onMessageReceived();
 
 protected:
     void connectNotify(const QMetaMethod &signal) override;
-
-signals:
-    void emitMessageReceived();
-    void onMessageReceived();
-    void onTokenReceived();
-    void onConnected();
-
 private:
-    QVariantMap _data;
     QString _token;
-    QMutex _tokenMutex;
+    QVariantMap _data;
+
     bool _messageReceivedConnected = false;
     bool _tokenReceivedConnected = false;
-
     bool _notifyMessageReceived = false;
     bool _notifyTokenReceived = false;
+
+    QMutex _tokenMutex;
 };
 
 #endif // QTFIREBASE_BUILD_MESSAGING
