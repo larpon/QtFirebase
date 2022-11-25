@@ -175,55 +175,33 @@ void MessageListener::OnMessage(const messaging::Message &message)
 {
     QVariantMap data;
 
-    if (message.notification) {
-        if (!message.notification->title.empty()) {
-            const QString key = QStringLiteral("nTitle");
-            const QString value = QString::fromStdString(message.notification->title.c_str());
-            data.insert(key, value);
-        }
-        if (!message.notification->body.empty()) {
-            const QString key = QStringLiteral("nBody");
-            const QString value = QString::fromStdString(message.notification->body.c_str());
-            data.insert(key, value);
-        }
-        if (!message.notification->icon.empty()) {
-            const QString key = QStringLiteral("nIcon");
-            const QString value = QString::fromStdString(message.notification->icon.c_str());
-            data.insert(key, value);
-        }
-        if (!message.notification->tag.empty()) {
-            const QString key = QStringLiteral("nTag");
-            const QString value = QString::fromStdString(message.notification->tag.c_str());
-            data.insert(key, value);
-        }
-        if (!message.notification->color.empty()) {
-            const QString key = QStringLiteral("nColor");
-            const QString value = QString::fromStdString(message.notification->color.c_str());
-            data.insert(key, value);
-        }
-        if (!message.notification->sound.empty()) {
-            const QString key = QStringLiteral("nSound");
-            const QString value = QString::fromStdString(message.notification->sound.c_str());
-            data.insert(key, value);
-        }
-        if (!message.notification->click_action.empty()) {
-            const QString key = QStringLiteral("nClickAction");
-            const QString value = QString::fromStdString(message.notification->click_action.c_str());
-            data.insert(key, value);
+    const auto notification = message.notification;
+    if (notification) {
+        const QMap<QString, QString> notificationData {
+            { QStringLiteral("nTitle"), QString::fromStdString(notification->title) },
+            { QStringLiteral("nBody"), QString::fromStdString(notification->body) },
+            { QStringLiteral("nIcon"), QString::fromStdString(notification->icon) },
+            { QStringLiteral("nTag"), QString::fromStdString(notification->tag) },
+            { QStringLiteral("nColor"), QString::fromStdString(notification->color) },
+            { QStringLiteral("nSound"), QString::fromStdString(notification->sound) },
+            { QStringLiteral("nClickAction"), QString::fromStdString(notification->click_action) },
+        };
+        const auto keys = notificationData.keys();
+        for (const auto &key : qAsConst(keys)) {
+            const auto &value = notificationData[key];
+            if (!value.isEmpty())
+                data[key] = value;
         }
     }
 
-    if (message.notification_opened) {
-        const QString key = QStringLiteral("launchnotification");
-        data.insert(key, true);
-    }
+    if (message.notification_opened)
+        data[QStringLiteral("launchnotification")] = true;
 
-    for (const auto& field : message.data)
-    {
-        const QString key = QString::fromStdString(field.first);
-        const QString value = QString::fromStdString(field.second);
+    for (const auto &field : message.data) {
+        const auto key = QString::fromStdString(field.first);
+        const auto value = QString::fromStdString(field.second);
 
-        data.insert(key, value);
+        data[key] = value;
     }
 
     QTimer::singleShot(0, q, [ this, data ] { q->setData(data); });
