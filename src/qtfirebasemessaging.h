@@ -9,9 +9,6 @@
 
 #include <QObject>
 #include <QVariantMap>
-#include <QMetaMethod>
-#include <QMutex>
-#include <QMutexLocker>
 
 #include <QQmlParserStatus>
 
@@ -67,7 +64,7 @@ public:
 
     bool ready() const { return _ready; }
     bool hasMissingDependency() const { return _hasMissingDependency; }
-    QString token() const { QMutexLocker locker { &(const_cast<QtFirebaseMessaging *>(this)->_tokenMutex) }; return _token; }
+    QString token() const { return _token; }
     QVariantMap data() const { return _data; }
 
     void setReady(bool = true);
@@ -93,8 +90,6 @@ signals:
 
 private slots:
     void init();
-    void getMessage();
-    void getToken();
 
 private:
     const QString __QTFIREBASE_ID;
@@ -105,42 +100,6 @@ private:
     QVariantMap _data;
 
     MessageListener *_listener = nullptr;
-    QMutex _tokenMutex;
-};
-
-class MessageListener : public QObject, public firebase::messaging::Listener
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(MessageListener)
-public:
-    explicit MessageListener(QObject* parent = nullptr);
-    QString token() const { return _token; }
-    QVariantMap data() const { return _data; }
-
-    void setToken(const QString &);
-    void setData(const QVariantMap &);
-
-    virtual void OnTokenReceived(const char *) override;
-    virtual void OnMessage(const firebase::messaging::Message &) override;
-signals:
-    void emitMessageReceived();
-
-    void onConnected();
-    void onTokenReceived();
-    void onMessageReceived();
-
-protected:
-    void connectNotify(const QMetaMethod &signal) override;
-private:
-    QString _token;
-    QVariantMap _data;
-
-    bool _messageReceivedConnected = false;
-    bool _tokenReceivedConnected = false;
-    bool _notifyMessageReceived = false;
-    bool _notifyTokenReceived = false;
-
-    QMutex _tokenMutex;
 };
 
 #endif // QTFIREBASE_BUILD_MESSAGING

@@ -1,8 +1,6 @@
 #include "qtfirebasemessaging.h"
 
-#include <firebase/app.h>
-#include <firebase/messaging.h>
-#include <firebase/internal/common.h>
+#include <QTimer>
 
 #define QTFIREBASE_MESSAGING_CHECK_READY(name) \
     if (!_ready) { \
@@ -11,6 +9,15 @@
     }
 
 namespace messaging = firebase::messaging;
+
+class MessageListener : public messaging::Listener
+{
+    QtFirebaseMessaging *q;
+public:
+    MessageListener(QtFirebaseMessaging *q) : q(q) { }
+    void OnTokenReceived(const char *) override;
+    void OnMessage(const messaging::Message &) override;
+};
 
 QtFirebaseMessaging *QtFirebaseMessaging::self { nullptr };
 
@@ -40,6 +47,8 @@ QtFirebaseMessaging::~QtFirebaseMessaging()
     if (_ready)
         messaging::Terminate();
 
+    delete _listener;
+
     // check this instance is legal
     if (self == this)
         self = nullptr;
@@ -47,9 +56,11 @@ QtFirebaseMessaging::~QtFirebaseMessaging()
 
 void QtFirebaseMessaging::componentComplete()
 {
-    // Connect on componentComplete so the signals are emited in the correct order
-    connect(_listener, &MessageListener::onMessageReceived, this, &QtFirebaseMessaging::getMessage);
-    connect(_listener, &MessageListener::onTokenReceived, this, &QtFirebaseMessaging::getToken);
+    if (!_token.isEmpty())
+        emit tokenChanged();
+
+    if (!_data.isEmpty())
+        emit dataChanged();
 }
 
 void QtFirebaseMessaging::init()
@@ -92,7 +103,7 @@ void QtFirebaseMessaging::subscribe(const QString &topic)
 {
     QTFIREBASE_MESSAGING_CHECK_READY("::subscribe")
 
-    const auto result = firebase::messaging::Subscribe(topic.toUtf8());
+    const auto result = messaging::Subscribe(topic.toUtf8());
     result.OnCompletion([ this, topic ](const firebase::FutureBase &future) {
         const auto code = future.error();
         const auto message = QString::fromUtf8(future.error_message());
@@ -108,7 +119,7 @@ void QtFirebaseMessaging::unsubscribe(const QString &topic)
 {
     QTFIREBASE_MESSAGING_CHECK_READY("::unsubscribe")
 
-    const auto result = firebase::messaging::Unsubscribe(topic.toUtf8());
+    const auto result = messaging::Unsubscribe(topic.toUtf8());
     result.OnCompletion([ this, topic ](const firebase::FutureBase &future) {
         const auto code = future.error();
         const auto message = QString::fromUtf8(future.error_message());
@@ -120,63 +131,48 @@ void QtFirebaseMessaging::unsubscribe(const QString &topic)
     });
 }
 
-void QtFirebaseMessaging::getMessage()
-{
-    setData(_listener->data());
-}
-
-void QtFirebaseMessaging::getToken()
-{
-    setToken(_listener->token());
-}
-
 void QtFirebaseMessaging::setReady(bool ready)
 {
-    if (_ready != ready) {
-        _ready = ready;
-        emit readyChanged();
-    }
+    if (_ready == ready)
+        return;
+    _ready = ready;
+    emit readyChanged();
 }
 
 void QtFirebaseMessaging::setHasMissingDependency(bool hasMissingDependency)
 {
-    if (_hasMissingDependency != hasMissingDependency) {
-        _hasMissingDependency = hasMissingDependency;
-        emit hasMissingDependencyChanged();
-    }
-}
-
-void QtFirebaseMessaging::setData(const QVariantMap &data)
-{
-    if (_data != data) {
-        _data = data;
-        emit dataChanged();
-        emit messageReceived();
-    }
+    if (_hasMissingDependency == hasMissingDependency)
+        return;
+    _hasMissingDependency = hasMissingDependency;
+    emit hasMissingDependencyChanged();
 }
 
 void QtFirebaseMessaging::setToken(const QString &token)
 {
-    QMutexLocker lock { &_tokenMutex };
-    if (_token != token) {
-        _token = token;
-        lock.unlock();
-
-        emit tokenChanged();
-    }
+    if (_token == token)
+        return;
+    _token = token;
+    emit tokenChanged();
 }
 
-MessageListener::MessageListener(QObject* parent)
-    : QObject(parent)
+void QtFirebaseMessaging::setData(const QVariantMap &data)
 {
+    if (_data == data)
+        return;
+    _data = data;
+    emit dataChanged();
+
+    emit messageReceived();
+}
+
+void MessageListener::OnTokenReceived(const char *token)
+{
+    const auto t = QString::fromUtf8(token);
+    QTimer::singleShot(0, q, [ this, t ] { q->setToken(t); });
 }
 
 void MessageListener::OnMessage(const messaging::Message &message)
 {
-    // When messages are received by the server, they are placed into an
-    // internal queue, waiting to be consumed. When ProcessMessages is called,
-    // this OnMessage function is called once for each queued message.
-
     QVariantMap data;
 
     if (message.notification) {
@@ -230,60 +226,5 @@ void MessageListener::OnMessage(const messaging::Message &message)
         data.insert(key, value);
     }
 
-    setData(data);
-}
-
-void MessageListener::OnTokenReceived(const char *token)
-{
-    setToken(QString::fromUtf8(token));
-}
-
-void MessageListener::connectNotify(const QMetaMethod &signal)
-{
-    if (signal == QMetaMethod::fromSignal(&MessageListener::onMessageReceived)) {
-        _messageReceivedConnected = true;
-
-        if(_notifyMessageReceived) {
-            emit onMessageReceived();
-            _notifyMessageReceived = false;
-        }
-    }
-
-    if (signal == QMetaMethod::fromSignal(&MessageListener::onTokenReceived)) {
-        _tokenReceivedConnected = true;
-
-        if(_notifyTokenReceived) {
-            emit onTokenReceived();
-            _notifyTokenReceived = false;
-        }
-    }
-}
-
-void MessageListener::setData(const QVariantMap &data)
-{
-    if (_data != data) {
-        _notifyMessageReceived = true;
-        _data = data;
-
-        if(_messageReceivedConnected) {
-            emit onMessageReceived();
-            _notifyMessageReceived = false;
-        }
-    }
-}
-
-void MessageListener::setToken(const QString &token)
-{
-    QMutexLocker lock { &_tokenMutex };
-    if (_token != token) {
-        _token = token;
-        lock.unlock();
-
-        _notifyTokenReceived = true;
-
-        if(_tokenReceivedConnected) {
-            emit onTokenReceived();
-            _notifyTokenReceived = false;
-        }
-    }
+    QTimer::singleShot(0, q, [ this, data ] { q->setData(data); });
 }
