@@ -1,14 +1,14 @@
 #include "qtfirebasemessaging.h"
 
-#if (QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(7, 0, 0)) && (QTFIREBASE_FIREBASE_VERSION < QTFIREBASE_FIREBASE_VERSION_CHECK(8, 6, 0))
-#if defined(Q_OS_ANDROID)
-#include <QPointer>
-#endif
-#endif
-
 #include <firebase/app.h>
 #include <firebase/messaging.h>
 #include <firebase/internal/common.h>
+
+#define QTFIREBASE_MESSAGING_CHECK_READY(name) \
+    if (!_ready) { \
+        qDebug().noquote() << this << name << "native part not ready"; \
+        return; \
+    }
 
 namespace messaging = firebase::messaging;
 
@@ -24,8 +24,6 @@ QtFirebaseMessaging::QtFirebaseMessaging(QObject *parent)
     if (self)
         return;
     self = this;
-
-    connect(qFirebase, &QtFirebase::futureEvent, this, &QtFirebaseMessaging::onFutureEvent);
 
     QTimer::singleShot(0, this, [ this ] {
         if (qFirebase->ready()) {
@@ -56,56 +54,70 @@ void QtFirebaseMessaging::componentComplete()
 
 void QtFirebaseMessaging::init()
 {
-    if(!qFirebase->ready()) {
-        qDebug() << self << "::init" << "base not ready";
+    if (!qFirebase->ready() || _ready)
+        return;
+
+    const auto result = messaging::Initialize(*qFirebase->firebaseApp(), _listener);
+    if (result == firebase::kInitResultFailedMissingDependency) {
+        qWarning().noquote() << this << "failed to initialize due to a missing dependency";
+        return setHasMissingDependency();
+    }
+    if (result != firebase::kInitResultSuccess) {
+        qWarning().noquote() << this << "failed to initialize due to an unknown error" << result;
         return;
     }
 
-    if(!_ready && !_initializing) {
-        _initializing = true;
-
-        auto initResult = messaging::Initialize(*qFirebase->firebaseApp(), _listener);
-        if(firebase::kInitResultFailedMissingDependency == initResult)
-            setHasMissingDependency(true);
-
-        _initializing = false;
-
-        if(firebase::kInitResultSuccess != initResult)
+#ifdef QTFIREBASE_ANDROID_FIX
+    const auto future = messaging::GetToken();
+    future.OnCompletion([ this ](const firebase::FutureBase &future) {
+        const auto code = future.error();
+        const auto message = QString::fromUtf8(future.error_message());
+        if (code) {
+            emit error(code, message);
             return;
+        }
 
-        setReady(true);
-#if (QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(7, 0, 0)) && (QTFIREBASE_FIREBASE_VERSION < QTFIREBASE_FIREBASE_VERSION_CHECK(8, 6, 0))
-#if defined(Q_OS_ANDROID) // https://github.com/firebase/firebase-cpp-sdk/pull/667
-        QPointer<QtFirebaseMessaging> self { this };
+        setReady();
 
-        // firebase::messaging::Listener::OnTokenReceived() may not be called on second app launch
-        auto future = messaging::GetToken();
-        future.OnCompletion([self, future](const firebase::FutureBase &){
-            if(!self)
-                return;
-            if(future.result())
-                self->setToken(QString::fromStdString(*future.result()));
-        });
+        const auto result = static_cast<const std::string *>(future.result_void());
+        if (result)
+            self->setToken(QString::fromStdString(*result));
+    });
+#else
+    setReady();
 #endif
-#endif
-    }
 }
 
-void QtFirebaseMessaging::onFutureEvent(const QString &eventId, const firebase::FutureBase &future)
+void QtFirebaseMessaging::subscribe(const QString &topic)
 {
-    if(!eventId.startsWith(__QTFIREBASE_ID))
-        return;
+    QTFIREBASE_MESSAGING_CHECK_READY("::subscribe")
 
-    qDebug() << self << "::onFutureEvent" << eventId;
+    const auto result = firebase::messaging::Subscribe(topic.toUtf8());
+    result.OnCompletion([ this, topic ](const firebase::FutureBase &future) {
+        const auto code = future.error();
+        const auto message = QString::fromUtf8(future.error_message());
+        if (code) {
+            emit error(code, message);
+            return;
+        }
+        emit subscribed(topic);
+    });
+}
 
-    if(future.status() != firebase::kFutureStatusComplete)
-    {
-        qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
-        _initializing = false;
-        return;
-    }
-    qDebug() << this << "::onFutureEvent initialized ok";
-    _initializing = false;
+void QtFirebaseMessaging::unsubscribe(const QString &topic)
+{
+    QTFIREBASE_MESSAGING_CHECK_READY("::unsubscribe")
+
+    const auto result = firebase::messaging::Unsubscribe(topic.toUtf8());
+    result.OnCompletion([ this, topic ](const firebase::FutureBase &future) {
+        const auto code = future.error();
+        const auto message = QString::fromUtf8(future.error_message());
+        if (code) {
+            emit error(code, message);
+            return;
+        }
+        emit unsubscribed(topic);
+    });
 }
 
 void QtFirebaseMessaging::getMessage()
@@ -152,44 +164,6 @@ void QtFirebaseMessaging::setToken(const QString &token)
 
         emit tokenChanged();
     }
-}
-
-void QtFirebaseMessaging::subscribe(const QString &topic)
-{
-    if(!_ready) {
-        qDebug() << this << "::subscribe native part not ready";
-        return;
-    }
-
-    // TODO queue these futures so repeated calls don't get lost
-    auto result = firebase::messaging::Subscribe(topic.toUtf8());
-
-    result.OnCompletion([this, topic](const firebase::FutureBase &completed_future){
-        if(completed_future.error() == firebase::messaging::kErrorNone) {
-            emit subscribed(topic);
-        } else {
-            emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
-        }
-    });
-}
-
-void QtFirebaseMessaging::unsubscribe(const QString &topic)
-{
-    if(!_ready) {
-        qDebug() << this << "::unsubscribe native part not ready";
-        return;
-    }
-
-    // TODO queue these futures so repeated calls don't get lost
-    auto result = firebase::messaging::Unsubscribe(topic.toUtf8());
-
-    result.OnCompletion([this, topic](const firebase::FutureBase &completed_future){
-        if(completed_future.error() == firebase::messaging::kErrorNone) {
-            emit unsubscribed(topic);
-        } else {
-            emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
-        }
-    });
 }
 
 MessageListener::MessageListener(QObject* parent)

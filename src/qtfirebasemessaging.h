@@ -15,6 +15,13 @@
 
 #include <QQmlParserStatus>
 
+// https://github.com/firebase/firebase-cpp-sdk/pull/667
+#if (QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(7, 0, 0)) && (QTFIREBASE_FIREBASE_VERSION < QTFIREBASE_FIREBASE_VERSION_CHECK(8, 6, 0))
+#ifdef Q_OS_ANDROID
+#define QTFIREBASE_ANDROID_FIX
+#endif
+#endif
+
 #if defined(qFirebaseMessaging)
 #undef qFirebaseMessaging
 #endif
@@ -86,14 +93,11 @@ signals:
 
 private slots:
     void init();
-    void onFutureEvent(const QString &eventId, const firebase::FutureBase &future);
     void getMessage();
     void getToken();
 
 private:
     const QString __QTFIREBASE_ID;
-
-    bool _initializing = false;
 
     bool _ready = false;
     bool _hasMissingDependency = false;
