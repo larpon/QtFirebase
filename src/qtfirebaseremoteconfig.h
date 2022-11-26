@@ -5,104 +5,106 @@
 
 #include "src/qtfirebase.h"
 
-#if defined(qFirebaseRemoteConfig)
+#include <firebase/remote_config.h>
+
+#include <QObject>
+#include <QVariant>
+#include <QVariantMap>
+
+#ifdef qFirebaseRemoteConfig
 #undef qFirebaseRemoteConfig
 #endif
-#define qFirebaseRemoteConfig (static_cast<QtFirebaseRemoteConfig *>(QtFirebaseRemoteConfig::instance()))
-
-#include "firebase/remote_config.h"
-
-#include <memory> //For std::unique_ptr
-#include <QDebug>
-#include <QObject>
+#define qFirebaseRemoteConfig (QtFirebaseRemoteConfig::instance())
 
 class QtFirebaseRemoteConfig : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(QtFirebaseRemoteConfig)
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
-    Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
+    Q_PROPERTY(bool fetching READ fetching NOTIFY fetchingChanged)
     Q_PROPERTY(quint64 cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
+    Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
 
+    static QtFirebaseRemoteConfig *self;
 public:
-    explicit QtFirebaseRemoteConfig(QObject *parent = nullptr);
-    ~QtFirebaseRemoteConfig();
+    static QtFirebaseRemoteConfig *instance(QObject *parent = nullptr) {
+        if (!self)
+            self = new QtFirebaseRemoteConfig(parent);
+        return self;
+    }
 
-    enum FetchFailure
-    {
+    static bool checkInstance(const char *function = nullptr) { Q_UNUSED(function) return self; }
+
+    enum FetchFailure {
         FetchFailureReasonInvalid = firebase::remote_config::kFetchFailureReasonInvalid,
         FetchFailureReasonThrottled = firebase::remote_config::kFetchFailureReasonThrottled,
         FetchFailureReasonError = firebase::remote_config::kFetchFailureReasonError,
     };
     Q_ENUM(FetchFailure)
 
-    static QtFirebaseRemoteConfig *instance() {
-        if(self == nullptr) {
-            self = new QtFirebaseRemoteConfig(nullptr);
-            qDebug() << self << "::instance" << "singleton";
-        }
-        return self;
-    }
+    explicit QtFirebaseRemoteConfig(QObject *parent = nullptr);
+    virtual ~QtFirebaseRemoteConfig();
 
-    bool checkInstance(const char *function);
-    bool ready();
+    bool ready() const { return _ready; }
+    bool fetching() const { return _fetching; }
+    quint64 cacheExpirationTime() const { return _cacheExpirationTime; }
+    QVariantMap parameters() const { return _parameters; }
 
-    QVariantMap parameters() const;
-    void setParameters(const QVariantMap& map);
+    void setCacheExpirationTime(quint64 ms);
+    void setParameters(const QVariantMap &);
 
-    quint64 cacheExpirationTime() const;
-    void setCacheExpirationTime(quint64 timeMs);
+    Q_INVOKABLE QVariant getParameterValue(const QString &name) const { return _parameters[name]; }
 
 public slots:
-    void addParameter(const QString &name, long long defaultValue);
-    void addParameter(const QString &name, double defaultValue);
-    void addParameter(const QString &name, const QString& defaultValue);
-    void addParameter(const QString &name, bool defaultValue);
-    QVariant getParameterValue(const QString &name) const;
+    void addParameter(const QString &name, bool defaultValue) { addParameterInternal(name, defaultValue); }
+    void addParameter(const QString &name, long long defaultValue) { addParameterInternal(name, defaultValue); }
+    void addParameter(const QString &name, double defaultValue) { addParameterInternal(name, defaultValue); }
+    void addParameter(const QString &name, const QString &defaultValue) { addParameterInternal(name, defaultValue); }
 
-    //If the data in the cache was fetched no longer than cacheExpirationTime ago,
-    //this method will return the cached data. If not, a fetch from the
-    //Remote Config Server will be attempted.
-    //cacheExpirationTime in QtFirebase should be set in milliseconds
-    //See for details
-    //https://firebase.google.com/docs/reference/android/com/google/firebase/remoteconfig/FirebaseRemoteConfig#fetch()
-    void fetch();
-    void fetchNow();//calls fetch with cacheExpirationTime = 0
-
+    void fetchNow() { fetch(0); }
+    void fetch() { fetch(_cacheExpirationTime / 1000); }
 signals:
+
     void readyChanged();
-    void error(int code, QString message);
-    void parametersChanged();
+    void fetchingChanged();
     void cacheExpirationTimeChanged();
+    void parametersChanged();
+
+    void googlePlayServicesError(); ///< For Firebase CPP SDK < 8.0.0 only
+
+    void futuresError(int code, QString message); ///< System error.
+    void error(int code, QString message); ///< Error of last fetch.
 
 private slots:
-    void addParameterInternal(const QString &name, const QVariant &defaultValue);
-    void delayedInit();
     void init();
-    void onFutureEvent(QString eventId, firebase::FutureBase future);
-    void onFutureEventInit(firebase::FutureBase& future);
-    void onFutureEventFetch(firebase::FutureBase& future);
-
+    void onFutureEvent(const QString &eventId, firebase::FutureBase);
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    void onFutureEventInit();
+    void onFutureEventDefaults();
+    void onFutureEventActivate();
+#endif
+    void onFutureEventFetch();
 private:
-    void setReady(bool ready);
+    void setReady(bool = true);
+    void setFetching(bool = true);
+    void setParametersAndFetching(const QVariantMap &, bool);
+    void addParameterInternal(const QString &name, const QVariant &defaultValue) { _parameters[name] = defaultValue; }
     void fetch(quint64 cacheExpirationInSeconds);
 
-    static QtFirebaseRemoteConfig *self;
-    Q_DISABLE_COPY(QtFirebaseRemoteConfig)
+    void updateParameters();
+private:
+    const QString __QTFIREBASE_ID;
 
-    QString __QTFIREBASE_ID;
-
-    bool _ready;
-    bool _initializing;
+    bool _ready = false;
+    bool _fetching = false;
+    quint64 _cacheExpirationTime = firebase::remote_config::kDefaultCacheExpiration * 1000;
     QVariantMap _parameters;
-    quint64 _cacheExpirationTime;
-    ::firebase::ModuleInitializer _initializer;
 
-    QString _appId;
-    QByteArray __appIdByteArray;
-
-    QByteArrayList __defaultsByteArrayList;
-    const char *__appId;
+#if QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
+    quint64 _cacheExpirationInSeconds = 0;
+    firebase::remote_config::RemoteConfig *_rc = nullptr;
+#endif
 };
 
-#endif //QTFIREBASE_BUILD_REMOTE_CONFIG
+#endif // QTFIREBASE_BUILD_REMOTE_CONFIG
 #endif // QTFIREBASE_REMOTE_CONFIG_H
