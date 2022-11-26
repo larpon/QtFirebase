@@ -58,9 +58,11 @@ void QtFirebaseMessaging::componentComplete()
 {
     if (!_token.isEmpty())
         emit tokenChanged();
-
-    if (!_data.isEmpty())
+    if (!_data.isEmpty()) {
         emit dataChanged();
+
+        emit messageReceived();
+    }
 }
 
 void QtFirebaseMessaging::init()
