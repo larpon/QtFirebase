@@ -1,361 +1,210 @@
 #include "qtfirebasemessaging.h"
 
-#include <QPointer>
-#include <QGuiApplication>
-#include <QQmlParserStatus>
+#include <QTimer>
 
-#include <QMutexLocker>
+#define QTFIREBASE_MESSAGING_CHECK_READY(name) \
+    if (!_ready) { \
+        qDebug().noquote() << this << name << "native part not ready"; \
+        return; \
+    }
 
-#include <stdint.h>
-#include "firebase/app.h"
-#include "firebase/internal/common.h"
-#include "firebase/messaging.h"
-#include "firebase/util.h"
+namespace messaging = firebase::messaging;
 
-namespace messaging = ::firebase::messaging;
-
-QtFirebaseMessaging *QtFirebaseMessaging::self = nullptr;
-
-QtFirebaseMessaging::QtFirebaseMessaging(QObject* parent)
-    : QObject(parent)
-    , _ready(false)
-    , _hasMissingDependency(false)
-    , _initializing(false)
-    , __QTFIREBASE_ID(QString().asprintf("%8p", static_cast<void*> (this)))
-    , g_listener(new MessageListener(this))
-    , _data()
-    , _token()
+class MessageListener : public messaging::Listener
 {
-    if(!self) {
-        self = this;
-        qDebug() << self << "::QtFirebaseMessaging" << "singleton";
-    }
+    QtFirebaseMessaging *q;
+public:
+    MessageListener(QtFirebaseMessaging *q) : q(q) { }
+    void OnTokenReceived(const char *) override;
+    void OnMessage(const messaging::Message &) override;
+};
 
-    if(qFirebase->ready()) {
-        //Call init outside of constructor, otherwise signal readyChanged not emited
-        QTimer::singleShot(100, this, &QtFirebaseMessaging::init);
-    } else {
-        connect(qFirebase,&QtFirebase::readyChanged, this, &QtFirebaseMessaging::init);
+QtFirebaseMessaging *QtFirebaseMessaging::self { nullptr };
+
+QtFirebaseMessaging::QtFirebaseMessaging(QObject *parent)
+    : QObject(parent)
+    , __QTFIREBASE_ID(QString().asprintf("%8p", static_cast<void *>(this)))
+    , _listener(new MessageListener(this))
+{
+    // deny multiple instances
+    Q_ASSERT(!self);
+    if (self)
+        return;
+    self = this;
+
+    QTimer::singleShot(0, this, [ this ] {
+        if (qFirebase->ready()) {
+            init();
+            return;
+        }
+        connect(qFirebase, &QtFirebase::readyChanged, this, &QtFirebaseMessaging::init);
         qFirebase->requestInit();
-    }
-
-    connect(qFirebase,&QtFirebase::futureEvent, this, &QtFirebaseMessaging::onFutureEvent);
+    });
 }
 
 QtFirebaseMessaging::~QtFirebaseMessaging()
 {
-    if(_ready) {
+    if (_ready)
         messaging::Terminate();
-    }
-}
 
-void QtFirebaseMessaging::classBegin()
-{
+    delete _listener;
+
+    // check this instance is legal
+    if (self == this)
+        self = nullptr;
 }
 
 void QtFirebaseMessaging::componentComplete()
 {
-    // Connect on componentComplete so the signals are emited in the correct order
-    connect(g_listener, &MessageListener::onMessageReceived, this, &QtFirebaseMessaging::getMessage);
-    connect(g_listener, &MessageListener::onTokenReceived, this, &QtFirebaseMessaging::getToken);
-}
-
-bool QtFirebaseMessaging::checkInstance(const char *function)
-{
-    const bool b = (QtFirebaseMessaging::self != nullptr);
-    if (!b)
-        qWarning("QtFirebaseMessaging::%s: Please instantiate the QtFirebaseMessaging object first", function);
-    return b;
-}
-
-void QtFirebaseMessaging::init()
-{
-    if(!qFirebase->ready()) {
-        qDebug() << self << "::init" << "base not ready";
-        return;
-    }
-
-    if(!_ready && !_initializing) {
-        _initializing = true;
-
-        auto initResult = messaging::Initialize(*qFirebase->firebaseApp(), g_listener);
-        if(firebase::kInitResultFailedMissingDependency == initResult)
-            setHasMissingDependency(true);
-
-        _initializing = false;
-
-        if(firebase::kInitResultSuccess != initResult)
-            return;
-
-        setReady(true);
-#if (QTFIREBASE_FIREBASE_VERSION >= QTFIREBASE_FIREBASE_VERSION_CHECK(7, 0, 0)) && (QTFIREBASE_FIREBASE_VERSION < QTFIREBASE_FIREBASE_VERSION_CHECK(8, 6, 0))
-#if defined(Q_OS_ANDROID) // https://github.com/firebase/firebase-cpp-sdk/pull/667
-        QPointer<QtFirebaseMessaging> self { this };
-
-        // firebase::messaging::Listener::OnTokenReceived() may not be called on second app launch
-        auto future = messaging::GetToken();
-        future.OnCompletion([self, future](const firebase::FutureBase &){
-            if(!self)
-                return;
-            if(future.result())
-                self->setToken(QString::fromStdString(*future.result()));
-        });
-#endif
-#endif
-    }
-}
-
-void QtFirebaseMessaging::onFutureEvent(const QString &eventId, const firebase::FutureBase &future)
-{
-    if(!eventId.startsWith(__QTFIREBASE_ID))
-        return;
-
-    qDebug() << self << "::onFutureEvent" << eventId;
-
-    if(future.status() != firebase::kFutureStatusComplete)
-    {
-        qDebug() << this << "::onFutureEvent initializing failed." << "ERROR: Action failed with error code and message: " << future.error() << future.error_message();
-        _initializing = false;
-        return;
-    }
-    qDebug() << this << "::onFutureEvent initialized ok";
-    _initializing = false;
-}
-
-void QtFirebaseMessaging::getMessage()
-{
-    setData(g_listener->data());
-}
-
-void QtFirebaseMessaging::getToken()
-{
-    setToken(g_listener->token());
-}
-
-bool QtFirebaseMessaging::ready()
-{
-    return _ready;
-}
-
-void QtFirebaseMessaging::setReady(bool ready)
-{
-    if (_ready != ready) {
-        _ready = ready;
-        emit readyChanged();
-    }
-}
-
-bool QtFirebaseMessaging::hasMissingDependency()
-{
-    return _hasMissingDependency;
-}
-
-void QtFirebaseMessaging::setHasMissingDependency(bool hasMissingDependency)
-{
-    if (_hasMissingDependency != hasMissingDependency) {
-        _hasMissingDependency = hasMissingDependency;
-        emit hasMissingDependencyChanged();
-    }
-}
-
-QVariantMap QtFirebaseMessaging::data()
-{
-    return _data;
-}
-
-void QtFirebaseMessaging::setData(const QVariantMap &data)
-{
-    if (_data != data) {
-        _data = data;
+    if (!_token.isEmpty())
+        emit tokenChanged();
+    if (!_data.isEmpty()) {
         emit dataChanged();
+
         emit messageReceived();
     }
 }
 
-QString QtFirebaseMessaging::token()
+void QtFirebaseMessaging::init()
 {
-    QMutexLocker lock { &_tokenMutex };
-    return _token;
-}
+    if (!qFirebase->ready() || _ready)
+        return;
 
-void QtFirebaseMessaging::setToken(const QString &token)
-{
-    QMutexLocker lock { &_tokenMutex };
-    if (_token != token) {
-        _token = token;
-        lock.unlock();
-
-        emit tokenChanged();
+    const auto result = messaging::Initialize(*qFirebase->firebaseApp(), _listener);
+    if (result == firebase::kInitResultFailedMissingDependency) {
+        qWarning().noquote() << this << "failed to initialize due to a missing dependency";
+        return setHasMissingDependency();
     }
+    if (result != firebase::kInitResultSuccess) {
+        qWarning().noquote() << this << "failed to initialize due to an unknown error" << result;
+        return;
+    }
+
+#ifdef QTFIREBASE_ANDROID_FIX
+    const auto future = messaging::GetToken();
+    future.OnCompletion([ this ](const firebase::FutureBase &future) {
+        const auto code = future.error();
+        const auto message = QString::fromUtf8(future.error_message());
+        if (code) {
+            emit error(code, message);
+            return;
+        }
+
+        setReady();
+
+        const auto result = static_cast<const std::string *>(future.result_void());
+        if (result)
+            self->setToken(QString::fromStdString(*result));
+    });
+#else
+    setReady();
+#endif
 }
 
 void QtFirebaseMessaging::subscribe(const QString &topic)
 {
-    if(!_ready) {
-        qDebug() << this << "::subscribe native part not ready";
-        return;
-    }
+    QTFIREBASE_MESSAGING_CHECK_READY("::subscribe")
 
-    // TODO queue these futures so repeated calls don't get lost
-    auto result = firebase::messaging::Subscribe(topic.toUtf8());
-
-    result.OnCompletion([this, topic](const firebase::FutureBase &completed_future){
-        if(completed_future.error() == firebase::messaging::kErrorNone) {
-            emit subscribed(topic);
-        } else {
-            emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
+    const auto result = messaging::Subscribe(topic.toUtf8());
+    result.OnCompletion([ this, topic ](const firebase::FutureBase &future) {
+        const auto code = future.error();
+        const auto message = QString::fromUtf8(future.error_message());
+        if (code) {
+            emit error(code, message);
+            return;
         }
+        emit subscribed(topic);
     });
 }
 
 void QtFirebaseMessaging::unsubscribe(const QString &topic)
 {
-    if(!_ready) {
-        qDebug() << this << "::unsubscribe native part not ready";
-        return;
-    }
+    QTFIREBASE_MESSAGING_CHECK_READY("::unsubscribe")
 
-    // TODO queue these futures so repeated calls don't get lost
-    auto result = firebase::messaging::Unsubscribe(topic.toUtf8());
-
-    result.OnCompletion([this, topic](const firebase::FutureBase &completed_future){
-        if(completed_future.error() == firebase::messaging::kErrorNone) {
-            emit unsubscribed(topic);
-        } else {
-            emit error(completed_future.error(), QString(QString::fromUtf8(completed_future.error_message())));
+    const auto result = messaging::Unsubscribe(topic.toUtf8());
+    result.OnCompletion([ this, topic ](const firebase::FutureBase &future) {
+        const auto code = future.error();
+        const auto message = QString::fromUtf8(future.error_message());
+        if (code) {
+            emit error(code, message);
+            return;
         }
+        emit unsubscribed(topic);
     });
 }
 
-MessageListener::MessageListener(QObject* parent)
-    : QObject(parent)
+void QtFirebaseMessaging::setReady(bool ready)
 {
+    if (_ready == ready)
+        return;
+    _ready = ready;
+    emit readyChanged();
 }
 
-void MessageListener::OnMessage(const messaging::Message &message)
+void QtFirebaseMessaging::setHasMissingDependency(bool hasMissingDependency)
 {
-    // When messages are received by the server, they are placed into an
-    // internal queue, waiting to be consumed. When ProcessMessages is called,
-    // this OnMessage function is called once for each queued message.
+    if (_hasMissingDependency == hasMissingDependency)
+        return;
+    _hasMissingDependency = hasMissingDependency;
+    emit hasMissingDependencyChanged();
+}
 
-    QVariantMap data;
+void QtFirebaseMessaging::setToken(const QString &token)
+{
+    if (_token == token)
+        return;
+    _token = token;
+    emit tokenChanged();
+}
 
-    if (message.notification) {
-        if (!message.notification->title.empty()) {
-            const QString key = QStringLiteral("nTitle");
-            const QString value = QString::fromStdString(message.notification->title.c_str());
-            data.insert(key, value);
-        }
-        if (!message.notification->body.empty()) {
-            const QString key = QStringLiteral("nBody");
-            const QString value = QString::fromStdString(message.notification->body.c_str());
-            data.insert(key, value);
-        }
-        if (!message.notification->icon.empty()) {
-            const QString key = QStringLiteral("nIcon");
-            const QString value = QString::fromStdString(message.notification->icon.c_str());
-            data.insert(key, value);
-        }
-        if (!message.notification->tag.empty()) {
-            const QString key = QStringLiteral("nTag");
-            const QString value = QString::fromStdString(message.notification->tag.c_str());
-            data.insert(key, value);
-        }
-        if (!message.notification->color.empty()) {
-            const QString key = QStringLiteral("nColor");
-            const QString value = QString::fromStdString(message.notification->color.c_str());
-            data.insert(key, value);
-        }
-        if (!message.notification->sound.empty()) {
-            const QString key = QStringLiteral("nSound");
-            const QString value = QString::fromStdString(message.notification->sound.c_str());
-            data.insert(key, value);
-        }
-        if (!message.notification->click_action.empty()) {
-            const QString key = QStringLiteral("nClickAction");
-            const QString value = QString::fromStdString(message.notification->click_action.c_str());
-            data.insert(key, value);
-        }
-    }
+void QtFirebaseMessaging::setData(const QVariantMap &data)
+{
+    if (_data == data)
+        return;
+    _data = data;
+    emit dataChanged();
 
-    if (message.notification_opened) {
-        const QString key = QStringLiteral("launchnotification");
-        data.insert(key, true);
-    }
-
-    for (const auto& field : message.data)
-    {
-        const QString key = QString::fromStdString(field.first);
-        const QString value = QString::fromStdString(field.second);
-
-        data.insert(key, value);
-    }
-
-    setData(data);
+    emit messageReceived();
 }
 
 void MessageListener::OnTokenReceived(const char *token)
 {
-    setToken(QString::fromUtf8(token));
+    const auto t = QString::fromUtf8(token);
+    QTimer::singleShot(0, q, [ this, t ] { q->setToken(t); });
 }
 
-void MessageListener::connectNotify(const QMetaMethod &signal)
+void MessageListener::OnMessage(const messaging::Message &message)
 {
-    if (signal == QMetaMethod::fromSignal(&MessageListener::onMessageReceived)) {
-        _messageReceivedConnected = true;
+    QVariantMap data;
 
-        if(_notifyMessageReceived) {
-            emit onMessageReceived();
-            _notifyMessageReceived = false;
+    const auto notification = message.notification;
+    if (notification) {
+        const QMap<QString, QString> notificationData {
+            { QStringLiteral("nTitle"), QString::fromStdString(notification->title) },
+            { QStringLiteral("nBody"), QString::fromStdString(notification->body) },
+            { QStringLiteral("nIcon"), QString::fromStdString(notification->icon) },
+            { QStringLiteral("nTag"), QString::fromStdString(notification->tag) },
+            { QStringLiteral("nColor"), QString::fromStdString(notification->color) },
+            { QStringLiteral("nSound"), QString::fromStdString(notification->sound) },
+            { QStringLiteral("nClickAction"), QString::fromStdString(notification->click_action) },
+        };
+        const auto keys = notificationData.keys();
+        for (const auto &key : qAsConst(keys)) {
+            const auto &value = notificationData[key];
+            if (!value.isEmpty())
+                data[key] = value;
         }
     }
 
-    if (signal == QMetaMethod::fromSignal(&MessageListener::onTokenReceived)) {
-        _tokenReceivedConnected = true;
+    if (message.notification_opened)
+        data[QStringLiteral("launchnotification")] = true;
 
-        if(_notifyTokenReceived) {
-            emit onTokenReceived();
-            _notifyTokenReceived = false;
-        }
+    for (const auto &field : message.data) {
+        const auto key = QString::fromStdString(field.first);
+        const auto value = QString::fromStdString(field.second);
+
+        data[key] = value;
     }
-}
 
-QVariantMap MessageListener::data()
-{
-    return _data;
-}
-
-void MessageListener::setData(const QVariantMap &data)
-{
-    if (_data != data) {
-        _notifyMessageReceived = true;
-        _data = data;
-
-        if(_messageReceivedConnected) {
-            emit onMessageReceived();
-            _notifyMessageReceived = false;
-        }
-    }
-}
-
-QString MessageListener::token()
-{
-    QMutexLocker lock { &_tokenMutex };
-    return _token;
-}
-
-void MessageListener::setToken(const QString &token)
-{
-    QMutexLocker lock { &_tokenMutex };
-    if (_token != token) {
-        _token = token;
-        lock.unlock();
-
-        _notifyTokenReceived = true;
-
-        if(_tokenReceivedConnected) {
-            emit onTokenReceived();
-            _notifyTokenReceived = false;
-        }
-    }
+    QTimer::singleShot(0, q, [ this, data ] { q->setData(data); });
 }
