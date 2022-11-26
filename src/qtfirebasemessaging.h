@@ -67,6 +67,7 @@ public:
     QString token() const { return _token; }
     QVariantMap data() const { return _data; }
 
+    // TODO: make setters private
     void setReady(bool = true);
     void setHasMissingDependency(bool = true);
     void setToken(const QString &);
