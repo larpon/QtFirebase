@@ -50,7 +50,7 @@ public:
     static void waitForFutureCompletion(firebase::FutureBase future);
     bool checkInstance(const char *function);
 
-    firebase::App* firebaseApp() const;
+    firebase::App *firebaseApp() const { return _firebaseApp; }
 
     // TODO make protected and have friend classes?
     void addFuture(const QString &eventId, const firebase::FutureBase &future);

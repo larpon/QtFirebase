@@ -22,10 +22,6 @@ QtFirebase::QtFirebase(QObject* parent) : QObject(parent)
     _initTimer->setSingleShot(false);
     connect(_initTimer, &QTimer::timeout, self, &QtFirebase::requestInit);
     _initTimer->start(1000);
-
-    _futureWatchTimer = new QTimer(self);
-    _futureWatchTimer->setSingleShot(false);
-    connect(_futureWatchTimer, &QTimer::timeout, self, &QtFirebase::processEvents);
 }
 
 QtFirebase::~QtFirebase()
@@ -80,11 +76,6 @@ void QtFirebase::waitForFutureCompletion(firebase::FutureBase future)
     }
 }
 
-firebase::App* QtFirebase::firebaseApp() const
-{
-    return _firebaseApp;
-}
-
 void QtFirebase::addFuture(const QString &eventId, const firebase::FutureBase &future)
 {
     qDebug() << self << "::addFuture" << "adding" << eventId;
@@ -96,11 +87,12 @@ void QtFirebase::addFuture(const QString &eventId, const firebase::FutureBase &f
 
     _futureMap.insert(eventId,future);
 
-    //if(!_futureWatchTimer->isActive()) {
     qDebug() << self << "::addFuture" << "starting future watch";
-    _futureWatchTimer->start(1000);
-    //}
 
+    future.OnCompletion([ ](const firebase::FutureBase &) {
+        // callback may be in different thread
+        QTimer::singleShot(0, qFirebase, &QtFirebase::processEvents);
+    });
 }
 
 void QtFirebase::requestInit()
@@ -161,7 +153,6 @@ void QtFirebase::processEvents()
 
     if(_futureMap.isEmpty()) {
         qDebug() << self << "::processEvents" << "stopping future watch";
-        _futureWatchTimer->stop();
     }
 
 }
