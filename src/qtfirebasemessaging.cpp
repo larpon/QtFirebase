@@ -89,12 +89,13 @@ void QtFirebaseMessaging::init()
             emit error(code, message);
             return;
         }
-
-        setReady();
-
         const auto result = static_cast<const std::string *>(future.result_void());
-        if (result)
-            self->setToken(QString::fromStdString(*result));
+        const auto token = result ? QString::fromStdString(*result) : QString();
+        QTimer::singleShot(0, this, [ this, token ] {
+            setReady();
+            if (!token.isEmpty())
+                setToken(token);
+        });
     });
 #else
     setReady();
@@ -104,6 +105,8 @@ void QtFirebaseMessaging::init()
 void QtFirebaseMessaging::subscribe(const QString &topic)
 {
     QTFIREBASE_MESSAGING_CHECK_READY("::subscribe")
+
+    qDebug() << this << "::subscribe" << topic;
 
     const auto result = messaging::Subscribe(topic.toUtf8());
     result.OnCompletion([ this, topic ](const firebase::FutureBase &future) {
@@ -120,6 +123,8 @@ void QtFirebaseMessaging::subscribe(const QString &topic)
 void QtFirebaseMessaging::unsubscribe(const QString &topic)
 {
     QTFIREBASE_MESSAGING_CHECK_READY("::unsubscribe")
+
+    qDebug() << this << "::unsubscribe" << topic;
 
     const auto result = messaging::Unsubscribe(topic.toUtf8());
     result.OnCompletion([ this, topic ](const firebase::FutureBase &future) {
