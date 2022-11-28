@@ -70,7 +70,7 @@ public:
     #elif defined(Q_OS_ANDROID)
     static jobject getNativeWindow();
     #else
-    static void getNativeWindow();
+    static bool getNativeWindow();
     #endif
 
 private:

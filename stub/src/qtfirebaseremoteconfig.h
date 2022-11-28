@@ -5,8 +5,6 @@
 
 #include "src/qtfirebase.h"
 
-#include <firebase/remote_config.h>
-
 #include <QObject>
 #include <QVariant>
 #include <QVariantMap>
@@ -25,7 +23,7 @@ class QtFirebaseRemoteConfig : public QObject
     Q_PROPERTY(quint64 cacheExpirationTime READ cacheExpirationTime WRITE setCacheExpirationTime NOTIFY cacheExpirationTimeChanged)
     Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
 
-    inline static QtFirebaseRemoteConfig *self = nullptr;
+    static QtFirebaseRemoteConfig *self;
 public:
     static QtFirebaseRemoteConfig *instance(QObject *parent = nullptr) {
         if (!self)
@@ -34,13 +32,6 @@ public:
     }
 
     static bool checkInstance(const char *function = nullptr) { Q_UNUSED(function) return self; }
-
-    enum FetchFailure {
-        FetchFailureReasonInvalid = firebase::remote_config::kFetchFailureReasonInvalid,
-        FetchFailureReasonThrottled = firebase::remote_config::kFetchFailureReasonThrottled,
-        FetchFailureReasonError = firebase::remote_config::kFetchFailureReasonError,
-    };
-    Q_ENUM(FetchFailure)
 
     explicit QtFirebaseRemoteConfig(QObject *parent = nullptr) : QObject(parent) { }
     virtual ~QtFirebaseRemoteConfig() { }
