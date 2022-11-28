@@ -55,9 +55,7 @@ public slots:
     void setUserProperty(const QString &, const QString &) { }
     void unsetUserId() { }
 
-#if QTFIREBASE_FIREBASE_VERSION < QTFIREBASE_FIREBASE_VERSION_CHECK(8, 0, 0)
     void setCurrentScreen(const QString &, const QString &) { }
-#endif
 
     void logEvent(const QString &) { }
     void logEvent(const QString &, const QString &, int) { }

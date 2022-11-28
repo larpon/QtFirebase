@@ -1,44 +1,50 @@
 #ifndef QTFIREBASE_H
 #define QTFIREBASE_H
 
+#include "platformutils.h"
+
+#include <QObject>
+#include <QGuiApplication>
+#include <QThread>
+#include <QTimer>
+#include <QMap>
+#include <QHash>
+
 #if defined(qFirebase)
 #undef qFirebase
 #endif
-#define qFirebase (static_cast<QtFirebase *>(QtFirebase::instance()))
+#define qFirebase (QtFirebase::instance())
 
-#include <QObject>
+namespace firebase {
+class App;
+}
 
 class QtFirebase : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(QtFirebase)
 
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
 
+    static QtFirebase *self;
 public:
-    explicit QtFirebase(QObject* parent = nullptr) { Q_UNUSED(parent) }
-    ~QtFirebase() {}
-
-    static QtFirebase *instance() {
-        if(!self)
-            self = new QtFirebase();
+    static QtFirebase *instance(QObject *parent = nullptr) {
+        if (!self)
+            self = new QtFirebase(parent);
         return self;
     }
 
-    bool ready() { return false; }
+    static bool checkInstance(const char *function = nullptr) { Q_UNUSED(function) return self; }
 
-    bool checkInstance(const char *function) { Q_UNUSED(function) return false; }
+    explicit QtFirebase(QObject *parent = nullptr) : QObject(parent) { }
+    bool ready() const { return false; }
+    firebase::App *firebaseApp() const { return nullptr; }
 
+    // TODO make protected and have friend classes?
+public slots:
+    void requestInit() { }
 signals:
     void readyChanged();
-
-public slots:
-    void requestInit() {}
-    void processEvents() {}
-
-private:
-    static QtFirebase *self;
-    Q_DISABLE_COPY(QtFirebase)
-
 };
 
 #endif // QTFIREBASE_H
