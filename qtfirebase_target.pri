@@ -1,6 +1,6 @@
 message("QtFirebase: configuring build for supported Firebase target platform...")
 
-isEmpty(QTFIREBASE_SDK_PATH){
+isEmpty(QTFIREBASE_SDK_PATH) {
     QTFIREBASE_SDK_PATH = $$PWD/firebase_cpp_sdk
     message("No QTFIREBASE_SDK_PATH path set. Using default (firebase_cpp_sdk) $$QTFIREBASE_SDK_PATH")
 } else {
@@ -155,6 +155,20 @@ ios: {
         LIBS += -F$$FW_PATH -framework $$framework
         export(LIBS)
         return (true)
+    }
+}
+
+# Desktop platforms
+linux:!android {
+    contains(QMAKE_TARGET.arch, x86_64) {
+        QTFIREBASE_LINUX_ARCH = x86_64
+    } else {
+        QTFIREBASE_LINUX_ARCH = i386
+    }
+    exists($$QTFIREBASE_SDK_PATH/libs/linux/$$QTFIREBASE_LINUX_ARCH/cxx11) {
+        QTFIREBASE_SDK_LIBS_PATH = $$QTFIREBASE_SDK_PATH/libs/linux/$$QTFIREBASE_LINUX_ARCH/cxx11
+    } else {
+        QTFIREBASE_SDK_LIBS_PATH = $$QTFIREBASE_SDK_PATH/libs/linux/$$QTFIREBASE_LINUX_ARCH
     }
 }
 
